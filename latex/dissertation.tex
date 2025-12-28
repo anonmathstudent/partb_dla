@@ -1,0 +1,230 @@
+\documentclass[12pt, a4paper, twoside]{report}
+
+% --- Packages ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{
+    top=2.5cm,
+    bottom=2.5cm,
+    inner=3.5cm, % Wider inner margin for binding
+    outer=2.5cm
+}
+\usepackage{graphicx}   % For images
+\usepackage{amsmath, amssymb, amsthm} % Math symbols and environments
+\usepackage{hyperref}   % Clickable links
+\usepackage{fancyhdr}   % Custom headers
+\usepackage{setspace}   % Line spacing
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e} % For algorithms
+\usepackage{subcaption} % For side-by-side figures
+\usepackage{natbib}     % Bibliography management
+
+% --- Aesthetic Setup ---
+\setlength{\parskip}{0.5em} % Small space between paragraphs
+\onehalfspacing             % 1.5 line spacing (common for dissertations)
+
+% Header/Footer Style
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage} % Page number on outer corners
+\fancyhead[RE]{\leftmark}   % Chapter title on inner (even pages)
+\fancyhead[LO]{\rightmark}  % Section title on inner (odd pages)
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Theorem Environments
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{lemma}{Lemma}[chapter]
+
+% --- Title Page Info ---
+\title{Mathematical Pathology and Geometric Universality in Diffusion Limited Aggregation}
+\author{Candidate Number: [Your Number]}
+\date{Trinity Term 2025}
+
+\begin{document}
+
+% --- Front Matter ---
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    
+    {\Huge \bfseries Mathematical Pathology and Geometric Universality in Diffusion Limited Aggregation \par}
+    
+    \vspace{2cm}
+    
+    {\Large \textbf{Candidate Number: [Your Number]} \par}
+    \vspace{1cm}
+    {\large Trinity Term 2025 \par}
+    
+    \vspace{4cm}
+    
+    \includegraphics[width=0.3\textwidth]{example-image-a} % Replace with University Logo
+    
+    \vspace{3cm}
+    
+    {\large \itshape A dissertation submitted for the degree of\\
+    Mathematics Part C \par}
+    
+\end{titlepage}
+
+% --- Abstract ---
+\thispagestyle{plain}
+\begin{center}
+    {\Large \bfseries Abstract}
+\end{center}
+\vspace{0.5cm}
+\begin{quote}
+    This dissertation investigates the universality class of Diffusion Limited Aggregation (DLA) through the lens of conformal mapping and harmonic measure theory. We compare on-lattice, off-lattice, and hybrid "snapping" algorithms to determine if microscopic lattice anisotropy survives in the macroscopic scaling limit. Particular attention is paid to the dimension of the harmonic measure and the dynamics of the active growth zone. [Placeholder: Finish this summary with your specific results regarding the Hybrid model's classification, totaling approx. 300 words.]
+\end{quote}
+\newpage
+
+% --- TOC ---
+\tableofcontents
+\newpage
+
+% --- Main Content ---
+
+\chapter{Introduction}
+\label{ch:intro}
+
+\section{DLA Overview \& Applications}
+Diffusion Limited Aggregation (DLA) is a process where particles undergo a random walk and cluster together to form fractals. This section will define the basic growth rule and discuss physical applications such as electrodeposition, dielectric breakdown, and Hele-Shaw flow.
+
+\section{History of Results}
+We trace the history of DLA from the original Witten-Sander paper (1981) through the early numerical estimates of fractal dimension. This section outlines the progression from purely numerical observations to the development of rigorous mathematical bounds by Kesten and others.
+
+\section{Key Mathematical Concepts}
+This section introduces the core machinery required to analyze DLA: Brownian motion as the continuum limit of random walks and its relationship to the Laplace equation ($\nabla^2 \phi = 0$). We define the Harmonic Measure, explaining its crucial role in determining the probability of a particle sticking to a specific site on the cluster boundary.
+
+\section{The ``Universality'' Debate}
+Here we frame the central problem of the dissertation: does the underlying grid geometry (lattice vs. off-lattice) fundamentally change the fractal dimension? We introduce the concept of "universality classes" and the controversy surrounding whether hybrid models belong to the continuum or lattice class.
+
+\chapter{Algorithms}
+\label{ch:algorithms}
+
+\section{Conformal Maps \& Harmonic Measure Theory}
+We discuss the Hastings-Levitov algorithm and how conformal mapping can theoretically generate DLA clusters without random walks. This section connects the physical growth probability to the derivative of the mapping function from the unit circle to the cluster exterior.
+
+\section{On-Lattice Algorithm}
+This section details the standard square-lattice implementation and the issue of grid bias. We explain Loh's algorithm or similar "bias-free" modifications that attempt to suppress the anisotropy inherent in the 4-neighbor connectivity.
+
+\section{Off-Lattice Algorithm}
+We describe the standard off-lattice Monte Carlo simulation where particles move in continuous space ($\mathbb{R}^2$). This includes optimization techniques like allowing large jump steps when the particle is far from the cluster (using Green's functions).
+
+\section{Hybrid Model (Snapping Logic)}
+This section defines the specific "Hybrid" model under investigation. We explain the "snapping" logic where particles move off-lattice but stick to the nearest grid point upon collision, effectively mixing continuum transport with discrete aggregation.
+
+\chapter{Analysis}
+\label{ch:analysis}
+
+\section{Global Scaling}
+We present results on the mass-radius relationship $M(R) \sim R^D$. This section calculates the fractal dimension $D$ for the different algorithms generated in Chapter \ref{ch:algorithms} and compares them to the accepted value of $D \approx 1.71$.
+
+\section{Anisotropy (Angular Growth Rate)}
+Using the method proposed by Grebenkov or similar angular harmonic analysis, we quantify the anisotropy of the clusters. We test whether the clusters exhibit 4-fold symmetry (indicating lattice pathology) or isotropic growth.
+
+\section{Active Zone Dynamics}
+This section analyzes the "active zone"—the set of perimeter sites with non-negligible harmonic measure. We distinguish between the "frozen interior" of the cluster and the active tips, discussing how the depth of the fjords affects particle penetration.
+
+\chapter{Discussion}
+\label{ch:discussion}
+
+\section{Synthesis of Results}
+We bring together the scaling and anisotropy data to draw conclusions about the Hybrid model. This section argues whether the "snapping" mechanism introduces enough noise to wash out lattice effects or if the underlying grid still dictates the asymptotic shape.
+
+\section{Final Classification}
+We provide a definitive classification of the Hybrid model within the universality landscape. We conclude whether DLA is truly geometrically universal or if mathematical pathologies persist in semi-discrete models.
+
+% --- Bibliography ---
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+% --- Appendices ---
+\appendix
+\chapter{Code Snippets and Derivations}
+This appendix contains the Python/C++ implementation of the random walk loop and the derivation of the hitting probability for a circle in 2D Brownian motion.
+
+% --- SPECIAL REQUIREMENT: LATEX TOOLKIT ---
+\chapter{Reference: LaTeX Structure Examples}
+\label{ch:toolkit}
+
+This section provides templates for common mathematical structures used in this dissertation.
+
+\section{Aligned Equations}
+Below is a multi-line derivation showing the alignment of the equals sign using the \texttt{align} environment.
+\begin{align}
+    \nabla^2 \phi(r, \theta) &= \frac{1}{r} \frac{\partial}{\partial r} \left( r \frac{\partial \phi}{\partial r} \right) + \frac{1}{r^2} \frac{\partial^2 \phi}{\partial \theta^2} \\
+    &= 0 \quad \text{(Laplace Equation)} \nonumber \\
+    \implies \phi(r, \theta) &= \sum_{n=0}^\infty r^n (A_n \cos n\theta + B_n \sin n\theta).
+\end{align}
+
+\section{Floats}
+\subsection{Single Figure}
+Figure \ref{fig:brownian} shows a standard inclusion of a graphic.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\textwidth]{example-image-b} % Replace with actual file
+    \caption{A realization of 2D Brownian motion.}
+    \label{fig:brownian}
+\end{figure}
+
+\subsection{Side-by-Side Figures (Subfloats)}
+Figure \ref{fig:comparison} demonstrates how to place two plots next to each other for comparison.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{example-image-a}
+        \caption{On-Lattice DLA}
+        \label{fig:lattice}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{example-image-c}
+        \caption{Off-Lattice DLA}
+        \label{fig:offlattice}
+    \end{subfigure}
+    \caption{Comparison of cluster morphology between lattice and continuum models.}
+    \label{fig:comparison}
+\end{figure}
+
+\section{Algorithms}
+Algorithm \ref{alg:random_walk} shows a basic random walk loop using the \texttt{algorithm2e} package.
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{Final position of particle}
+ Initialize particle at $r_{start}$\;
+ \While{particle not stuck AND particle within bounds}{
+  Generate random angle $\theta \in [0, 2\pi)$\;
+  $x \leftarrow x + \delta \cos \theta$\;
+  $y \leftarrow y + \delta \sin \theta$\;
+  \If{distance to cluster $< \epsilon$}{
+   Stick particle\;
+   break\;
+  }
+ }
+ \caption{Basic Random Walk Simulation}
+ \label{alg:random_walk}
+\end{algorithm}
+
+\section{Theorems}
+Standard environments for formal mathematical statements.
+
+\begin{definition}[Harmonic Measure]
+The harmonic measure $\omega(z, E, \Omega)$ is the probability that a Brownian motion starting at $z \in \Omega$ first hits the boundary $\partial \Omega$ in the set $E \subset \partial \Omega$.
+\end{definition}
+
+\begin{theorem}[Kakutani's Theorem]
+The solution to the Dirichlet problem for the Laplace equation can be expressed stochastically in terms of the hitting distribution of Brownian motion.
+\end{theorem}
+
+\begin{proof}
+The proof follows from the martingale property of harmonic functions composed with Brownian motion. See \cite{witten1981} for details.
+\end{proof}
+
+\section{References}
+This is an example of a citation. Witten and Sander introduced the model in 1981 \cite{witten1981}.
+
+\end{document}
