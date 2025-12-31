@@ -28,7 +28,7 @@ def rand_circ():
     Returns a complex number uniformly on the unit circle.
     """
     theta = np.random.uniform(0.0, TWO_PI)
-    return complex(np.sin(theta), np.cos(theta))
+    return complex(np.cos(theta), np.sin(theta)) 
 
 
 @njit

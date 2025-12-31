@@ -115,6 +115,7 @@ def render_density(
         # Linear: Shows true mass concentration
         norm = mcolors.Normalize(vmin=0, vmax=max_count)
         title_mode = "Linear Density"
+        
     
     else:
         raise ValueError(f"Unknown mode: {mode}")
