@@ -1,27 +1,35 @@
-\documentclass[12pt, a4paper, twoside]{report}
+\documentclass[11pt, a4paper, oneside]{report} 
+\setcounter{secnumdepth}{3} % Numbers subsubsections (1.1.1)
+\setcounter{tocdepth}{2}    % Shows down to subsections in TOC
 
 % --- Packages ---
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{geometry}
 \geometry{
-    top=2.5cm,
-    bottom=2.5cm,
-    inner=3.5cm, % Wider inner margin for binding
-    outer=2.5cm
+    a4paper,
+    margin=2.5cm, % Equal 2.5cm margins everywhere (standard for drafts)
+    % bindingoffset=0cm % Use this if you print later
 }
-\usepackage{graphicx}   % For images
-\usepackage{amsmath, amssymb, amsthm} % Math symbols and environments
-\usepackage{hyperref}   % Clickable links
-\usepackage{fancyhdr}   % Custom headers
-\usepackage{setspace}   % Line spacing
-\usepackage[linesnumbered,ruled,vlined]{algorithm2e} % For algorithms
-\usepackage{subcaption} % For side-by-side figures
-\usepackage{natbib}     % Bibliography management
+\usepackage{graphicx} % Remove [demo] when you have real images
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{setspace}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{subcaption}
+\usepackage[font=small, labelfont=bf]{caption} % Nicer captions
+\usepackage{microtype} % The "secret weapon" for pro typography
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathmorphing} % Required for the "random steps" line
+
+% --- Bibliography & Links ---
+\usepackage[numbers, sort&compress]{natbib} % Numbered citations [1-3]
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref} % Blue links, no boxes
+\usepackage{cleveref} % Smart referencing (load after hyperref)
+\usepackage{fancyhdr}
 
 % --- Aesthetic Setup ---
-\setlength{\parskip}{0.5em} % Small space between paragraphs
-\onehalfspacing             % 1.5 line spacing (common for dissertations)
+\setlength{\parskip}{0em} % Small space between paragraphs
+\setstretch{1.2} % Requires \usepackage{setspace}
 
 % Header/Footer Style
 \pagestyle{fancy}
@@ -35,20 +43,18 @@
 \newtheorem{theorem}{Theorem}[chapter]
 \newtheorem{definition}{Definition}[chapter]
 \newtheorem{lemma}{Lemma}[chapter]
-
-% --- Title Page Info ---
-\title{Mathematical Pathology and Geometric Universality in Diffusion Limited Aggregation}
-\author{Candidate Number: [Your Number]}
-\date{Hilary Term 2026}
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{remark}{Remark}[chapter]
 
 \begin{document}
 
-% --- Front Matter ---
+
+% --- Title Page ---
 \begin{titlepage}
     \centering
     \vspace*{2cm}
     
-    {\Huge \bfseries Mathematical Pathology and Geometric Universality in Diffusion Limited Aggregation \par}
+    {\Huge \bfseries Diffusion Limited Aggregation \par}
     
     \vspace{2cm}
     
@@ -63,7 +69,7 @@
     \vspace{3cm}
     
     {\large \itshape A dissertation submitted for the degree of\\
-    Mathematics Part C \par}
+    Mathematics Part B \par}
     
 \end{titlepage}
 
@@ -83,66 +89,496 @@
 \newpage
 
 % --- Main Content ---
-
+% =========================================
+% CHAPTER 1: INTRODUCTION
+% =========================================
 \chapter{Introduction}
 \label{ch:intro}
 
-\section{DLA Overview \& Applications}
-Diffusion Limited Aggregation (DLA) is a process where particles undergo a random walk and cluster together to form fractals. This section will define the basic growth rule and discuss physical applications such as electrodeposition, dielectric breakdown, and Hele-Shaw flow.
+\section{Overview}
+Diffusion Limited Aggregation (DLA) is a stochastic model for irreversible colloidal aggregation. In this model a seed particle is placed at the origin, and then subsequent particles are released from a boundary far from the cluster one at a time. The particle then diffuses, either as a random walk on a lattice or Brownian motion (the continuous analogue to a random walk). Upon collision, the walker sticks and the next one starts diffusing.
 
-\section{History of Results}
-We trace the history of DLA from the original Witten-Sander paper (1981) through the early numerical estimates of fractal dimension. This section outlines the progression from purely numerical observations to the development of rigorous mathematical bounds by Kesten and others.
+The model was first proposed in 1981 by Witten and Sander to model the colloidal aggregation of metal precipitates \cite{witten1981}, but has since been found to have applications in a diverse range of physical systems, including electrodeposition \cite{Matsushita1984}, bacteria growth \cite{BenJacob1994} and viscous fingering in Hele-Shaw cells \cite{Paterson1984} among others.
 
-\section{Key Mathematical Concepts}
-This section introduces the core machinery required to analyze DLA: Brownian motion as the continuum limit of random walks and its relationship to the Laplace equation ($\nabla^2 \phi = 0$). We define the Harmonic Measure, explaining its crucial role in determining the probability of a particle sticking to a specific site on the cluster boundary.
+%first visual of DLA
+% --- FIGURE 1.2: REAL VS SIMULATION ---
+\begin{figure}[ht]
+    \centering
+    % --- Panel A: Nature (Zinc) ---
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        % You need to screenshot this from Matsushita (1984) and save as zinc.png
+        \includegraphics[width=\textwidth, trim=0 0 0 1.5cm, clip]{images/zinc_intro.png} 
+        \caption{Zinc Electrodeposition \cite{Matsushita1984}}
+        \label{fig:zinc}
+    \end{subfigure}
+    \hfill % Adds flexible space
+    % --- Panel B: Off-Lattice ---
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        % Note: 'trim' cuts off the header. Adjust '1.5cm' if needed.
+        \includegraphics[width=\textwidth, trim=0 0 0 1.5cm, clip]{images/off_lattice_intro.png} 
+        \caption{Off-Lattice DLA}
+        \label{fig:off_lattice_intro}
+    \end{subfigure}
+    \hfill
+    % --- Panel C: On-Lattice ---
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        % Note: 'trim' cuts off the header.
+        \includegraphics[width=\textwidth, trim=0 0 0 1.5cm, clip]{images/on_lattice_intro.png} 
+        \caption{On-Lattice DLA}
+        \label{fig:on_lattice_intro}
+    \end{subfigure}
+    
+    \caption{Comparison of physical aggregation (a) with the two primary modelling approaches: continuum Off-Lattice DLA (b) and discrete On-Lattice DLA (c). Both are the results of simulation with $10^7$ particles. Note the distinct grid-induced anisotropy visible in the on-lattice case.}
+    \label{fig:three_panel_comparison}
+\end{figure}
 
-\section{The ``Universality'' Debate}
-Here we frame the central problem of the dissertation: does the underlying grid geometry (lattice vs. off-lattice) fundamentally change the fractal dimension? We introduce the concept of "universality classes" and the controversy surrounding whether hybrid models belong to the continuum or lattice class.
+\section{Theoretical Context}
+While DLA is defined by a stochastic algorithm (random walkers), its theoretical significance lies in its connection to potential theory, the study of harmonic functions. As will be detailed in the following chapters, the probability density $\phi(u)$ of a diffusing particle at position $u$ satisfies the Laplace equation $\nabla^2 \phi = 0$. Intuitively, this is because both random walks and harmonic functions are defined by the property that the value at any point is the average of its neighbours. Each additional walker to aggregate onto the cluster distorts this probability field, creating a Laplacian instability that amplifies irregularities into the observed complicated structure \cite{Lawler2010}.
 
+\section{Fractal Dimension}
+Visually, DLA clusters exhibit self-similarity, where small branches look statistically identical to large branches. Mathematically this can be understood via fractal dimension $D$. This will be formally defined later, but can be thought of as the relationship between the mass of a cluster (number of particles $N$) and its linear size $R$, where:
+\begin{equation}
+    N \propto R^D.
+\end{equation}
+For instance, doubling the size of a line would double its mass, so it has dimension 1, while doubling the size of a solid disc would quadruple its mass, so this has dimension 2. Simulations of off-lattice DLA have consistently yielded a fractal dimension $D \approx 1.71$, but this has not been proven \cite{Meakin1983}.
+
+In fact, the only mathematical theorem on 2D DLA is due to Kesten, who proved a bound on the growth rate of on-lattice DLA in 1987, with a key consequence being that the fractal dimension of a DLA cluster is bounded below by $1.5$ \cite{Kesten1987}.
+
+\section{Anisotropy and Thesis Goals}
+It is likely that the dimension of on-lattice DLA is actually lower than off-lattice due to the effect of the grid on the cluster shape, a phenomenon known as anisotropy. Grebenkov and Beliaev discussed how anisotropy is likely to reduce the dimension of large enough clusters \cite{Grebenkov2017}, but understanding why and to what extent is still not fully understood.
+
+To answer these questions, simulations of DLA must be done both on and off-lattice. Additionally, to understand the effect of the lattice we create a 'hybrid' algorithm with continuous diffusion but a discrete aggregation method. Other hybrid models of DLA have previously been studied \cite{Shmyrov2019}, including a similar semi-lattice approach \cite{Menshutin2011}, but to our knowledge have not been utilised to decouple the effects of transport from aggregation in on-lattice DLA.
+
+The purpose of this dissertation is to compare these three different models of DLA, in order to decouple the diffusion process of DLA from the geometry of the aggregation. By analysing various features of the resulting clusters, we hope to better understand the relationship between the continuous and discrete variations of the probability distribution governing DLA growth.
+
+% =========================================
+% CHAPTER 2: POTENTIAL THEORY
+% =========================================
+\chapter{Potential Theory}
+\label{ch:theory}
+
+\section{Preliminaries} % may end up in appendix
+\label{sec:preliminaries}
+
+\subsection{Martingales and the Optional Stopping Theorem}
+In this section, we review the probabilistic tools required to link random walks to potential theory. We assume standard measure-theoretic knowledge (equivalent to the Part A Integration course).
+
+\begin{definition}[Probability Space]
+A probability space $(\Omega, \mathcal{F}, \mathbb{P})$ is a triple where $\Omega$ is a sample set, $\mathcal{F}$ is a $\sigma$-algebra on $\Omega$ representing the set of events, and $\mathbb{P} \colon \mathcal{F}\to[0,1]$ is a countably additive set function such that $\mathbb{P}(\Omega)=1$.
+\end{definition}
+
+\begin{definition}[Filtration]
+A filtration on a probability space $(\Omega, \mathcal{F}, \mathbb{P})$ is a sequence of sub-$\sigma$-algebras $(\mathcal{F}_n)_{n \geq 0}$ such that:
+\begin{equation*}
+    \mathcal{F}_0 \subseteq \mathcal{F}_1 \subseteq \mathcal{F}_2 \subseteq \dots \subseteq \mathcal{F}.
+\end{equation*}
+The tuple $(\Omega, \mathcal{F}, (\mathcal{F}_n)_{n \geq 0}, \mathbb{P})$ is called a filtered probability space.
+\end{definition}
+
+\noindent \textit{Intuition:} The filtration $(\mathcal{F}_n)$ represents the accumulation of information over time. $\mathcal{F}_n$ contains all events whose occurrence (or non-occurrence) is known by time $n$.
+
+\begin{definition}[Stopping Time]
+A random variable $\tau \colon \Omega \to \{0, 1, \dots, \infty\}$ is called a stopping time with respect to the filtration $(\mathcal{F}_n)_{n \geq 0}$ if for every $n \geq 0$:
+\begin{equation*}
+    \{ \omega \in \Omega : \tau(\omega) \leq n \} \in \mathcal{F}_n.
+\end{equation*}
+\end{definition}
+
+\noindent \textit{Intuition:} A stopping time represents a strategy where the decision to stop at time $n$ depends only on the history of the process up to time $n$. For example, ``stop when the walker hits the cluster" is a valid stopping time but ``stop at the step before the walker hits the cluster" is not.
+
+\begin{definition}[Martingale]
+A discrete-time stochastic process $(X_n)_{n \geq 0}$ is a martingale with respect to a filtration $(\mathcal{F}_n)_{n \geq 0}$ if:
+\begin{enumerate}
+    \item $X_n$ is adapted to the filtration (i.e., $X_n$ is $\mathcal{F}_n$-measurable for all $n$),
+    \item $\mathbb{E}[|X_n|] < \infty$ for all $n$ (integrability),
+    \item $\mathbb{E}[X_{n+1} \mid \mathcal{F}_n] = X_n$ almost surely (conditional expectation).
+\end{enumerate}
+\end{definition}
+
+\noindent \textit{Intuition:} A martingale models a ``fair game" with no drift. The condition $\mathbb{E}[X_{n+1} \mid \mathcal{F}_n] = X_n$ implies that given the entire history of the process, the best prediction for the next value is the current value.
+
+\begin{theorem}[Doob's Optional Stopping Theorem]
+\label{thm:ost}
+    Let $X$ be a martingale on a filtered probability space. If $\tau$ is a stopping time such that $\mathbb{P}(\tau < \infty) = 1$, and $X$ is \textbf{uniformly bounded} (i.e., there exists $K$ such that $|X_n(\omega)| \leq K$ for all $n, \omega$), then:
+\begin{equation}
+    \mathbb{E}[X_\tau] = \mathbb{E}[X_0].
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+See \citet[Section 10.9]{Williams1991}.
+\end{proof}
+
+\noindent \textit{Intuition:} The Optional Stopping Theorem states that for a fair game, no stopping strategy $\tau$ can change the expected payout. This will allow us to relate the value of a harmonic function at a starting point $x$ (start of the walk) to its expected value at the boundary $\partial D$ (end of the walk).
+
+\subsection{Measure Theory Concepts}
+
+In the study of potential theory, we will want to understand the relationship between the geometric length of a boundary (Lebesgue measure) and the probability that a random walker hits that boundary (harmonic measure). To rigorously define a probability density function linking these two concepts we require the notion of the Radon-Nikodym derivative.
+
+\noindent \textit{Remark:} throughout this work, we assume our measurable spaces are equipped with the \textbf{Borel $\sigma$-algebra}.
+\begin{definition}[Absolute Continuity]
+Let $(\Omega, \mathcal{F})$ be a measurable space equipped with two measures $\mu$ and $\nu$. We say that $\nu$ is \textbf{absolutely continuous} with respect to $\mu$, denoted $\nu \ll \mu$, if for every $A \in \mathcal{F}$:
+\begin{equation}
+    \mu(A) = 0 \implies \nu(A) = 0.
+\end{equation}
+\end{definition}
+
+\noindent \textit{Intuition:} If $\nu \ll \mu$, then $\nu$ assigns zero mass to any set where $\mu$ assigns zero mass. This ensures that we can't have a "probability" of being in a region with zero "volume."
+
+\begin{theorem}[The Radon-Nikodym Theorem]
+Let $(\Omega, \mathcal{F})$ be a measurable space, and let $\mu$ and $\nu$ be two \textbf{finite} measures such that $\nu \ll \mu$. Then, there exists a non-negative measurable function $f \colon \Omega \to [0, \infty)$, unique $\mu$-almost everywhere, such that for any $A \in \mathcal{F}$:
+\begin{equation}
+    \nu(A) = \int_A f \, d\mu.
+\end{equation}
+The function $f$ is called the \textbf{Radon-Nikodym derivative} of $\nu$ with respect to $\mu$ and is denoted by:
+\begin{equation}
+    f = \frac{d\nu}{d\mu}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+See \citet[Section 5.14]{Williams1991}.
+\end{proof}
+
+\subsection{Conformal Maps}
+
+Here we state the definition of a conformal map, and the Riemann mapping theorem. Conformal maps will be very important for two reasons: theoretically, the Riemann Mapping Theorem guarantees that the Dirichlet problem is well-posed even on the fractal boundary of a DLA cluster; algorithmically, these maps allow us to exploit the 'conformal invariance' of Brownian motion (discussed later)
+\begin{definition}[Conformal Map]
+Let $U, V \subseteq \mathbb{C}$ be open sets. A function $f \colon U \to V$ is called \textbf{conformal} at a point $z_0 \in U$ if it preserves angles and orientation locally. 
+
+Analytically, a holomorphic function $f$ is conformal at every point where its derivative is non-zero, i.e., $f'(z) \neq 0$. If $f$ is a holomorphic bijection between $U$ and $V$ (a biholomorphism), it is essentially a global conformal map, and we say $U$ and $V$ are \textbf{conformally equivalent}.
+\end{definition}
+
+\begin{theorem}[Riemann Mapping Theorem]
+Let $U \subsetneq \mathbb{C}$ be a non-empty, simply connected open subset of the complex plane (i.e., $U$ is the whole plane minus at least one point, with no holes). Then, there exists a unique bijective conformal map $f$ from $U$ onto the open unit disk $\mathbb{D} = \{z \in \mathbb{C} : |z| < 1\}$ such that:
+\begin{equation}
+    f(z_0) = 0 \quad \text{and} \quad f'(z_0) > 0,
+\end{equation}
+for any prescribed point $z_0 \in U$.
+\end{theorem}
+
+\begin{proof}
+See \citet[Chapter 6]{Ahlfors1979} or \citet[Chapter 9]{Priestley2003}.
+\end{proof}
+
+\section{Discrete Potential Theory}
+\label{sec:discrete_theory}
+
+\subsection{Simple Random Walks and the Generator}
+
+We begin by formally defining the random walk on the integer lattice.
+
+\begin{definition}[Random Walk]
+A random walk on $\mathbb{Z}^2$ is a stochastic process $(S_n)_{n \geq 0}$ defined by $S_n = S_0 + \sum_{i=1}^n X_i$, where $X_1, X_2, \dots$ are independent and identically distributed random variables taking values in $\mathbb{Z}^2$. 
+
+The common distribution of the steps is denoted by $p(x) = \mathbb{P}(X_i = x)$ and is called the \textbf{increment distribution}.
+\end{definition}
+
+\noindent For the purposes of DLA, we are primarily interested in the symmetric case:
+
+\begin{definition}[Simple Symmetric Random Walk]
+A random walk is called a \textbf{Simple Symmetric Random Walk (SSRW)} if the increment distribution is uniform on the nearest neighbors:
+\begin{equation}
+    p(x) = \begin{cases} 
+        \frac{1}{4} & \text{if } |x| = 1, \\
+        0 & \text{otherwise}.
+    \end{cases}
+\end{equation}
+\end{definition}
+
+\noindent We can now define the operator that governs the evolution of the expectation of functions under this flow.
+
+\begin{definition}[Discrete Generator]
+Let $p(\cdot)$ be the increment distribution of a random walk. The \textbf{generator} $\mathcal{L}$ is a linear operator acting on functions $f: \mathbb{Z}^2 \to \mathbb{R}$ defined by:
+\begin{equation}
+    \mathcal{L}f(x) = \sum_{y \in \mathbb{Z}^2} p(y-x) [f(y) - f(x)].
+\end{equation}
+Probabilistically, this represents the expected change in the function $f$ in a single step of the walk starting at $x$:
+\begin{equation}
+    \mathcal{L}f(x) = \mathbb{E}[f(S_1) - f(S_0) \mid S_0 = x].
+\end{equation}
+\end{definition}
+
+\noindent \textit{Remark:} For Simple Symmetric Random Walk, the generator is proportional to the unnormalized discrete Laplacian, $\mathcal{L} = \frac{1}{4} \Delta$, where $\Delta f(x) = \sum_{y \sim x} (f(y) - f(x))$.
+
+\begin{definition}[Discrete Harmonic Functions]
+A function $f: A \cup \partial A \to \mathbb{R}$ is said to be \textbf{harmonic} in a subset $A \subset \mathbb{Z}^2$ if:
+\begin{equation}
+    \mathcal{L}f(x) = 0 \quad \text{for all } x \in A.
+\end{equation}
+Note that the value of $f$ is required on the boundary $\partial A$ to compute $\mathcal{L}f$ for points in $A$ adjacent to the boundary.
+\end{definition}
+
+%check this
+\begin{proposition}[Harmonic Functions are Martingales]
+\label{prop:harmonic_martingale}
+Let $S_n$ be a random walk and $f$ be a function harmonic on a set $A$. Let $\tau_A = \min\{n \ge 0 : S_n \notin A\}$ be the first exit time from $A$. 
+Then the stopped process $M_n = f(S_{n \wedge \tau_A})$ is a martingale (with respect to the natural filtration of $S_n$).
+\end{proposition}
+\begin{proof}
+See \citet[Proposition 6.1.1]{Lawler2010}.
+\end{proof}
+
+\subsection{The Discrete Dirichlet Problem}
+\label{sec:dirichlet}
+
+We now address the central problem of potential theory: constructing a harmonic function on a subset $A \subset \mathbb{Z}^2$ with prescribed values on the boundary $\partial A$. 
+
+Note that while $A$ is often a finite box in elementary probability, in the context of DLA, $A$ represents the \textbf{infinite} exterior of the cluster. Fortunately, the theory holds for infinite sets provided the random walk eventually exits $A$ (hits the boundary) with probability 1.
+
+\begin{theorem}[Solution to the 2D Discrete Dirichlet Problem]
+\label{thm:dirichlet_sol}
+Let $A \subset \mathbb{Z}^2$ be a subset (potentially infinite) and let $\tau = \inf \{n \ge 0 : S_n \notin A\}$ be the first exit time. 
+Assume that:
+\begin{enumerate}
+    \item The random walk stops almost surely: $\mathbb{P}_x(\tau < \infty) = 1$ for all $x \in A$.
+    \item The boundary function $g: \partial A \to \mathbb{R}$ is bounded.
+\end{enumerate}
+Then, the function $f: A \cup \partial A \to \mathbb{R}$ defined by the expectation:
+\begin{equation}
+    f(x) = \mathbb{E}_x [g(S_{\tau})]
+    \label{eq:prob_solution}
+\end{equation}
+is the unique \textbf{bounded} solution to the Dirichlet system:
+\begin{subequations}
+\label{eq:dirichlet_system}
+\begin{align}
+    \mathcal{L} f(x) &= 0, & \text{for all } x \in A, \label{eq:harmonic_cond} \\
+    f(x) &= g(x), & \text{for all } x \in \partial A. \label{eq:boundary_cond}
+\end{align}
+\end{subequations}
+\end{theorem}
+
+\begin{proof}
+\textbf{Existence:} 
+We first check that \eqref{eq:prob_solution} satisfies the system \eqref{eq:dirichlet_system}.
+If $x \in \partial A$, then $\tau = 0$, so $S_\tau = x$ and $f(x) = \mathbb{E}_x[g(x)] = g(x)$. Thus the boundary condition \eqref{eq:boundary_cond} holds.
+If $x \in A$, we use the Markov property at the first step:
+\begin{equation}
+    f(x) = \mathbb{E}_x[g(S_\tau)] = \sum_{y \sim x} p(y-x) \mathbb{E}_y[g(S_\tau)] = \sum_{y \sim x} p(y-x) f(y).
+\end{equation}
+Thus $\mathcal{L}f(x) = 0$, satisfying \eqref{eq:harmonic_cond}.
+
+\textbf{Uniqueness:} 
+Suppose $h$ is another bounded solution to the system \eqref{eq:dirichlet_system}. Since $h$ satisfies \eqref{eq:harmonic_cond}, it is harmonic, and by \cref{prop:harmonic_martingale}, the process $M_n = h(S_{n \land \tau})$ constitutes a martingale. Since $h$ is bounded, $M_n$ is a bounded martingale.
+
+Given that $\tau < \infty$ almost surely, we can apply the Optional Stopping Theorem (\cref{thm:ost}):
+\begin{equation}
+    h(x) = \mathbb{E}_x[M_0] = \mathbb{E}_x[M_\tau] = \mathbb{E}_x[h(S_\tau)].
+\end{equation}
+From condition \eqref{eq:boundary_cond}, we know $h(S_\tau) = g(S_\tau)$ on the boundary. Therefore:
+\begin{equation}
+    h(x) = \mathbb{E}_x[g(S_\tau)],
+\end{equation}
+which is exactly $f(x)$. Thus $h \equiv f$, proving uniqueness.
+\end{proof}
+
+\subsection{Recurrence and the Potential Kernel}
+\label{sec:potential_kernel}
+
+For our purposes we require our boundary to include both the boundary of the cluster as well as a point 'at infinity', where the boundary function is defined to be 0 on the cluster boundary, and 1 at infinity. 
+
+This is done formally by \citet[Proposition 6.2.2]{Lawler2010}, who prove that a solution to the Dirichlet problem in $d$ dimensions is uniquely determined by values on the finite boundary $\partial A$ and the value at infinity, taking the form:
+\begin{equation}
+    f(x) = \mathbb{E}_x [g(S_{\tau})\mathbb{I}_{\tau < \infty}] + g(\infty)\mathbb{P}_x(\tau = \infty).
+\end{equation}
+However, due to the recurrence of a random walk in 2D space, the escape probability $\mathbb{P}_x(\tau = \infty)$ is zero for any random walk in $\mathbb{Z}^2$. Consequently, the second term vanishes, and the boundary condition at infinity becomes ineffectual. The solution is entirely determined by the inner boundary $\partial K$. If $g=0$ on $\partial K$, the only solution is the trivial potential $f \equiv 0$.
+
+To model DLA, we require a non-trivial potential field that creates a gradient from "infinity" toward the cluster. 
+
+To address this we now turn to the concept of Green's functions. In the theory of differential equations, the Green's function $G(x,y)$ represents the field (potential) at $x$ induced by a point source (charge) at $y$. It is the fundamental solution to the Poisson equation:
+\begin{equation}
+    \Delta G(x,y) = -\delta_y(x).
+\end{equation}
+In the probabilistic setting, the Green's function has a precise interpretation: it is the expected number of times a random walk starting at $x$ visits the site $y$:
+\begin{equation}
+    G(x,y) = \mathbb{E}_x \left[ \sum_{n=0}^\infty \mathbb{I}_{\{S_n = y\}} \right] = \sum_{n=0}^\infty p_n(y-x).
+\end{equation}
+For transient random walks (such as in dimensions $d \ge 3$), this sum converges, and $G(x,y)$ decays to zero as $|x-y| \to \infty$ (specifically as $|x-y|^{2-d}$). 
+
+However, in two dimensions, the random walk is recurrent. A walker returns to the origin infinitely often, causing the sum in the definition of $G(x,y)$ to diverge:
+\begin{equation}
+    G(x,y) = \infty \quad \text{for all } x, y.
+\end{equation}
+Physically, this corresponds to the fact that a point charge in 2D (an infinite line charge in 3D) creates a potential field that grows logarithmically rather than decaying. Since the absolute potential is infinite, we must instead work with potential \textit{differences}. This motivates the definition of the \textbf{recurrent potential kernel}, which regularizes the divergent Green's function.
+
+\begin{definition}[Potential Kernel]
+The potential kernel $a(x)$ for simple random walk in $\mathbb{Z}^2$ is defined as:
+\begin{equation}
+    a(x) = \sum_{n=0}^\infty [p_n(0) - p_n(x)],
+\end{equation}
+where $p_n(x) = \mathbb{P}(S_n = x)$.
+\end{definition}
+
+\noindent The potential kernel therefore acts as the fundamental solution to the Laplacian on the lattice. It satisfies the Poisson equation:
+\begin{equation}
+    \mathcal{L}a(x) = \delta_0(x) = \begin{cases} 1 & x = 0, \\ 0 & x \neq 0. \end{cases}
+\end{equation}
+It replaces the `boundary at infinity' with an asymptotic growth condition.
+
+\begin{theorem}[Asymptotics of the Potential Kernel]
+As $|x| \to \infty$, the potential kernel satisfies:
+\begin{equation}
+    a(x) = \frac{2}{\pi} \ln |x| + k + O(|x|^{-2}),
+\end{equation}
+where $k$ is a constant involving Euler's constant $\gamma$.
+\end{theorem}
+\begin{proof}
+See \citet[Theorem 4.4.4]{Lawler2010}.
+\end{proof}
+
+Note that by adopting the potential kernel we change the nature of the solution:
+\begin{itemize}
+    \item \textbf{The Dirichlet Solution} (Finite Domain) represents a \textbf{probability}. Specifically, $f_R(x)$ is the probability that a walker escapes to the boundary at radius $R$ before hitting the cluster. As $R \to \infty$, this probability decays to zero everywhere ($f_R(x) \to 0$), causing the solution to vanish.
+    
+    \item \textbf{The Potential Kernel} (Infinite Domain) represents a \textbf{renormalized potential}. The function $a(x)$ is unbounded and does not represent a probability directly. Instead, it captures the relative difference in expected visits.
+\end{itemize}
+
+Intuitively, we are taking the vanishing probability $f_R(x)$ and multiplying it by a scaling factor that grows with $R$. While the absolute probability goes to zero, the shape of the field stabilizes. Consequently, the two formulations are intimately linked: the gradient of the probability field in the finite approximation converges to the gradient of the potential kernel as the domain size tends to infinity. 
+
+This means that the gradient on the cluster boundary remain consistent regardless of whether we simulate with a large killing circle or compute with the infinite potential kernel.
+
+This gradient on the boundary is precisely what determines where new particles attach. 
+
+\subsection{Discrete Harmonic Measure}
+% Notes: Definition and existence of the limit [cite: 28]
+% Notes: Link to potential field [cite: 29]
+We define the discrete harmonic measure as the hitting distribution of the random walk on the cluster boundary.
+
+%\subsection{Link to Electrostatics}
+
+\section{Continuous Potential Theory}
+\label{sec:continuous_theory}
+
+\subsection{Brownian Motion and the Generator}
+% Notes: Define BM, Heuristic derivation [cite: 31, 33]
+% Notes: Ito's Formula statement [cite: 34]
+We introduce standard planar Brownian motion $(B_t)_{t \geq 0}$ as the scaling limit of the random walk. We state Ito's Lemma for calculating differentials of stochastic processes.
+
+\subsection{Harmonic Functions}
+% Notes: Mean Value Property [cite: 36]
+% Notes: After drift vanishing, f(B_t) is a local martingale [cite: 37]
+
+\subsection{The Continuous Dirichlet Problem}
+% Notes: Statement of the problem on domain D [cite: 40, 41]
+
+\subsection{Kakutani's Theorem}
+% Notes: Solution u(x) = E_x[f(B_tau)] [cite: 44, 46]
+% Notes: Define Harmonic Measure and Poisson Kernel [cite: 47, 50]
+% Notes: Radon-Nikodym derivative link [cite: 52]
+We present Kakutani's Theorem, which establishes the equivalence between the harmonic measure and the electrostatic charge distribution on a conductor.
+
+\section{Conformal Invariance and Solvable Geometries}
+\label{sec:conformal_invariance}
+
+\subsection{Conformal Invariance of Brownian Motion}
+% Notes: Theorem statement and proof strategy [cite: 55, 56]
+Brownian motion is conformally invariant; the image of a Brownian path under a conformal map is essentially a time-changed Brownian motion.
+
+\subsection{The Half-Plane Solution}
+% Notes: Reflection Principle [cite: 58]
+% Notes: Cauchy Distribution [cite: 59]
+
+\subsection{The Disk Solution}
+% Notes: Mobius transformations mapping disk to half-plane [cite: 61]
+% Notes: Poisson Kernel for the Disk [cite: 62]
+
+% =========================================
+% CHAPTER 3: ALGORITHMS
+% =========================================
 \chapter{Algorithms}
 \label{ch:algorithms}
 
-\section{Conformal Maps \& Harmonic Measure Theory}
-We discuss the Hastings-Levitov algorithm and how conformal mapping can theoretically generate DLA clusters without random walks. This section connects the physical growth probability to the derivative of the mapping function from the unit circle to the cluster exterior.
+\section{Introduction}
+\label{sec:algo_intro}
+% Notes: Direct simulation is computationally intractable [cite: 96]
+% Notes: Overview of 3 distinct models + implementation (C/C++ to Numba) [cite: 96]
+We discuss why naive simulation of DLA is inefficient and introduce the three algorithmic approaches implemented in this study: On-Lattice, Off-Lattice, and the Hybrid model.
 
-\section{On-Lattice Algorithm}
-This section details the standard square-lattice implementation and the issue of grid bias. We explain Loh's algorithm or similar "bias-free" modifications that attempt to suppress the anisotropy inherent in the 4-neighbor connectivity.
+\section{On-Lattice Implementation}
+\label{sec:on_lattice}
+% Notes: Based on Loh's algorithm [cite: 96]
 
-\section{Off-Lattice Algorithm}
-We describe the standard off-lattice Monte Carlo simulation where particles move in continuous space ($\mathbb{R}^2$). This includes optimization techniques like allowing large jump steps when the particle is far from the cluster (using Green's functions).
+\subsection{The Fuzzy Annulus Method}
+% Notes: Discrete problem vs Electrostatics (Loh vs PMM) [cite: 96]
+% Notes: Calculating exact Green's functions via method of images/look-up tables [cite: 96]
+% Notes: Asymptotic series and rejection sampling [cite: 96]
 
-\section{Hybrid Model (Snapping Logic)}
-This section defines the specific "Hybrid" model under investigation. We explain the "snapping" logic where particles move off-lattice but stick to the nearest grid point upon collision, effectively mixing continuum transport with discrete aggregation.
+\subsection{Walk-to-Line}
 
-\chapter{Analysis}
-\label{ch:analysis}
+\subsection{Walk-to-Square}
+% Notes: Problem outline and solution via look-up table [cite: 96]
+% Notes: Reference the S-tables in Appendix [cite: 96]
 
-\section{Global Scaling}
-We present results on the mass-radius relationship $M(R) \sim R^D$. This section calculates the fractal dimension $D$ for the different algorithms generated in Chapter \ref{ch:algorithms} and compares them to the accepted value of $D \approx 1.71$.
+\section{Off-Lattice Implementation}
+\label{sec:off_lattice}
+% Notes: Based on Bell's algorithm [cite: 96]
 
-\section{Anisotropy (Angular Growth Rate)}
-Using the method proposed by Grebenkov or similar angular harmonic analysis, we quantify the anisotropy of the clusters. We test whether the clusters exhibit 4-fold symmetry (indicating lattice pathology) or isotropic growth.
+\subsection{Optimization Strategies}
+% Notes: "No killing circle" (Makarov?) [cite: 96]
+% Notes: Walker aliasing sampling [cite: 72]
+% Notes: State Mobius maps approach [cite: 96]
 
-\section{Active Zone Dynamics}
-This section analyzes the "active zone"—the set of perimeter sites with non-negligible harmonic measure. We distinguish between the "frozen interior" of the cluster and the active tips, discussing how the depth of the fjords affects particle penetration.
+\subsection{Exact Collision}
+% Notes: Solving the quadratic equation for intersection [cite: 96]
 
-\chapter{Discussion}
-\label{ch:discussion}
+\subsection{Comparison to On-Lattice}
 
-\section{Synthesis of Results}
-We bring together the scaling and anisotropy data to draw conclusions about the Hybrid model. This section argues whether the "snapping" mechanism introduces enough noise to wash out lattice effects or if the underlying grid still dictates the asymptotic shape.
+\section{The Hybrid Model}
+\label{sec:hybrid_model}
 
-\section{Final Classification}
-We provide a definitive classification of the Hybrid model within the universality landscape. We conclude whether DLA is truly geometrically universal or if mathematical pathologies persist in semi-discrete models.
+\subsection{Motivation}
+% Notes: Relaxing the Belyayev hypothesis [cite: 96]
+% Notes: Goal: does microscopic lattice anisotropy survive? [cite: 96]
 
-% --- Bibliography ---
-\bibliographystyle{plainnat}
+\subsection{Theoretical Alternatives}
+% Notes: Intrinsic anisotropy (Antenna method) vs Extrinsic strategies [cite: 96]
+% Notes: "Sticky grid" vs "Contact/Crop" [cite: 96]
+% Notes: Beurling's Estimate equivalence [cite: 96]
+
+\subsection{Selection and Justification}
+% Notes: Rejection of Antenna [cite: 96]
+% Notes: "Rotate + Snap" chosen as closest fit to Belyayev [cite: 96]
+
+\subsection{Implementation}
+% Notes: Ad-hoc Snapping logic [cite: 96]
+% Notes: Includes Visuals [cite: 96]
+We define the specific "snapping" mechanism: particles propagate in continuous $\mathbb{R}^2$ but aggregate to $\mathbb{Z}^2$.
+
+
+% =========================================
+% Bibliography
+% =========================================
+\bibliographystyle{unsrtnat} % or 'plainnat' to appear in alphabetical order
 \bibliography{references}
 
-% --- Appendices ---
+% =========================================
+% APPENDICES
+% =========================================
 \appendix
-\chapter{Code Snippets and Derivations}
-This appendix contains the Python/C++ implementation of the random walk loop and the derivation of the hitting probability for a circle in 2D Brownian motion.
+
+\chapter{Algorithmic Details and Optimizations}
+\label{ch:appendix_algo}
+
+\section{Lattice Core Optimizations}
+% Notes: Auto-size grid (adopted from Bell's off-lattice role) [cite: 65]
+% Notes: Look-up tables from Loh [cite: 66]
+% Notes: Large hierarchy to find bounding box size + flattening storage [cite: 68]
+
+\section{Off-Lattice and Hybrid Details}
+% Notes: Walker aliasing sampling explanation [cite: 72]
+% Notes: Explicit Kaiser-Bessel approximation (cite needed) [cite: 73]
+% Notes: Auto-memory management [cite: 75]
+% Notes: Python - Numba JIT vs C++ speed comparisons [cite: 77, 87]
+
+\section{Data Structures}
+% Notes: Power of 2 hierarchy grid [cite: 84]
+% Notes: Static linked lists for spatial hashing instead of re-allocating [cite: 84]
+% Notes: Hybrid's "is_occupied" function [cite: 86]
+% Notes: 3x3 neighbor logic vs vectors [cite: 88]
 
 % --- SPECIAL REQUIREMENT: LATEX TOOLKIT ---
 \chapter{Reference: LaTeX Structure Examples}
@@ -187,6 +623,27 @@ Figure \ref{fig:comparison} demonstrates how to place two plots next to each oth
     \end{subfigure}
     \caption{Comparison of cluster morphology between lattice and continuum models.}
     \label{fig:comparison}
+\end{figure}
+
+% --- FIGURE 1: GROWTH SCHEMATIC ---
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=0.8]
+        % Circle at infinity
+        \draw[dashed, gray] (0,0) circle (4cm);
+        \node[gray, anchor=south] at (0,4.1) {Release Boundary ($R \to \infty$)};
+        
+        % Seed
+        \fill[black] (0,0) circle (4pt) node[below right] {Seed};
+        
+        % Random Walk Path
+        \draw[blue, ->, decorate, decoration={random steps,segment length=3pt,amplitude=2pt}] 
+            (2.5, 3.12) -- (0.2, 0.2);
+        \fill[blue] (2.5, 3.12) circle (2pt) node[above right] {Particle Release};
+        \node[blue, font=\footnotesize] at (1.5, 2) {Random Walk};
+    \end{tikzpicture}
+    \caption{Schematic of the DLA growth process.}
+    \label{fig:dla_schematic}
 \end{figure}
 
 \section{Algorithms}

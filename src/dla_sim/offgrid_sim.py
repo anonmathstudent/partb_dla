@@ -498,7 +498,7 @@ class BellOffSimulator:
         # Scale down by 2.0 to match lattice effective diameter of 1.0
         normalized_pts = self.pts / 2.0
         
-        return np.column_stack((normalized_pts.real, normalized_pts.imag))
+        return np.column_stack((normalized_pts.real, normalized_pts.imag)).astype(np.float32)
 
 
 __all__ = ["fast_dla", "BellOffParams", "BellOffSimulator"]

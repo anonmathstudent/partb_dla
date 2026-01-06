@@ -61,7 +61,7 @@ def save_cluster_result(
     if result.occupied is not None:
         out["occupied"] = result.occupied.astype("uint8")
     if result.positions is not None:
-        out["positions"] = np.asarray(result.positions, dtype=np.float64)
+        out["positions"] = np.asarray(result.positions, dtype=np.float32)
     
     # Save metadata, extracting numpy arrays to top level for easier access
     meta = result.meta or {}

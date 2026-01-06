@@ -1,4 +1,4 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{13}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -9,5 +9,65 @@
 T.~A. Witten and L.~M. Sander.
 \newblock Diffusion-limited aggregation, a kinetic critical phenomenon.
 \newblock \emph{Physical Review Letters}, 47\penalty0 (19):\penalty0 1400, 1981.
+
+\bibitem[Matsushita et~al.(1984)]{Matsushita1984}
+Mitsugu Matsushita et~al.
+\newblock Fractal structures of zinc metal leaves grown by electrodeposition.
+\newblock \emph{Phys. Rev. Lett.}, 53:\penalty0 286--289, 1984.
+
+\bibitem[Ben-Jacob et~al.(1994)]{BenJacob1994}
+Eshel Ben-Jacob et~al.
+\newblock Generic modelling of cooperative growth patterns in bacterial colonies.
+\newblock \emph{Nature}, 368:\penalty0 46--49, 1994.
+
+\bibitem[Paterson(1984)]{Paterson1984}
+Lincoln Paterson.
+\newblock Diffusion-limited aggregation and the {Saffman-Taylor} instability.
+\newblock \emph{Phys. Rev. Lett.}, 52:\penalty0 1621--1624, 1984.
+
+\bibitem[Lawler and Limic(2010)]{Lawler2010}
+Gregory~F. Lawler and Vlada Limic.
+\newblock \emph{Random Walk: A Modern Introduction}.
+\newblock Cambridge University Press, 2010.
+
+\bibitem[Meakin(1983)]{Meakin1983}
+Paul Meakin.
+\newblock Diffusion-controlled cluster formation in 2-6-dimensional space.
+\newblock \emph{Phys. Rev. A}, 27:\penalty0 1495--1507, 1983.
+
+\bibitem[Kesten(1987)]{Kesten1987}
+Harry Kesten.
+\newblock How long are the arms in {DLA}?
+\newblock \emph{J. Phys. A: Math. Gen.}, 20:\penalty0 L29--L33, 1987.
+
+\bibitem[Grebenkov and Beliaev(2017)]{Grebenkov2017}
+D.~S. Grebenkov and D.~Beliaev.
+\newblock How anisotropy beats fractality in two-dimensional on-lattice diffusion-limited-aggregation growth.
+\newblock \emph{Phys. Rev. E}, 96:\penalty0 042159, 2017.
+
+\bibitem[Shmyrov et~al.(2019)Shmyrov, Shmyrova, and Gerasimov]{Shmyrov2019}
+A.~S. Shmyrov, A.~I. Shmyrova, and E.~S. Gerasimov.
+\newblock Hybrid {L-system}--{DLA} scheme for modeling morphology of fungal colonies.
+\newblock \emph{Physica A: Statistical Mechanics and its Applications}, 517:\penalty0 443--452, 2019.
+
+\bibitem[Menshutin and Shchur(2011)]{Menshutin2011}
+Anton~Yu Menshutin and Lev~N. Shchur.
+\newblock Morphological diagram of diffusion driven aggregate growth in plane.
+\newblock \emph{Comp. Phys. Comm.}, 182:\penalty0 1819--1821, 2011.
+
+\bibitem[Williams(1991)]{Williams1991}
+David Williams.
+\newblock \emph{Probability with Martingales}.
+\newblock Cambridge University Press, Cambridge, 1991.
+
+\bibitem[Ahlfors(1979)]{Ahlfors1979}
+Lars~V. Ahlfors.
+\newblock \emph{Complex Analysis: An Introduction to the Theory of Analytic Functions of One Complex Variable}.
+\newblock McGraw-Hill, New York, 3rd edition, 1979.
+
+\bibitem[Priestley(2003)]{Priestley2003}
+H.~A. Priestley.
+\newblock \emph{Introduction to Complex Analysis}.
+\newblock Oxford University Press, Oxford, 2nd edition, 2003.
 
 \end{thebibliography}

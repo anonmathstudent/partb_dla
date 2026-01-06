@@ -614,7 +614,7 @@ class HybridSimulator:
         # Divide by 2.0 to normalize from grid spacing 2.0 to spacing 1.0
         normalized_pts = self.pts / 2.0
         
-        return np.column_stack((normalized_pts.real, normalized_pts.imag))
+        return np.column_stack((normalized_pts.real, normalized_pts.imag)).astype(np.float32)
 
 
 __all__ = ["fast_dla", "HybridParams", "HybridSimulator"]
