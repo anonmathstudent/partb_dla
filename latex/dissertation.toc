@@ -7,45 +7,41 @@
 \contentsline {section}{\numberline {2.1}Preliminaries}{6}{section.2.1}%
 \contentsline {subsection}{\numberline {2.1.1}Martingales and the Optional Stopping Theorem}{6}{subsection.2.1.1}%
 \contentsline {subsection}{\numberline {2.1.2}Measure Theory Concepts}{7}{subsection.2.1.2}%
-\contentsline {subsection}{\numberline {2.1.3}Conformal Maps}{7}{subsection.2.1.3}%
+\contentsline {subsection}{\numberline {2.1.3}Conformal Maps}{8}{subsection.2.1.3}%
 \contentsline {section}{\numberline {2.2}Discrete Potential Theory}{8}{section.2.2}%
 \contentsline {subsection}{\numberline {2.2.1}Simple Random Walks and the Generator}{8}{subsection.2.2.1}%
 \contentsline {subsection}{\numberline {2.2.2}The Discrete Dirichlet Problem}{9}{subsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.2.3}Recurrence and the Potential Kernel}{10}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.3}Recurrence and the Potential Kernel}{11}{subsection.2.2.3}%
 \contentsline {subsection}{\numberline {2.2.4}Discrete Harmonic Measure}{12}{subsection.2.2.4}%
-\contentsline {section}{\numberline {2.3}Continuous Potential Theory}{12}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Brownian Motion and the Generator}{12}{subsection.2.3.1}%
-\contentsline {subsection}{\numberline {2.3.2}Harmonic Functions}{12}{subsection.2.3.2}%
-\contentsline {subsection}{\numberline {2.3.3}The Continuous Dirichlet Problem}{12}{subsection.2.3.3}%
-\contentsline {subsection}{\numberline {2.3.4}Kakutani's Theorem}{12}{subsection.2.3.4}%
-\contentsline {section}{\numberline {2.4}Conformal Invariance and Solvable Geometries}{12}{section.2.4}%
-\contentsline {subsection}{\numberline {2.4.1}Conformal Invariance of Brownian Motion}{12}{subsection.2.4.1}%
-\contentsline {subsection}{\numberline {2.4.2}The Half-Plane Solution}{12}{subsection.2.4.2}%
-\contentsline {subsection}{\numberline {2.4.3}The Disk Solution}{12}{subsection.2.4.3}%
-\contentsline {chapter}{\numberline {3}Algorithms}{13}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Introduction}{13}{section.3.1}%
-\contentsline {section}{\numberline {3.2}On-Lattice Implementation}{13}{section.3.2}%
-\contentsline {subsection}{\numberline {3.2.1}The Fuzzy Annulus Method}{13}{subsection.3.2.1}%
-\contentsline {subsection}{\numberline {3.2.2}Walk-to-Line}{13}{subsection.3.2.2}%
-\contentsline {subsection}{\numberline {3.2.3}Walk-to-Square}{13}{subsection.3.2.3}%
-\contentsline {section}{\numberline {3.3}Off-Lattice Implementation}{13}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}Optimization Strategies}{13}{subsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.3.2}Exact Collision}{13}{subsection.3.3.2}%
-\contentsline {subsection}{\numberline {3.3.3}Comparison to On-Lattice}{13}{subsection.3.3.3}%
-\contentsline {section}{\numberline {3.4}The Hybrid Model}{13}{section.3.4}%
-\contentsline {subsection}{\numberline {3.4.1}Motivation}{13}{subsection.3.4.1}%
-\contentsline {subsection}{\numberline {3.4.2}Theoretical Alternatives}{13}{subsection.3.4.2}%
-\contentsline {subsection}{\numberline {3.4.3}Selection and Justification}{13}{subsection.3.4.3}%
-\contentsline {subsection}{\numberline {3.4.4}Implementation}{13}{subsection.3.4.4}%
-\contentsline {chapter}{\numberline {A}Algorithmic Details and Optimizations}{15}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Lattice Core Optimizations}{15}{section.A.1}%
-\contentsline {section}{\numberline {A.2}Off-Lattice and Hybrid Details}{15}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Data Structures}{15}{section.A.3}%
-\contentsline {chapter}{\numberline {B}Reference: LaTeX Structure Examples}{16}{appendix.B}%
-\contentsline {section}{\numberline {B.1}Aligned Equations}{16}{section.B.1}%
-\contentsline {section}{\numberline {B.2}Floats}{16}{section.B.2}%
-\contentsline {subsection}{\numberline {B.2.1}Single Figure}{16}{subsection.B.2.1}%
-\contentsline {subsection}{\numberline {B.2.2}Side-by-Side Figures (Subfloats)}{16}{subsection.B.2.2}%
-\contentsline {section}{\numberline {B.3}Algorithms}{17}{section.B.3}%
-\contentsline {section}{\numberline {B.4}Theorems}{18}{section.B.4}%
-\contentsline {section}{\numberline {B.5}References}{18}{section.B.5}%
+\contentsline {section}{\numberline {2.3}Continuous Potential Theory}{14}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Brownian Motion and the Laplacian}{14}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Harmonic Measure and the Poisson Kernel}{16}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Conformal Invariance}{17}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.4}Solvable Geometries}{17}{subsection.2.3.4}%
+\contentsline {chapter}{\numberline {3}Algorithms}{20}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Introduction}{20}{section.3.1}%
+\contentsline {section}{\numberline {3.2}On-Lattice Implementation}{20}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}The Fuzzy Annulus Method}{20}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Walk-to-Line}{20}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Walk-to-Square}{20}{subsection.3.2.3}%
+\contentsline {section}{\numberline {3.3}Off-Lattice Implementation}{20}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Optimization Strategies}{20}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Exact Collision}{21}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}Comparison to On-Lattice}{21}{subsection.3.3.3}%
+\contentsline {section}{\numberline {3.4}The Hybrid Model}{21}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Motivation}{21}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Theoretical Alternatives}{21}{subsection.3.4.2}%
+\contentsline {subsection}{\numberline {3.4.3}Selection and Justification}{21}{subsection.3.4.3}%
+\contentsline {subsection}{\numberline {3.4.4}Implementation}{21}{subsection.3.4.4}%
+\contentsline {chapter}{\numberline {A}Algorithmic Details and Optimizations}{24}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Lattice Core Optimizations}{24}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Off-Lattice and Hybrid Details}{24}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Data Structures}{24}{section.A.3}%
+\contentsline {chapter}{\numberline {B}Reference: LaTeX Structure Examples}{25}{appendix.B}%
+\contentsline {section}{\numberline {B.1}Aligned Equations}{25}{section.B.1}%
+\contentsline {section}{\numberline {B.2}Floats}{25}{section.B.2}%
+\contentsline {subsection}{\numberline {B.2.1}Single Figure}{25}{subsection.B.2.1}%
+\contentsline {subsection}{\numberline {B.2.2}Side-by-Side Figures (Subfloats)}{25}{subsection.B.2.2}%
+\contentsline {section}{\numberline {B.3}Algorithms}{26}{section.B.3}%
+\contentsline {section}{\numberline {B.4}Theorems}{27}{section.B.4}%
+\contentsline {section}{\numberline {B.5}References}{27}{section.B.5}%

@@ -45,6 +45,7 @@
 \newtheorem{lemma}{Lemma}[chapter]
 \newtheorem{proposition}{Proposition}[chapter]
 \newtheorem{remark}{Remark}[chapter]
+\newtheorem{corollary}{Corollary}[chapter]
 
 \begin{document}
 
@@ -202,7 +203,7 @@ A discrete-time stochastic process $(X_n)_{n \geq 0}$ is a martingale with respe
 
 \begin{theorem}[Doob's Optional Stopping Theorem]
 \label{thm:ost}
-    Let $X$ be a martingale on a filtered probability space. If $\tau$ is a stopping time such that $\mathbb{P}(\tau < \infty) = 1$, and $X$ is \textbf{uniformly bounded} (i.e., there exists $K$ such that $|X_n(\omega)| \leq K$ for all $n, \omega$), then:
+    Let $X$ be a martingale on a filtered probability space. If $\tau$ is a stopping time such that $\mathbb{P}(\tau < \infty) = 1$, and $X$ is uniformly bounded (i.e., there exists $K$ such that $|X_n(\omega)| \leq K$ for all $n, \omega$), then:
 \begin{equation}
     \mathbb{E}[X_\tau] = \mathbb{E}[X_0].
 \end{equation}
@@ -218,9 +219,9 @@ See \citet[Section 10.9]{Williams1991}.
 
 In the study of potential theory, we will want to understand the relationship between the geometric length of a boundary (Lebesgue measure) and the probability that a random walker hits that boundary (harmonic measure). To rigorously define a probability density function linking these two concepts we require the notion of the Radon-Nikodym derivative.
 
-\noindent \textit{Remark:} throughout this work, we assume our measurable spaces are equipped with the \textbf{Borel $\sigma$-algebra}.
+\noindent \textit{Remark:} throughout this work, we assume our measurable spaces are equipped with the Borel $\sigma$-algebra.
 \begin{definition}[Absolute Continuity]
-Let $(\Omega, \mathcal{F})$ be a measurable space equipped with two measures $\mu$ and $\nu$. We say that $\nu$ is \textbf{absolutely continuous} with respect to $\mu$, denoted $\nu \ll \mu$, if for every $A \in \mathcal{F}$:
+Let $(\Omega, \mathcal{F})$ be a measurable space equipped with two measures $\mu$ and $\nu$. We say that $\nu$ is absolutely continuous with respect to $\mu$, denoted $\nu \ll \mu$, if for every $A \in \mathcal{F}$:
 \begin{equation}
     \mu(A) = 0 \implies \nu(A) = 0.
 \end{equation}
@@ -229,11 +230,11 @@ Let $(\Omega, \mathcal{F})$ be a measurable space equipped with two measures $\m
 \noindent \textit{Intuition:} If $\nu \ll \mu$, then $\nu$ assigns zero mass to any set where $\mu$ assigns zero mass. This ensures that we can't have a "probability" of being in a region with zero "volume."
 
 \begin{theorem}[The Radon-Nikodym Theorem]
-Let $(\Omega, \mathcal{F})$ be a measurable space, and let $\mu$ and $\nu$ be two \textbf{finite} measures such that $\nu \ll \mu$. Then, there exists a non-negative measurable function $f \colon \Omega \to [0, \infty)$, unique $\mu$-almost everywhere, such that for any $A \in \mathcal{F}$:
+Let $(\Omega, \mathcal{F})$ be a measurable space, and let $\mu$ and $\nu$ be two finite measures such that $\nu \ll \mu$. Then, there exists a non-negative measurable function $f \colon \Omega \to [0, \infty)$, unique $\mu$-almost everywhere, such that for any $A \in \mathcal{F}$:
 \begin{equation}
     \nu(A) = \int_A f \, d\mu.
 \end{equation}
-The function $f$ is called the \textbf{Radon-Nikodym derivative} of $\nu$ with respect to $\mu$ and is denoted by:
+The function $f$ is called the Radon-Nikodym derivative of $\nu$ with respect to $\mu$ and is denoted by:
 \begin{equation}
     f = \frac{d\nu}{d\mu}.
 \end{equation}
@@ -243,13 +244,15 @@ The function $f$ is called the \textbf{Radon-Nikodym derivative} of $\nu$ with r
 See \citet[Section 5.14]{Williams1991}.
 \end{proof}
 
+%add LCLT and also Ito's Lemma?
+
 \subsection{Conformal Maps}
 
 Here we state the definition of a conformal map, and the Riemann mapping theorem. Conformal maps will be very important for two reasons: theoretically, the Riemann Mapping Theorem guarantees that the Dirichlet problem is well-posed even on the fractal boundary of a DLA cluster; algorithmically, these maps allow us to exploit the 'conformal invariance' of Brownian motion (discussed later)
 \begin{definition}[Conformal Map]
 Let $U, V \subseteq \mathbb{C}$ be open sets. A function $f \colon U \to V$ is called \textbf{conformal} at a point $z_0 \in U$ if it preserves angles and orientation locally. 
 
-Analytically, a holomorphic function $f$ is conformal at every point where its derivative is non-zero, i.e., $f'(z) \neq 0$. If $f$ is a holomorphic bijection between $U$ and $V$ (a biholomorphism), it is essentially a global conformal map, and we say $U$ and $V$ are \textbf{conformally equivalent}.
+Analytically, a holomorphic function $f$ is conformal at every point where its derivative is non-zero, i.e., $f'(z) \neq 0$. If $f$ is a holomorphic bijection between $U$ and $V$ (a biholomorphism), it is essentially a global conformal map, and we say $U$ and $V$ are conformally equivalent.
 \end{definition}
 
 \begin{theorem}[Riemann Mapping Theorem]
@@ -264,13 +267,11 @@ for any prescribed point $z_0 \in U$.
 See \citet[Chapter 6]{Ahlfors1979} or \citet[Chapter 9]{Priestley2003}.
 \end{proof}
 
-\section{Discrete Potential Theory}
-\label{sec:discrete_theory}
-
+\section[Discrete Potential Theory]{Discrete Potential Theory\footnote{The theoretical framework in this section is largely adapted from \citet{Lawler2010}, applied here to the specific case of 2D DLA.}}\label{sec:discrete_theory}
+We now introduce potential theory in a discrete setting, focusing on its applications to DLA. We start by considering the definitions of a random walk and a discrete harmonic function.
+%remark about focusing on intuition and links to DLA, and therefore omitting proofs, which can be found in Lawler and Limic.
 \subsection{Simple Random Walks and the Generator}
-
-We begin by formally defining the random walk on the integer lattice.
-
+\label{sec:rw_generator}
 \begin{definition}[Random Walk]
 A random walk on $\mathbb{Z}^2$ is a stochastic process $(S_n)_{n \geq 0}$ defined by $S_n = S_0 + \sum_{i=1}^n X_i$, where $X_1, X_2, \dots$ are independent and identically distributed random variables taking values in $\mathbb{Z}^2$. 
 
@@ -280,7 +281,7 @@ The common distribution of the steps is denoted by $p(x) = \mathbb{P}(X_i = x)$ 
 \noindent For the purposes of DLA, we are primarily interested in the symmetric case:
 
 \begin{definition}[Simple Symmetric Random Walk]
-A random walk is called a \textbf{Simple Symmetric Random Walk (SSRW)} if the increment distribution is uniform on the nearest neighbors:
+A random walk is called a Simple Symmetric Random Walk (SSRW) if the increment distribution is uniform on the nearest neighbors:
 \begin{equation}
     p(x) = \begin{cases} 
         \frac{1}{4} & \text{if } |x| = 1, \\
@@ -292,7 +293,7 @@ A random walk is called a \textbf{Simple Symmetric Random Walk (SSRW)} if the in
 \noindent We can now define the operator that governs the evolution of the expectation of functions under this flow.
 
 \begin{definition}[Discrete Generator]
-Let $p(\cdot)$ be the increment distribution of a random walk. The \textbf{generator} $\mathcal{L}$ is a linear operator acting on functions $f: \mathbb{Z}^2 \to \mathbb{R}$ defined by:
+Let $p(\cdot)$ be the increment distribution of a random walk. The generator $\mathcal{L}$ is a linear operator acting on functions $f: \mathbb{Z}^2 \to \mathbb{R}$ defined by:
 \begin{equation}
     \mathcal{L}f(x) = \sum_{y \in \mathbb{Z}^2} p(y-x) [f(y) - f(x)].
 \end{equation}
@@ -305,17 +306,17 @@ Probabilistically, this represents the expected change in the function $f$ in a 
 \noindent \textit{Remark:} For Simple Symmetric Random Walk, the generator is proportional to the unnormalized discrete Laplacian, $\mathcal{L} = \frac{1}{4} \Delta$, where $\Delta f(x) = \sum_{y \sim x} (f(y) - f(x))$.
 
 \begin{definition}[Discrete Harmonic Functions]
-A function $f: A \cup \partial A \to \mathbb{R}$ is said to be \textbf{harmonic} in a subset $A \subset \mathbb{Z}^2$ if:
+A function $f: A \cup \partial A \to \mathbb{R}$ is said to be harmonic in a subset $A \subset \mathbb{Z}^2$ if:
 \begin{equation}
     \mathcal{L}f(x) = 0 \quad \text{for all } x \in A.
 \end{equation}
-Note that the value of $f$ is required on the boundary $\partial A$ to compute $\mathcal{L}f$ for points in $A$ adjacent to the boundary.
+%Note that the value of $f$ is required on the boundary $\partial A$ to compute $\mathcal{L}f$ for points in $A$ adjacent to the boundary.
 \end{definition}
 
 %check this
 \begin{proposition}[Harmonic Functions are Martingales]
 \label{prop:harmonic_martingale}
-Let $S_n$ be a random walk and $f$ be a function harmonic on a set $A$. Let $\tau_A = \min\{n \ge 0 : S_n \notin A\}$ be the first exit time from $A$. 
+Let $S_n$ be a random walk and $f$ be a function harmonic on a set $A$. Let $\tau_A = \inf\{n \ge 0 : S_n \notin A\}$ be the first exit time from $A$. 
 Then the stopped process $M_n = f(S_{n \wedge \tau_A})$ is a martingale (with respect to the natural filtration of $S_n$).
 \end{proposition}
 \begin{proof}
@@ -325,10 +326,36 @@ See \citet[Proposition 6.1.1]{Lawler2010}.
 \subsection{The Discrete Dirichlet Problem}
 \label{sec:dirichlet}
 
-We now address the central problem of potential theory: constructing a harmonic function on a subset $A \subset \mathbb{Z}^2$ with prescribed values on the boundary $\partial A$. 
+\begin{definition}[Boundary]
+Before proceeding, we distinguish between the occupied cluster and the available growth sites. Let $K \subset \mathbb{Z}^2$ denote the set of occupied sites (the cluster). We define the boundary $\partial K$ as the outer boundary consisting of all empty sites adjacent to the cluster:
+\begin{equation}
+    \partial K = \{y \in \mathbb{Z}^2 \setminus K : \exists x \in K \text{ such that } |y-x|=1\}.
+\end{equation}
+Subsequently we refer to the outer boundary as the \textbf{boundary} of the cluster $\partial K$.
+\end{definition}
 
-Note that while $A$ is often a finite box in elementary probability, in the context of DLA, $A$ represents the \textbf{infinite} exterior of the cluster. Fortunately, the theory holds for infinite sets provided the random walk eventually exits $A$ (hits the boundary) with probability 1.
+We now attempt to model DLA as a discrete Dirichlet problem, where the unknown function $u_R(x)$ is defined as the probability of a random walker starting at x escaping to some outer boundary $\partial R$ of radius $R$ before hitting the cluster boundary $\partial K$.
+\begin{equation} u_R(x) = \mathbb{P}^x(\text{hit outer boundary } \partial R \text{ before } \partial K). \end{equation} 
+As the diffusion process is a simple random walk, the probability of escaping from $x$ is simply the average of the excape probabilities of its neighbours:
+\begin{equation}
+u_R(x) = \frac{1}{4} \sum_{z \sim x} u_R(z).
+\end{equation}
+By definition this makes $u(\cdot)$ harmonic, hence satisfies the discrete Laplace equation $\mathcal{L}u(x) = 0$.
 
+\noindent Thus, each stage of DLA is equivalent to solving the Dirichlet problem:
+\begin{equation}
+    \begin{cases}
+      \Delta f(x) = 0 & \text{if } x \notin K \text{ (Harmonic in free space)}, \\
+      f(x) = 0 & \text{if } x \in \partial K \text{ (Hit the cluster)}, \\
+      f(x) = 1 & \text{if } x \in \partial R \text{ (Escaped to infinity)}.
+    \end{cases}
+\end{equation}
+
+\begin{remark}
+We could have solved for the probability of hitting the cluster before escaping, reversing the boundary conditions. However, we do it this way to preserve consistency with the later sections and the electrostatic interpretation (see Appendix).
+\end{remark}
+
+\noindent We now look at the general discrete Dirichlet problem in 2D:
 \begin{theorem}[Solution to the 2D Discrete Dirichlet Problem]
 \label{thm:dirichlet_sol}
 Let $A \subset \mathbb{Z}^2$ be a subset (potentially infinite) and let $\tau = \inf \{n \ge 0 : S_n \notin A\}$ be the first exit time. 
@@ -342,7 +369,7 @@ Then, the function $f: A \cup \partial A \to \mathbb{R}$ defined by the expectat
     f(x) = \mathbb{E}_x [g(S_{\tau})]
     \label{eq:prob_solution}
 \end{equation}
-is the unique \textbf{bounded} solution to the Dirichlet system:
+is the unique bounded solution to the Dirichlet system:
 \begin{subequations}
 \label{eq:dirichlet_system}
 \begin{align}
@@ -365,7 +392,7 @@ Thus $\mathcal{L}f(x) = 0$, satisfying \eqref{eq:harmonic_cond}.
 \textbf{Uniqueness:} 
 Suppose $h$ is another bounded solution to the system \eqref{eq:dirichlet_system}. Since $h$ satisfies \eqref{eq:harmonic_cond}, it is harmonic, and by \cref{prop:harmonic_martingale}, the process $M_n = h(S_{n \land \tau})$ constitutes a martingale. Since $h$ is bounded, $M_n$ is a bounded martingale.
 
-Given that $\tau < \infty$ almost surely, we can apply the Optional Stopping Theorem (\cref{thm:ost}):
+\noindent Given that $\tau < \infty$ almost surely, we can apply the Optional Stopping Theorem (\cref{thm:ost}):
 \begin{equation}
     h(x) = \mathbb{E}_x[M_0] = \mathbb{E}_x[M_\tau] = \mathbb{E}_x[h(S_\tau)].
 \end{equation}
@@ -379,32 +406,29 @@ which is exactly $f(x)$. Thus $h \equiv f$, proving uniqueness.
 \subsection{Recurrence and the Potential Kernel}
 \label{sec:potential_kernel}
 
-For our purposes we require our boundary to include both the boundary of the cluster as well as a point 'at infinity', where the boundary function is defined to be 0 on the cluster boundary, and 1 at infinity. 
+To apply this solution to DLA, we require taking the limit $R \to \infty$, which is equivalent to solving the Dirichlet problem with a boundary condition at infinity.
 
 This is done formally by \citet[Proposition 6.2.2]{Lawler2010}, who prove that a solution to the Dirichlet problem in $d$ dimensions is uniquely determined by values on the finite boundary $\partial A$ and the value at infinity, taking the form:
 \begin{equation}
-    f(x) = \mathbb{E}_x [g(S_{\tau})\mathbb{I}_{\tau < \infty}] + g(\infty)\mathbb{P}_x(\tau = \infty).
+    f(x) = \mathbb{E}_x [g(S_{\tau})\mathbf{1}_{\tau < \infty}] + g(\infty)\mathbb{P}_x(\tau = \infty).
 \end{equation}
-However, due to the recurrence of a random walk in 2D space, the escape probability $\mathbb{P}_x(\tau = \infty)$ is zero for any random walk in $\mathbb{Z}^2$. Consequently, the second term vanishes, and the boundary condition at infinity becomes ineffectual. The solution is entirely determined by the inner boundary $\partial K$. If $g=0$ on $\partial K$, the only solution is the trivial potential $f \equiv 0$.
+However, due to the recurrence of a random walk in 2D space, the escape probability $\mathbb{P}_x(\tau = \infty)$ is zero for any random walk in $\mathbb{Z}^2$. Consequently, the second term vanishes. The solution is now entirely determined by the inner boundary $\partial K$. For our boundary conditions given in \cref{eq:dirichlet_system}, the only solution is the trivial potential $f \equiv 0$.
 
-To model DLA, we require a non-trivial potential field that creates a gradient from "infinity" toward the cluster. 
-
-To address this we now turn to the concept of Green's functions. In the theory of differential equations, the Green's function $G(x,y)$ represents the field (potential) at $x$ induced by a point source (charge) at $y$. It is the fundamental solution to the Poisson equation:
+To address this we now turn to the concept of Green's functions. The Green's function $G(x,y)$ represents the potential field at $x$ induced by a point source at $y$. Put another way, it is the solution to the Poisson equation:
 \begin{equation}
     \Delta G(x,y) = -\delta_y(x).
 \end{equation}
 In the probabilistic setting, the Green's function has a precise interpretation: it is the expected number of times a random walk starting at $x$ visits the site $y$:
 \begin{equation}
-    G(x,y) = \mathbb{E}_x \left[ \sum_{n=0}^\infty \mathbb{I}_{\{S_n = y\}} \right] = \sum_{n=0}^\infty p_n(y-x).
+    G(x,y) = \mathbb{E}_x \left[ \sum_{n=0}^\infty \mathbf{1}_{\{S_n = y\}} \right] = \sum_{n=0}^\infty p_n(y-x).
 \end{equation}
-For transient random walks (such as in dimensions $d \ge 3$), this sum converges, and $G(x,y)$ decays to zero as $|x-y| \to \infty$ (specifically as $|x-y|^{2-d}$). 
+For transient random walks (such as in dimensions $d \ge 3$), this sum converges, and $G(x,y)$ decays to zero as $|x-y| \to \infty$. 
 
-However, in two dimensions, the random walk is recurrent. A walker returns to the origin infinitely often, causing the sum in the definition of $G(x,y)$ to diverge:
+However, in two dimensions the random walk is recurrent, meaning a walker returns to the origin infinitely often, causing the sum in the definition of $G(x,y)$ to diverge:
 \begin{equation}
     G(x,y) = \infty \quad \text{for all } x, y.
 \end{equation}
-Physically, this corresponds to the fact that a point charge in 2D (an infinite line charge in 3D) creates a potential field that grows logarithmically rather than decaying. Since the absolute potential is infinite, we must instead work with potential \textit{differences}. This motivates the definition of the \textbf{recurrent potential kernel}, which regularizes the divergent Green's function.
-
+Instead we regularise the divergent Green's function by working with potential differences, motivating the definition of the potential kernel.
 \begin{definition}[Potential Kernel]
 The potential kernel $a(x)$ for simple random walk in $\mathbb{Z}^2$ is defined as:
 \begin{equation}
@@ -412,6 +436,14 @@ The potential kernel $a(x)$ for simple random walk in $\mathbb{Z}^2$ is defined 
 \end{equation}
 where $p_n(x) = \mathbb{P}(S_n = x)$.
 \end{definition}
+%add local CLT to prelims/appendix?
+It is not immediately clear that this will be finite. However, using estimates from the Local Central Limit Theorem \citep[Section 4.4.1]{Lawler2010}, it can be shown that for any fixed $x$, the difference decays as:
+\begin{equation}
+    |p_n(0) - p_n(x)| \leq C|x|n^{-3/2}.
+\end{equation}
+Since the series $\sum_{n=1}^\infty n^{-3/2}$ converges absolutely, the potential kernel $a(x)$ is well-defined and finite for all $x$.
+
+By transitioning from the Dirichlet problem to the potential kernel, we stop solving directly for the probability and instead solve for a renormalised potential $a(x)$. Intuitively, $a(x)$ quantifies the relative accessibility of a given lattice site from infinity. Importantly, the growth probability is recovered through the discrete differences of this potential: The proportion of walkers hitting a boundary point depends on the 'steepness' of the potential at the boundary.
 
 \noindent The potential kernel therefore acts as the fundamental solution to the Laplacian on the lattice. It satisfies the Poisson equation:
 \begin{equation}
@@ -430,61 +462,313 @@ where $k$ is a constant involving Euler's constant $\gamma$.
 See \citet[Theorem 4.4.4]{Lawler2010}.
 \end{proof}
 
-Note that by adopting the potential kernel we change the nature of the solution:
-\begin{itemize}
-    \item \textbf{The Dirichlet Solution} (Finite Domain) represents a \textbf{probability}. Specifically, $f_R(x)$ is the probability that a walker escapes to the boundary at radius $R$ before hitting the cluster. As $R \to \infty$, this probability decays to zero everywhere ($f_R(x) \to 0$), causing the solution to vanish.
-    
-    \item \textbf{The Potential Kernel} (Infinite Domain) represents a \textbf{renormalized potential}. The function $a(x)$ is unbounded and does not represent a probability directly. Instead, it captures the relative difference in expected visits.
-\end{itemize}
-
-Intuitively, we are taking the vanishing probability $f_R(x)$ and multiplying it by a scaling factor that grows with $R$. While the absolute probability goes to zero, the shape of the field stabilizes. Consequently, the two formulations are intimately linked: the gradient of the probability field in the finite approximation converges to the gradient of the potential kernel as the domain size tends to infinity. 
-
-This means that the gradient on the cluster boundary remain consistent regardless of whether we simulate with a large killing circle or compute with the infinite potential kernel.
-
-This gradient on the boundary is precisely what determines where new particles attach. 
+\begin{remark}
+\label{rem:log_growth}
+The logarithmic growth may seem arbitrary, but can in fact be justified with some geometric intuition:
+Consider a large circle of radius $R$ centered on the cluster (large so that it contains the entire cluster). For a steady flow of random walkers coming from infinity to reach the cluster, the total flux (rate of flow) across this circle must be independent of $R$. The total flux is the product of the circumference ($2\pi R$) and the radial gradient of the potential ($\nabla f(R)$). This implies that the gradient must decay as $\nabla f(R) \propto 1/R$. Integrating this gradient yields:
+\begin{equation}
+    f(R) \propto \int \frac{1}{R} \, dR = \ln R.
+\end{equation}
+Non-logarithmic growth would imply that the flux across a circle varies depending on its radius, violating physical conservation laws. 
+\end{remark}
 
 \subsection{Discrete Harmonic Measure}
-% Notes: Definition and existence of the limit [cite: 28]
-% Notes: Link to potential field [cite: 29]
-We define the discrete harmonic measure as the hitting distribution of the random walk on the cluster boundary.
+\label{sec:harmonic_measure}
 
-%\subsection{Link to Electrostatics}
+We now formally define the discrete harmonic measure:
+
+\begin{definition}[Harmonic Measure from Infinity]
+Let $K \subset \mathbb{Z}^2$ be a finite cluster. The harmonic measure $H_{\partial K}(y)$ is the probability that a simple random walk starting from infinity first hits the cluster $K$ at the point $y \in \partial K$. Formally, it is defined as the limit:
+\begin{equation}
+    H_{\partial K}(y) = \lim_{|x| \to \infty} \mathbb{P}_x(S_{\tau_K} = y),
+\end{equation}
+where $\tau_K = \inf\{n \ge 0 : S_n \in K\}$ is the first hitting time.
+\end{definition}
+
+\noindent \citet[Proposition 6.6.1]{Lawler2010} prove that this limit exists and defines a unique probability measure on the boundary $\partial K$. While the definition may seem abstract, we can in fact calculate these probabilities directly from the potential field derived in the previous section.
+
+We begin by formally defining the concept of discrete flux which was invoked in \cref{rem:log_growth}. On the lattice, the concept of a normal derivative $\nabla u \cdot \mathbf{n}$ is replaced by a difference operator across the boundary.
+
+\begin{definition}[Discrete Flux]
+For a function $u: \mathbb{Z}^2 \to \mathbb{R}$ that vanishes on $K$, the discrete flux at a boundary point $y \in \partial K$ is the sum of the potential differences from its neighbors in the complement:
+\begin{equation}
+    \Phi(y) = \sum_{z \sim y, z \notin K} (u(z) - u(y)).
+\end{equation}
+Since $u(y)=0$ on the boundary, this simplifies to the sum of the external neighbors: $\Phi(y) = \sum_{z \sim y, z \notin K} u(z)$.
+\end{definition}
+
+\noindent The fundamental result that we require from discrete potential theory is the equivalence of flux and the harmonic measure.
+
+\begin{proposition}[Harmonic Measure as Flux]
+The harmonic measure at $y \in \partial K$ is proportional to the discrete flux at $y$:
+\begin{equation}
+    H_{\partial K}(y) = \frac{\Phi(y)}{\sum_{w \in \partial K} \Phi(w)}.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+For a formal rigorous proof connecting hitting probabilities to the Laplacian of the Green's function, see \citet[Proposition 1.6.3]{Lawler2010}.
+\end{proof}
+
+\noindent To understand this link intuitively, we interpret the potential $u(x)$ as the density of a stream of random walkers originating from infinity and disappearing upon hitting the cluster $K$.
+In the exterior free space, the condition $\mathcal{L}u(x) = 0$ implies a sort of conservation law: the expected number of walkers entering any site $x$ equals the number leaving it.
+However, at a boundary site $y \in \partial K$, walkers arrive from neighbors but do not continue; they form the cluster. The operator $\mathcal{L}u(y)$ represents this absorption rate:
+\begin{equation}
+    \text{Rate into } y \propto \sum_{z \sim y} (\text{Density at } z) = \sum_{z \sim y} u(z) = \Phi(y).
+\end{equation}
+Since the harmonic measure $H(y)$ is the proportion of all walkers that terminate at $y$, it is directly proportional to this local absorption rate, i.e., the flux $\Phi(y)$.
+
+
+This concludes the discrete formulation of the DLA process. The growth mechanism can be summarized as follows:
+\begin{enumerate}
+    \item The system is governed by a harmonic potential $u(x)$ determined by the geometry of the cluster $K$.
+    \item This potential is the solution to the discrete Laplace equation $\mathcal{L}u=0$ with $u|_K = 0$ and $u(x) \sim \ln|x|$ as $|x| \to \infty$.
+    \item The growth probability at a boundary site $y$ is determined by the local flux $\Phi(y) = \sum_{z \sim y} u(z)$, where a new particle is added with probability $H(y) \propto \Phi(y)$.
+\end{enumerate}
+%\subsection{Link to Electrostatics} - needed/ appendix?
 
 \section{Continuous Potential Theory}
 \label{sec:continuous_theory}
 
-\subsection{Brownian Motion and the Generator}
-% Notes: Define BM, Heuristic derivation [cite: 31, 33]
-% Notes: Ito's Formula statement [cite: 34]
-We introduce standard planar Brownian motion $(B_t)_{t \geq 0}$ as the scaling limit of the random walk. We state Ito's Lemma for calculating differentials of stochastic processes.
+Much of this section parallels the discrete theory presented in \cref{sec:discrete_theory}, though the derivations here require the delicate machinery of stochastic calculus. However, for our purposes, an understanding of the main results is sufficient to build a robust intuition for DLA. The fundamental shift is replacing the discrete random walker with its scaling limit: Brownian motion.
 
-\subsection{Harmonic Functions}
-% Notes: Mean Value Property [cite: 36]
-% Notes: After drift vanishing, f(B_t) is a local martingale [cite: 37]
+\subsection{Brownian Motion and the Laplacian}
+We start by defining Brownian motion in both $\mathbb{R}^d$ and $\mathbb{C}$.
 
-\subsection{The Continuous Dirichlet Problem}
-% Notes: Statement of the problem on domain D [cite: 40, 41]
+\begin{definition}[Standard Brownian Motion]
+A standard Brownian motion in $\mathbb{R}^d$ is a stochastic process $B = (B_t)_{t \ge 0}$ defined on a probability space $(\Omega, \mathcal{F}, \mathbb{P})$ taking values in $\mathbb{R}^d$, such that:
+\begin{enumerate}
+    \item $B_0 = 0$ almost surely.
+    \item The process has independent increments: for any $0 \le s < t$, $B_t - B_s$ is independent of $\mathcal{F}_s = \sigma(B_u : u \le s)$.
+    \item The increments are Gaussian: $B_t - B_s \sim \mathcal{N}(0, (t-s)I_d)$.
+    \item The paths $t \mapsto B_t$ are continuous almost surely.
+\end{enumerate}
+\end{definition}
 
-\subsection{Kakutani's Theorem}
-% Notes: Solution u(x) = E_x[f(B_tau)] [cite: 44, 46]
-% Notes: Define Harmonic Measure and Poisson Kernel [cite: 47, 50]
-% Notes: Radon-Nikodym derivative link [cite: 52]
-We present Kakutani's Theorem, which establishes the equivalence between the harmonic measure and the electrostatic charge distribution on a conductor.
+In the study of 2D DLA, we will utilise results from complex analysis. Thus, it is natural to identify the plane $\mathbb{R}^2$ with $\mathbb{C}$.
 
-\section{Conformal Invariance and Solvable Geometries}
-\label{sec:conformal_invariance}
+\begin{definition}[Complex Brownian Motion]
+A canonical complex Brownian motion $Z_t$ is a process taking values in $\mathbb{C}$, defined as:
+\begin{equation}
+    Z_t = X_t + iY_t,
+\end{equation}
+where $X_t$ and $Y_t$ are two independent, standard one-dimensional Brownian motions.
+\end{definition}
 
-\subsection{Conformal Invariance of Brownian Motion}
-% Notes: Theorem statement and proof strategy [cite: 55, 56]
-Brownian motion is conformally invariant; the image of a Brownian path under a conformal map is essentially a time-changed Brownian motion.
+\noindent The utility of this complex formulation becomes clear when we consider what is known as the quadratic variation of the process. In stochastic calculus, standard Brownian motions satisfy the formal rules $(dX_t)^2 = dt$ and $(dY_t)^2 = dt$. Applying this yields:
+\begin{equation}
+    (dZ_t)^2 = (dX_t + i dY_t)^2 = (dX_t)^2 - (dY_t)^2 + 2i dX_t dY_t.
+\end{equation}
+Since $X$ and $Y$ are independent identical copies, their variances match ($dt - dt = 0$), and the cross-term is negligible for variation. Thus, we effectively have $(dZ_t)^2 = 0$.
+This property identifies $Z_t$ as a conformal martingale, which is the stochastic equivalent of an analytic function (where derivative depends only on $z$, not $\bar{z}$, as given by Wirtinger derivatives), and will be why we get the conformal invariance result later.
 
-\subsection{The Half-Plane Solution}
-% Notes: Reflection Principle [cite: 58]
-% Notes: Cauchy Distribution [cite: 59]
+\begin{remark}
+Much of this section has been somewhat hand-wavy. However, for our purposes a complete rigourous introduction to stochastic calculus is unnecessary. If nothing else, think of Brownian motion as the continuous limit of a random walk. In fact, this has been rigorously proven as Donsker's Invariance Principle. For DLA, this implies that large clusters formed by random walks should exhibit the same macroscopic properties as those formed by Brownian particles.
+\end{remark}
 
-\subsection{The Disk Solution}
-% Notes: Mobius transformations mapping disk to half-plane [cite: 61]
-% Notes: Poisson Kernel for the Disk [cite: 62]
+The connection between the physical process (Brownian motion) and the geometric potential (Laplace's equation) is provided by the infinitesimal generator.
+
+\begin{definition}[Continuous Generator and Laplacian]
+The Laplace operator (or Laplacian) $\Delta$ in $\mathbb{R}^d$ is the sum of the second partial derivatives:
+\begin{equation}
+\Delta = \sum_{i=1}^d \frac{\partial^2}{\partial x_i^2}.
+\end{equation}
+The infinitesimal generator of standard Brownian motion is the operator $\mathcal{A} = \frac{1}{2}\Delta$. It characterises the process via the martingale property: for any compactly supported $C^2$ (twice continuously differentiable) function $f$, the quantity
+\begin{equation}
+M_t = f(B_t) - f(B_0) - \int_0^t \frac{1}{2}\Delta f(B_s) \, ds
+\end{equation}
+is a martingale with respect to the filtration of $B_t$.
+\end{definition}
+
+\noindent This definition can be understood as a stochastic analogue to the Fundamental Theorem of Calculus. The integral term represents the expected drift of the function along the path. By subtracting this drift, we isolate the centered random noise, which is a martingale.
+
+\begin{remark}[Scaling Factors and Independence]
+We point out here that the scaling factor here differs from that in \cref{sec:rw_generator}. This discrepancy stems from the second-order term of the Taylor expansion used to derive the Brownian limit. However, since the potential distribution for DLA is determined by the condition $\mathcal{L}u = 0$ $($or $\Delta u = 0)$, this constant factor cancels out. The resulting harmonic measure is invariant. For a full derivation of this limit, see \citet[Section 2.1]{Lawler2010}.
+\end{remark}
+
+\begin{definition}[Harmonic Functions]
+A twice continuously differentiable function $u: D \to \mathbb{R}$ defined on a domain $D \subset \mathbb{R}^d$ is called harmonic if it lies in the kernel of the Laplace operator:
+\begin{equation}
+    \Delta u(x) = 0 \quad \text{for all } x \in D.
+\end{equation}
+\end{definition}
+
+\noindent By comparing this with the generator definition above, we see immediately that if $u$ is harmonic, the drift term vanishes. This yields the critical result that $u(B_t)$ is a martingale, implying that the "average value" of a harmonic function is conserved along Brownian paths. We formalise this as the mean value property.
+
+\begin{theorem}[Mean Value Property]
+A locally integrable function $u: D \to \mathbb{R}$ is harmonic ($\Delta u = 0$) if and only if for every ball $B(x,r)$ strictly contained in the domain $D$:
+\begin{equation}
+    u(x) = \frac{1}{|\partial B(x,r)|} \int_{\partial B(x,r)} u(y) \, d\sigma(y),
+\end{equation}
+where $\sigma$ denotes the surface measure on the boundary sphere.
+\end{theorem}
+
+\noindent This is the continuous equivalent to the `average of its neighbours' property of in the discrete setting.
+
+\subsection{Harmonic Measure and the Poisson Kernel}
+
+Before we present the continuous analogue to \cref{thm:dirichlet_sol}, we define the continuous version of the harmonic measure.
+\begin{definition}[Harmonic Measure]
+Let $D \subset \mathbb{R}^d$ be a domain. The harmonic measure $\omega_x = \omega_x(D, \cdot)$ is the probability measure on the boundary $\partial D$ defined by:
+\begin{equation}
+    \omega_x(E) = \mathbb{P}^x(B_{\tau_D} \in E),
+\end{equation}
+for Borel sets $E \subset \partial D$, where $\tau_D = \inf\{t > 0 : B_t \notin D\}$ is the first exit time.
+\end{definition}
+
+The solution to the continuous Dirichlet problem is given by Kakutani's Theorem.
+
+\begin{theorem}[Kakutani's Theorem]
+    \label{the:kakutani}
+If $D$ is a bounded domain and $g$ is a continuous function on $\partial D$, then the function defined by:
+\begin{equation}
+    u(x) = \mathbb{E}^x[g(B_{\tau_D})] = \int_{\partial D} g(y) \, d\omega_x(y)
+\end{equation}
+is harmonic in $D$ and satisfies $\lim_{x \to y} u(x) = g(y)$ for regular boundary points $y \in \partial D$.
+Here, $\omega_x$ denotes the harmonic measure relative to $x$, representing the distribution of the first hitting point of Brownian motion on $\partial D$.
+\begin{proof}
+For a rigorous proof relying on the martingale property of harmonic functions, see \citet[Theorem 3.12]{MortersPeres2010}.
+\end{proof}
+\end{theorem}
+
+As in the discrete case, we are concerned with extending this to infinity. As a consequence of the following lemma, 2D Brownian motion is neighbourhood recurrent, meaning it will revisit any neighborhood infinitely often. This prevents us from simply imposing a boundary condition at infinity, just as recurrence did in the discrete case.
+
+\begin{lemma}[Exit Probabilities from an Annulus]
+Let $B_t$ be a complex Brownian motion starting at $z_0$ within the annulus $A = \{z \in \mathbb{C} : r < |z| < R\}$. Let $T_A = \inf\{t > 0 : B_t \notin A\}$ be the first exit time. The probability that the process exits through the inner boundary $|z|=r$ is given by:
+\begin{equation}
+    \mathbb{P}^{z_0}(|B_{T_A}| = r) = \frac{\ln R - \ln |z_0|}{\ln R - \ln r}.
+\end{equation}
+\end{lemma}
+\begin{proof}
+See \citet[Lemma 43]{Cass2009}. The proof uses It\^o's formula (stochastic chain rule) on the function $\ln|Z_t|$.
+\end{proof}
+
+\begin{corollary}[Recurrence]
+Planar Brownian motion is neighborhood recurrent. For any starting point $z_0$ and any $\epsilon > 0$, the process will enter the disk $\{z : |z-z_0| < \epsilon\}$ almost surely:
+\begin{equation}
+    \mathbb{P}(\exists t > 0 : |B_t - z_0| < \epsilon) = 1.
+\end{equation}
+\end{corollary}
+\begin{proof}
+Taking the limit $R \to \infty$ in the annulus exit probability yields $\mathbb{P}(|B_{T_A}| = r) \to 1$.
+\end{proof}
+
+\subsection{Conformal Invariance}
+While in the discrete case we resolved this recurrence issue by turning to (regularised) Green's functions, we will instead utilise a fundamental property of Brownian motion: conformal invariance.
+
+\begin{theorem}[L\'evy's Conformal Invariance Theorem]
+Let $U \subset \mathbb{C}$ be a domain and $f: U \to V$ be a non-constant analytic function. If $Z_t$ is a complex Brownian motion in $U$, then the image process $W_t = f(Z_t)$ is, up to a random time change, a complex Brownian motion in $V$.
+Specifically, if $\tau_t = \int_0^t |f'(Z_s)|^2 ds$, then $f(Z_{\tau^{-1}(t)})$ is a standard Brownian motion in $V$.
+\end{theorem}
+\begin{proof}
+See \citet[Theorem 40]{Cass2009}.
+\end{proof}
+
+
+\begin{corollary}[Conformal Invariance of Harmonic Measure]
+Let $f: D \to D'$ be a conformal map. The harmonic measure is invariant under $f$:
+\begin{equation}
+    \omega_z(D, E) = \omega_{f(z)}(D', f(E))
+\end{equation}
+for any Borel set $E \subset \partial D$.
+\end{corollary}
+
+\noindent This result guarantees that utilising conformal maps in the sampling process will not distort the underlying harmonic measure, preserving the integrity of our off-lattice algorithm in the subsequent section.
+
+\subsection{Solvable Geometries}
+\label{sec:solvable_geometries}
+We conclude by introducing the probability density function for the hitting probabilities, and finding it explicitly for two fundamental domains used in DLA algorithms: the Upper Half-Plane ($\mathbb{H}$) and the Unit Disk ($\mathbb{D}$).
+
+\begin{definition}[Poisson Kernel]
+Let $\sigma$ be the surface measure on $\partial D$. If the harmonic measure is absolutely continuous with respect to $\zeta$, the Poisson kernel $P(x,y)$ is defined as the Radon-Nikodym derivative:
+\begin{equation}
+    P(x,y) = \frac{d\omega_x}{d\sigma}(y).
+\end{equation}
+It represents the probability density of the Brownian motion exiting $D$ at $y$ given it started at $x$.
+\end{definition}
+
+\noindent We can now express the conformal invariance of the harmonic measure in terms of the Poisson kernel. By definition, the harmonic measure of a set $E \subset \partial D$ is the integral of the Poisson kernel with respect to the surface measure $d\sigma$:
+\begin{equation}
+\omega_z(D, E) = \int_E P_D(z, \zeta) d\sigma(\zeta).
+\end{equation}
+Applying the conformal invariance corollary to a map $f: D \to \mathbb{D}$ such that $f(z)=0$, and noting that the Poisson kernel on the disk from the origin is uniform ($P_{\mathbb{D}}(0, w) = \frac{1}{2\pi}$), we have:
+\begin{equation}
+\int_E P_D(z, \zeta)  d\sigma(\zeta) = \omega_0(\mathbb{D}, f(E)) = \int_{f(E)} \frac{1}{2\pi}  d\sigma(w).
+\end{equation}
+By the change of variables $w = f(\zeta)$, the arc length element transforms as $d\sigma(w) = |f'(\zeta)| d\sigma(\zeta)$, resulting in: 
+\begin{equation}
+\int_E P_D(z, \zeta)  d\sigma(\zeta) = \int_E \frac{1}{2\pi} |f'(\zeta)| d\sigma(\zeta).
+\end{equation}
+This equality holds for any Borel set $E$, hence:
+\begin{equation}
+P_D(z, \zeta) = \frac{1}{2\pi} |f'(\zeta)|.
+\end{equation}
+
+We now apply this relation to our domains of interest:
+
+\begin{theorem}[Poisson Kernel for $\mathbb{H}$]
+Consider the upper half-plane $\mathbb{H} = \{z \in \mathbb{C} : \text{Im}(z) > 0\}$. The probability density of a Brownian particle starting at $z = x+iy$ hitting the real line at $u \in \mathbb{R}$ is given by the Cauchy distribution:
+\begin{equation}
+    P_{\mathbb{H}}(z, u) = \frac{1}{\pi} \frac{y}{(u-x)^2 + y^2}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+We construct a conformal map $\phi: \mathbb{H} \to \mathbb{D}$ that sends the starting point $z$ to the origin $0$, and the real line $\mathbb{R}$ to the unit disk. The standard choice is the Cayley transform variation:
+\begin{equation}
+    \phi(w) = \frac{w - z}{w - \bar{z}}.
+\end{equation}
+Observe that $\phi(z) = 0$, and for any real boundary point $u \in \mathbb{R}$, $|\phi(u)| = 1$.
+Using the pullback proposition, the kernel is given by $\frac{1}{2\pi}|\phi'(w)|$. We compute the derivative with respect to the $w$:
+\begin{equation}
+    \phi'(w) = \frac{z - \bar{z}}{(w - \bar{z})^2}.
+\end{equation}
+Now evaluated at a boundary point $w=u$:
+\begin{equation}
+    |\phi'(u)| = \frac{|2iy|}{|u - \bar{z}|^2} = \frac{2y}{(u-x)^2 + y^2}.
+\end{equation}
+Thus, the Poisson kernel is:
+\begin{equation}
+    P_{\mathbb{H}}(z, u) = \frac{1}{2\pi} \left( \frac{2y}{(u-x)^2 + y^2} \right) = \frac{1}{\pi} \frac{y}{(u-x)^2 + y^2}.
+\end{equation}
+\end{proof}
+
+We now follow the same procedure for the unit disk.
+
+\begin{theorem}[Poisson Kernel for $\mathbb{D}$]
+The Poisson kernel for the unit disk $\mathbb{D}$, representing the exit density at angle $\theta$ for a particle starting at $z \in \mathbb{D}$, is given by:
+\begin{equation}
+    P_{\mathbb{D}}(z, \theta) = \frac{1}{2\pi} \frac{1-|z|^2}{|e^{i\theta} - z|^2}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+We seek an automorphism of the disk $\psi: \mathbb{D} \to \mathbb{D}$ that maps the starting point $z$ to the origin $0$. This is given by the Möbius transformation:
+\begin{equation}
+    \psi(w) = \frac{w - z}{1 - \bar{z}w}.
+\end{equation}
+The derivative at the boundary point $w$ is:
+\begin{equation}
+    \psi'(w) =  \frac{1 - |z|^2}{(1 - \bar{z}w)^2}.
+\end{equation}
+To find the magnitude $|\psi'(w)|$, we observe that for $w = e^{i\theta}$, the denominator satisfies:
+\begin{equation}
+    |1 - \bar{z}e^{i\theta}| = |e^{-i\theta} - \bar{z}| = |\overline{e^{-i\theta} - \bar{z}}| = |e^{i\theta} - z|.
+\end{equation}
+Therefore, the Poisson kernel is:
+\begin{equation}
+    \frac{1}{2\pi}|\psi'(e^{i\theta})| = \frac{1}{2\pi} \frac{1 - |z|^2}{|e^{i\theta} - z|^2}.
+\end{equation}
+\end{proof}
+
+
+This concludes the continuous formulation of the DLA process. The theoretical framework parallels the discrete setting but utilises slightly different machinery:
+\begin{enumerate}
+    \item The system is governed by a continuous potential field $u(x)$ determined by the geometry of the cluster, representing the probability density of the underlying Brownian motion.
+    \item $u(x)$ satisfies the continuous Laplace equation $\Delta u = 0$, but solving this explicitly is difficult. Instead we utilise the property of conformal invariance, allowing us to encode the potential field geometrically.
+    \item The growth probability at a boundary point is given by the Poisson Kernel, which serves as the continuous analogue to the discrete flux.
+\end{enumerate}
+
 
 % =========================================
 % CHAPTER 3: ALGORITHMS
@@ -518,9 +802,13 @@ We discuss why naive simulation of DLA is inefficient and introduce the three al
 % Notes: Based on Bell's algorithm [cite: 96]
 
 \subsection{Optimization Strategies}
-% Notes: "No killing circle" (Makarov?) [cite: 96]
-% Notes: Walker aliasing sampling [cite: 72]
-% Notes: State Mobius maps approach [cite: 96]
+\begin{remark}[Justification for DLA Initialization]
+If we start the Brownian motion at the center of the disk ($z=0$), the kernel simplifies to:
+\begin{equation}
+    P_{\mathbb{D}}(0, \theta) = \frac{1}{2\pi}.
+\end{equation}
+This constant density proves that a random walker starting at the origin hits the bounding circle \textbf{uniformly}. This rigorously justifies the standard DLA algorithm initialization, where particles are spawned at uniformly random angles on a large bounding circle.
+\end{remark}
 
 \subsection{Exact Collision}
 % Notes: Solving the quadratic equation for intersection [cite: 96]
@@ -674,12 +962,12 @@ The harmonic measure $\omega(z, E, \Omega)$ is the probability that a Brownian m
 \end{definition}
 
 \begin{theorem}[Kakutani's Theorem]
-The solution to the Dirichlet problem for the Laplace equation can be expressed stochastically in terms of the hitting distribution of Brownian motion.
+If $D$ is a bounded domain and $g$ is a continuous function on $\partial D$, then the function defined by:
+\begin{equation}
+    u(x) = \mathbb{E}^x[g(B_{\tau_D})] = \int_{\partial D} g(y) \, d\omega_x(y)
+\end{equation}
+is harmonic in $D$ and satisfies $\lim_{x \to y} u(x) = g(y)$ for regular boundary points $y \in \partial D$.
 \end{theorem}
-
-\begin{proof}
-The proof follows from the martingale property of harmonic functions composed with Brownian motion. See \cite{witten1981} for details.
-\end{proof}
 
 \section{References}
 This is an example of a citation. Witten and Sander introduced the model in 1981 \cite{witten1981}.
