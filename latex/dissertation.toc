@@ -20,28 +20,32 @@
 \contentsline {subsection}{\numberline {2.3.4}Solvable Geometries}{17}{subsection.2.3.4}%
 \contentsline {chapter}{\numberline {3}Algorithms}{20}{chapter.3}%
 \contentsline {section}{\numberline {3.1}Introduction}{20}{section.3.1}%
-\contentsline {section}{\numberline {3.2}On-Lattice Implementation}{20}{section.3.2}%
-\contentsline {subsection}{\numberline {3.2.1}The Fuzzy Annulus Method}{20}{subsection.3.2.1}%
-\contentsline {subsection}{\numberline {3.2.2}Walk-to-Line}{20}{subsection.3.2.2}%
-\contentsline {subsection}{\numberline {3.2.3}Walk-to-Square}{20}{subsection.3.2.3}%
-\contentsline {section}{\numberline {3.3}Off-Lattice Implementation}{20}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}Optimization Strategies}{20}{subsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.3.2}Exact Collision}{21}{subsection.3.3.2}%
-\contentsline {subsection}{\numberline {3.3.3}Comparison to On-Lattice}{21}{subsection.3.3.3}%
-\contentsline {section}{\numberline {3.4}The Hybrid Model}{21}{section.3.4}%
-\contentsline {subsection}{\numberline {3.4.1}Motivation}{21}{subsection.3.4.1}%
-\contentsline {subsection}{\numberline {3.4.2}Theoretical Alternatives}{21}{subsection.3.4.2}%
-\contentsline {subsection}{\numberline {3.4.3}Selection and Justification}{21}{subsection.3.4.3}%
-\contentsline {subsection}{\numberline {3.4.4}Implementation}{21}{subsection.3.4.4}%
-\contentsline {chapter}{\numberline {A}Algorithmic Details and Optimizations}{24}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Lattice Core Optimizations}{24}{section.A.1}%
-\contentsline {section}{\numberline {A.2}Off-Lattice and Hybrid Details}{24}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Data Structures}{24}{section.A.3}%
-\contentsline {chapter}{\numberline {B}Reference: LaTeX Structure Examples}{25}{appendix.B}%
-\contentsline {section}{\numberline {B.1}Aligned Equations}{25}{section.B.1}%
-\contentsline {section}{\numberline {B.2}Floats}{25}{section.B.2}%
-\contentsline {subsection}{\numberline {B.2.1}Single Figure}{25}{subsection.B.2.1}%
-\contentsline {subsection}{\numberline {B.2.2}Side-by-Side Figures (Subfloats)}{25}{subsection.B.2.2}%
-\contentsline {section}{\numberline {B.3}Algorithms}{26}{section.B.3}%
-\contentsline {section}{\numberline {B.4}Theorems}{27}{section.B.4}%
-\contentsline {section}{\numberline {B.5}References}{27}{section.B.5}%
+\contentsline {section}{\numberline {3.2}Initialisation}{20}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Off-Lattice: The Launching Circle}{20}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}On-Lattice: The Fuzzy Annulus}{21}{subsection.3.2.2}%
+\contentsline {section}{\numberline {3.3}Far-Field Diffusion}{21}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Off-Lattice: Re-injection from Infinity}{21}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}On-Lattice: Walk-to-Line}{22}{subsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.2.1}Discrete Method of Images}{22}{subsubsection.3.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.3.2.2}The Killing Circle}{23}{subsubsection.3.3.2.2}%
+\contentsline {section}{\numberline {3.4}Near-Field Diffusion}{23}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Off-Lattice: Walk-to-Circle}{23}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}On-Lattice: Walk-to-Square}{24}{subsection.3.4.2}%
+\contentsline {section}{\numberline {3.5}Aggregation}{24}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}On-Lattice: Sticky Boundary}{24}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}Off-Lattice: Analytic Termination}{24}{subsection.3.5.2}%
+\contentsline {section}{\numberline {3.6}The Hybrid Model}{25}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Motivation and Design}{25}{subsection.3.6.1}%
+\contentsline {subsection}{\numberline {3.6.2}Implementation}{26}{subsection.3.6.2}%
+\contentsline {chapter}{\numberline {A}Algorithmic Details and Optimizations}{29}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Lattice Core Optimizations}{29}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Off-Lattice and Hybrid Details}{29}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Data Structures}{29}{section.A.3}%
+\contentsline {chapter}{\numberline {B}Reference: LaTeX Structure Examples}{30}{appendix.B}%
+\contentsline {section}{\numberline {B.1}Aligned Equations}{30}{section.B.1}%
+\contentsline {section}{\numberline {B.2}Floats}{30}{section.B.2}%
+\contentsline {subsection}{\numberline {B.2.1}Single Figure}{30}{subsection.B.2.1}%
+\contentsline {subsection}{\numberline {B.2.2}Side-by-Side Figures (Subfloats)}{30}{subsection.B.2.2}%
+\contentsline {section}{\numberline {B.3}Algorithms}{32}{section.B.3}%
+\contentsline {section}{\numberline {B.4}Theorems}{32}{section.B.4}%
+\contentsline {section}{\numberline {B.5}References}{33}{section.B.5}%

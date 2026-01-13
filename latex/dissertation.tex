@@ -19,7 +19,15 @@
 \usepackage[font=small, labelfont=bf]{caption} % Nicer captions
 \usepackage{microtype} % The "secret weapon" for pro typography
 \usepackage{tikz}
-\usetikzlibrary{decorations.pathmorphing} % Required for the "random steps" line
+
+\usetikzlibrary{
+    decorations.pathmorphing, % Required for "random steps" (The schematic)
+    positioning,              % Required for "right=of" (The new diagrams)
+    arrows.meta,              % Required for ">=Latex" arrowheads
+    shapes,                   % Required for node shapes
+    calc,                     % Required for coordinate calculations
+    backgrounds               % Optional but good for complex figures
+}
 
 % --- Bibliography & Links ---
 \usepackage[numbers, sort&compress]{natbib} % Numbered citations [1-3]
@@ -281,7 +289,7 @@ The common distribution of the steps is denoted by $p(x) = \mathbb{P}(X_i = x)$ 
 \noindent For the purposes of DLA, we are primarily interested in the symmetric case:
 
 \begin{definition}[Simple Symmetric Random Walk]
-A random walk is called a Simple Symmetric Random Walk (SSRW) if the increment distribution is uniform on the nearest neighbors:
+A random walk is called a Simple Symmetric Random Walk (SSRW) if the increment distribution is uniform on the nearest neighbours:
 \begin{equation}
     p(x) = \begin{cases} 
         \frac{1}{4} & \text{if } |x| = 1, \\
@@ -303,7 +311,7 @@ Probabilistically, this represents the expected change in the function $f$ in a 
 \end{equation}
 \end{definition}
 
-\noindent \textit{Remark:} For Simple Symmetric Random Walk, the generator is proportional to the unnormalized discrete Laplacian, $\mathcal{L} = \frac{1}{4} \Delta$, where $\Delta f(x) = \sum_{y \sim x} (f(y) - f(x))$.
+\noindent \textit{Remark:} For Simple Symmetric Random Walk, the generator is proportional to the unnormalised discrete Laplacian, $\mathcal{L} = \frac{1}{4} \Delta$, where $\Delta f(x) = \sum_{y \sim x} (f(y) - f(x))$.
 
 \begin{definition}[Discrete Harmonic Functions]
 A function $f: A \cup \partial A \to \mathbb{R}$ is said to be harmonic in a subset $A \subset \mathbb{Z}^2$ if:
@@ -465,7 +473,7 @@ See \citet[Theorem 4.4.4]{Lawler2010}.
 \begin{remark}
 \label{rem:log_growth}
 The logarithmic growth may seem arbitrary, but can in fact be justified with some geometric intuition:
-Consider a large circle of radius $R$ centered on the cluster (large so that it contains the entire cluster). For a steady flow of random walkers coming from infinity to reach the cluster, the total flux (rate of flow) across this circle must be independent of $R$. The total flux is the product of the circumference ($2\pi R$) and the radial gradient of the potential ($\nabla f(R)$). This implies that the gradient must decay as $\nabla f(R) \propto 1/R$. Integrating this gradient yields:
+Consider a large circle of radius $R$ centred on the cluster (large so that it contains the entire cluster). For a steady flow of random walkers coming from infinity to reach the cluster, the total flux (rate of flow) across this circle must be independent of $R$. The total flux is the product of the circumference ($2\pi R$) and the radial gradient of the potential ($\nabla f(R)$). This implies that the gradient must decay as $\nabla f(R) \propto 1/R$. Integrating this gradient yields:
 \begin{equation}
     f(R) \propto \int \frac{1}{R} \, dR = \ln R.
 \end{equation}
@@ -490,11 +498,11 @@ where $\tau_K = \inf\{n \ge 0 : S_n \in K\}$ is the first hitting time.
 We begin by formally defining the concept of discrete flux which was invoked in \cref{rem:log_growth}. On the lattice, the concept of a normal derivative $\nabla u \cdot \mathbf{n}$ is replaced by a difference operator across the boundary.
 
 \begin{definition}[Discrete Flux]
-For a function $u: \mathbb{Z}^2 \to \mathbb{R}$ that vanishes on $K$, the discrete flux at a boundary point $y \in \partial K$ is the sum of the potential differences from its neighbors in the complement:
+For a function $u: \mathbb{Z}^2 \to \mathbb{R}$ that vanishes on $K$, the discrete flux at a boundary point $y \in \partial K$ is the sum of the potential differences from its neighbours in the complement:
 \begin{equation}
     \Phi(y) = \sum_{z \sim y, z \notin K} (u(z) - u(y)).
 \end{equation}
-Since $u(y)=0$ on the boundary, this simplifies to the sum of the external neighbors: $\Phi(y) = \sum_{z \sim y, z \notin K} u(z)$.
+Since $u(y)=0$ on the boundary, this simplifies to the sum of the external neighbours: $\Phi(y) = \sum_{z \sim y, z \notin K} u(z)$.
 \end{definition}
 
 \noindent The fundamental result that we require from discrete potential theory is the equivalence of flux and the harmonic measure.
@@ -512,14 +520,14 @@ For a formal rigorous proof connecting hitting probabilities to the Laplacian of
 
 \noindent To understand this link intuitively, we interpret the potential $u(x)$ as the density of a stream of random walkers originating from infinity and disappearing upon hitting the cluster $K$.
 In the exterior free space, the condition $\mathcal{L}u(x) = 0$ implies a sort of conservation law: the expected number of walkers entering any site $x$ equals the number leaving it.
-However, at a boundary site $y \in \partial K$, walkers arrive from neighbors but do not continue; they form the cluster. The operator $\mathcal{L}u(y)$ represents this absorption rate:
+However, at a boundary site $y \in \partial K$, walkers arrive from neighbours but do not continue; they form the cluster. The operator $\mathcal{L}u(y)$ represents this absorption rate:
 \begin{equation}
     \text{Rate into } y \propto \sum_{z \sim y} (\text{Density at } z) = \sum_{z \sim y} u(z) = \Phi(y).
 \end{equation}
 Since the harmonic measure $H(y)$ is the proportion of all walkers that terminate at $y$, it is directly proportional to this local absorption rate, i.e., the flux $\Phi(y)$.
 
 
-This concludes the discrete formulation of the DLA process. The growth mechanism can be summarized as follows:
+This concludes the discrete formulation of the DLA process. The growth mechanism can be summarised as follows:
 \begin{enumerate}
     \item The system is governed by a harmonic potential $u(x)$ determined by the geometry of the cluster $K$.
     \item This potential is the solution to the discrete Laplace equation $\mathcal{L}u=0$ with $u|_K = 0$ and $u(x) \sim \ln|x|$ as $|x| \to \infty$.
@@ -580,7 +588,7 @@ M_t = f(B_t) - f(B_0) - \int_0^t \frac{1}{2}\Delta f(B_s) \, ds
 is a martingale with respect to the filtration of $B_t$.
 \end{definition}
 
-\noindent This definition can be understood as a stochastic analogue to the Fundamental Theorem of Calculus. The integral term represents the expected drift of the function along the path. By subtracting this drift, we isolate the centered random noise, which is a martingale.
+\noindent This definition can be understood as a stochastic analogue to the Fundamental Theorem of Calculus. The integral term represents the expected drift of the function along the path. By subtracting this drift, we isolate the centred random noise, which is a martingale.
 
 \begin{remark}[Scaling Factors and Independence]
 We point out here that the scaling factor here differs from that in \cref{sec:rw_generator}. This discrepancy stems from the second-order term of the Taylor expansion used to derive the Brownian limit. However, since the potential distribution for DLA is determined by the condition $\mathcal{L}u = 0$ $($or $\Delta u = 0)$, this constant factor cancels out. The resulting harmonic measure is invariant. For a full derivation of this limit, see \citet[Section 2.1]{Lawler2010}.
@@ -631,7 +639,7 @@ For a rigorous proof relying on the martingale property of harmonic functions, s
 \end{proof}
 \end{theorem}
 
-As in the discrete case, we are concerned with extending this to infinity. As a consequence of the following lemma, 2D Brownian motion is neighbourhood recurrent, meaning it will revisit any neighborhood infinitely often. This prevents us from simply imposing a boundary condition at infinity, just as recurrence did in the discrete case.
+As in the discrete case, we are concerned with extending this to infinity. As a consequence of the following lemma, 2D Brownian motion is neighbourhood recurrent, meaning it will revisit any neighbourhood infinitely often. This prevents us from simply imposing a boundary condition at infinity, just as recurrence did in the discrete case.
 
 \begin{lemma}[Exit Probabilities from an Annulus]
 Let $B_t$ be a complex Brownian motion starting at $z_0$ within the annulus $A = \{z \in \mathbb{C} : r < |z| < R\}$. Let $T_A = \inf\{t > 0 : B_t \notin A\}$ be the first exit time. The probability that the process exits through the inner boundary $|z|=r$ is given by:
@@ -644,7 +652,7 @@ See \citet[Lemma 43]{Cass2009}. The proof uses It\^o's formula (stochastic chain
 \end{proof}
 
 \begin{corollary}[Recurrence]
-Planar Brownian motion is neighborhood recurrent. For any starting point $z_0$ and any $\epsilon > 0$, the process will enter the disk $\{z : |z-z_0| < \epsilon\}$ almost surely:
+Planar Brownian motion is neighbourhood recurrent. For any starting point $z_0$ and any $\epsilon > 0$, the process will enter the disk $\{z : |z-z_0| < \epsilon\}$ almost surely:
 \begin{equation}
     \mathbb{P}(\exists t > 0 : |B_t - z_0| < \epsilon) = 1.
 \end{equation}
@@ -707,6 +715,7 @@ P_D(z, \zeta) = \frac{1}{2\pi} |f'(\zeta)|.
 We now apply this relation to our domains of interest:
 
 \begin{theorem}[Poisson Kernel for $\mathbb{H}$]
+    \label{the:line_kernel}
 Consider the upper half-plane $\mathbb{H} = \{z \in \mathbb{C} : \text{Im}(z) > 0\}$. The probability density of a Brownian particle starting at $z = x+iy$ hitting the real line at $u \in \mathbb{R}$ is given by the Cauchy distribution:
 \begin{equation}
     P_{\mathbb{H}}(z, u) = \frac{1}{\pi} \frac{y}{(u-x)^2 + y^2}.
@@ -736,6 +745,7 @@ Thus, the Poisson kernel is:
 We now follow the same procedure for the unit disk.
 
 \begin{theorem}[Poisson Kernel for $\mathbb{D}$]
+\label{the:disk_kernel}
 The Poisson kernel for the unit disk $\mathbb{D}$, representing the exit density at angle $\theta$ for a particle starting at $z \in \mathbb{D}$, is given by:
 \begin{equation}
     P_{\mathbb{D}}(z, \theta) = \frac{1}{2\pi} \frac{1-|z|^2}{|e^{i\theta} - z|^2}.
@@ -761,11 +771,21 @@ Therefore, the Poisson kernel is:
 \end{equation}
 \end{proof}
 
+\begin{corollary}[Poisson Kernel for the Exterior of $\mathbb{D}$]
+\label{cor:exterior_kernel}
+Let $D_{ext} = \{z \in \mathbb{C} : |z| > 1\}$. The harmonic measure of the unit circle relative to a point $z \in D_{ext}$ is given by the density:
+\begin{equation}
+P_{\text{ext}}(z, \theta) = \frac{1}{2\pi} \frac{|z|^2 - 1}{|z - e^{i\theta}|^2}.
+\end{equation}
+\end{corollary}
+\begin{proof}
+Consider the geometric inversion $a = 1/\bar{z}$, which maps $D_{ext} \to \mathbb{D}$. By the conformal invariance of harmonic measure, the exit distribution for $z$ is identical to that of $a$. Substituting $a$ into the interior kernel (\cref{the:disk_kernel}) and simplifying yields the result.
+\end{proof}
 
 This concludes the continuous formulation of the DLA process. The theoretical framework parallels the discrete setting but utilises slightly different machinery:
 \begin{enumerate}
     \item The system is governed by a continuous potential field $u(x)$ determined by the geometry of the cluster, representing the probability density of the underlying Brownian motion.
-    \item $u(x)$ satisfies the continuous Laplace equation $\Delta u = 0$, but solving this explicitly is difficult. Instead we utilise the property of conformal invariance, allowing us to encode the potential field geometrically.
+    \item The field $u(x)$ satisfies the continuous Laplace equation $\Delta u = 0$, but solving this explicitly is difficult. Instead we utilise the property of conformal invariance, allowing us to encode the potential field geometrically.
     \item The growth probability at a boundary point is given by the Poisson Kernel, which serves as the continuous analogue to the discrete flux.
 \end{enumerate}
 
@@ -778,64 +798,326 @@ This concludes the continuous formulation of the DLA process. The theoretical fr
 
 \section{Introduction}
 \label{sec:algo_intro}
-% Notes: Direct simulation is computationally intractable [cite: 96]
-% Notes: Overview of 3 distinct models + implementation (C/C++ to Numba) [cite: 96]
-We discuss why naive simulation of DLA is inefficient and introduce the three algorithmic approaches implemented in this study: On-Lattice, Off-Lattice, and the Hybrid model.
 
-\section{On-Lattice Implementation}
-\label{sec:on_lattice}
-% Notes: Based on Loh's algorithm [cite: 96]
+Simulating DLA presents a significant computational challenge. A naive implementation, where a walker moves one lattice step at a time from a large distance, is prohibitively expensive; the number of steps required for a walker to hit a cluster of radius $R$ scales as $O(R^2)$. To generate large clusters (e.g., $N=10^7$ particles) required for useful analysis, we must employ accelerated algorithms that exploit the potential theory derived in \cref{ch:theory}.
 
-\subsection{The Fuzzy Annulus Method}
-% Notes: Discrete problem vs Electrostatics (Loh vs PMM) [cite: 96]
-% Notes: Calculating exact Green's functions via method of images/look-up tables [cite: 96]
-% Notes: Asymptotic series and rejection sampling [cite: 96]
+In this chapter, we develop three distinct implementation models:
+\begin{enumerate}
+    \item \textbf{On-Lattice DLA:} A high-precision discrete implementation adapted from bias-free algorithm by \citet{Loh2014}.
+    \item \textbf{Off-Lattice DLA:} A continuous implementation utilising conformal mapping techniques adapted from \citet{Bell2019}.
+    \item \textbf{Hybrid DLA:} A novel semi-discrete model designed to decouple transport dynamics from aggregation geometry.
+\end{enumerate}
 
-\subsection{Walk-to-Line}
+Despite the differing domains ($\mathbb{Z}^2$ vs $\mathbb{R}^2$), all three algorithms share a common three-stage architecture: Initialisation, Diffusion, and Aggregation. We analyse each stage in turn.
 
-\subsection{Walk-to-Square}
-% Notes: Problem outline and solution via look-up table [cite: 96]
-% Notes: Reference the S-tables in Appendix [cite: 96]
+\section{Initialisation}
+\label{sec:initialisation}
 
-\section{Off-Lattice Implementation}
-\label{sec:off_lattice}
-% Notes: Based on Bell's algorithm [cite: 96]
+The mathematical definition of DLA requires particles to originate ``from infinity.'' In practice, we must approximate this by launching particles from a boundary $\partial \Omega$ sufficiently far from the cluster $K$.
 
-\subsection{Optimization Strategies}
-\begin{remark}[Justification for DLA Initialization]
-If we start the Brownian motion at the center of the disk ($z=0$), the kernel simplifies to:
+\subsection{Off-Lattice: The Launching Circle}
+In the continuous setting, initialising at infinity is mathematically equivalent to initialising uniformly on a large bounding circle.
+Let $R_{max}$ be the radius of the smallest circle centred at the origin containing the cluster. We define a launching circle of radius $R_{l} > R_{max}$.
+
+
+
+Consider the conformal map $\phi(z) = \frac{R_{l}}{z}$. This creates a bijection between the exterior of the launching circle and its interior, mapping infinity to the origin. By the Mean Value Property, the harmonic measure of the origin in the disk is uniform (\cref{the:disk_kernel} with $z=0$). Consequently, the hitting distribution of a Brownian motion starting at infinity on the circle $|z|=R_{launch}$ is uniform.
+Thus, our off-lattice algorithm simply samples a starting angle $\theta \sim U[0, 2\pi)$ and initialises the walker at $z_0 = R_{l}e^{i\theta}$. This is therefore exactly equivalent analytically to starting ``at infinity''. Note also that provided the circle contains the entire cluster, there is no size restriction, so we scale it dynamically.
+
+\subsection{On-Lattice: The Fuzzy Annulus}
+In the discrete setting, the "launching circle" approach introduces a subtle but significant bias. As detailed by \citet{Loh2014}, analytically projecting a continuous circle onto a discrete grid forces the starting positions to "snap" to the nearest integer coordinates. This discreteness creates a `lattice aliasing` effect (also referred to as a Moire\'e interference pattern), resulting in a bias. For clusters of size $N > 10^5$, this bias is sufficient to distort the fractal dimension.
+
+To eliminate this, we implement Loh's Fuzzy Annulus method. Instead of a fixed radius $R$, the starting position is sampled from a probability distribution spread over an annulus. This probability distribution utilises the Kaiser-Bessel function $I_0$, which was developed to suppress high-frequency aliasing artifacts in signal processing \cite{kaiser1966}:
 \begin{equation}
-    P_{\mathbb{D}}(0, \theta) = \frac{1}{2\pi}.
+    P(x) \propto \frac{I_0(x)}{I_0(R_{l})}.
 \end{equation}
-This constant density proves that a random walker starting at the origin hits the bounding circle \textbf{uniformly}. This rigorously justifies the standard DLA algorithm initialization, where particles are spawned at uniformly random angles on a large bounding circle.
+By sampling from this ``fuzzy'' distribution, the grid aliasing effects interfere destructively and cancel out, reducing the initialisation bias to negligible levels.
+
+Like in the off-lattice case, we can scale the launching annulus dynamically, but to further reduce the bias, the inner boundary of the annulus is at $2R_{max}$.
+\begin{remark}[Rejection Sampling]
+Rather than directly sampling from this distribution, we use an optimisation technique called `rejection sampling', which we explain in the appendix.
 \end{remark}
 
-\subsection{Exact Collision}
-% Notes: Solving the quadratic equation for intersection [cite: 96]
 
-\subsection{Comparison to On-Lattice}
+\section{Far-Field Diffusion}
+\label{sec:far_field}
+Once initialised, the walker is far from the cluster. Simulating every step of a random walk is inefficient. We therefore use skipping strategies based on the properties of harmonic functions.
+
+\subsection{Off-Lattice: Re-injection from Infinity}
+If the walker strays outside the launching circle ($|z_{out}| > R_l$), we exploit the conformal invariance established in \cref{sec:continuous_theory}.
+
+Rather than discarding the particle or simulating the return trajectory step-by-step, we sample the first hitting point on the circle directly. As shown in \cref{cor:exterior_kernel}, the return probability is governed by the exterior Poisson kernel.
+To sample from this efficiently, we avoid numerical integration of this density function. Instead, we directly utilise the conformal invariance of Brownian motion. This principle establishes a statistical equivalence between geometries: to sample the hitting distribution on a physical boundary $\partial \Omega$, we can sample the hitting distribution on a reference domain $\partial D$ (where the distribution is known, e.g., Uniform) and transform the result via the conformal map $f: D \to \Omega$. In this instance, we map the uniform distribution of the unit circle to the exterior harmonic measure via the following steps:
+ \begin{enumerate}
+    \item Normalisation: We normalise the walker's position to $r = |z_{out}|/R_l$ and map it to the interior point $a = 1/r$ via inversion.
+    \item Möbius Transformation: We generate a uniform variate $\zeta$ on the unit circle (representing an isotropic exit from the origin). We then apply the real-axis Möbius map:
+    \begin{equation}
+        w = \frac{r\zeta + 1}{r + \zeta}.
+    \end{equation}
+    \item Reconstruction: The resulting point $w$ is distributed exactly according to the exterior harmonic measure. We rotate $w$ by $\arg(z_{out})$ and scale by $R_l$ to obtain the true re-entry position.
+\end{enumerate}
+This effectively folds the infinite exterior space back onto the launch circle in $\mathcal{O}(1)$ operations. 
+
+\begin{remark}
+This `no-killing' approach was formally introduced by Menshutin and Schur \cite{menshutin2006} as a 'killing-free' algorithm, where they sampled from the exact hitting distribution (via the Poisson Kernel). We instead adopt Bell's conformal mapping approach, although we map to the unit disk while Bell maps to a straight line, which should make our code very slightly more computationally efficient. 
+\end{remark}
+
+\subsection{On-Lattice: Walk-to-Line}
+\label{sec:lattice_wtl}
+
+In the discrete setting, we cannot simply use a conformal map to transport a walker from infinity to the cluster's boundary, as the grid lacks the continuous symmetries required for conformal invariance. As an alternative, we employ Loh's Walk-to-Line acceleration method.
+
+When a walker wanders outside the cluster's bounding box, we project its position onto the nearest face of the box. We treat this face as an infinite absorbing line $\partial \Lambda = \{(x, 0) : x \in \mathbb{Z}\}$ and the walker's position as $z_0 = (0, h)$ in the upper half-plane $y > 0$. The problem reduces to sampling the exit probability on the line, the discrete analogue to \cref{the:line_kernel}.
+
+\subsubsection{Discrete Method of Images}
+As established in \cref{ch:theory}, the exit probability (harmonic measure) at a boundary point $(x,0)$ is proportional to the discrete flux into that point. Since the potential $u(z)$ vanishes on the boundary, the flux is simply the value of the potential at the immediate interior neighbor:
+\begin{equation}
+    P_{\text{lattice}}(x) \propto \Phi(x, 0) = u(x, 1).
+\end{equation}
+
+To calculate this, we must construct a potential $u(z)$ that is harmonic in the upper half-plane but strictly satisfies the Dirichlet boundary condition $u(x, 0) = 0$ (representing the absorbing line). We achieve this via the Method of Images.
+
+The fundamental idea is to place a fictitious "negative walker" (or sink) at the reflected position $(0, -h)$, opposite the true walker at $(0, h)$. Due to the symmetry of the lattice, the potential generated by the real walker at any point on the boundary line $y=0$ is identical to the potential generated by the image. By subtracting the image potential from the source potential, these contributions cancel out exactly along the line, ensuring $u(x, 0) = 0$ by construction.
+
+Using the discrete potential kernel $a(z)$ defined in \cref{sec:potential_kernel}, the resulting field is:
+\begin{equation}
+    u(x, y) = a(x, y + h) - a(x, y - h).
+\end{equation}
+Substituting this into the flux equation ($y=1$), we obtain the exact unnormalised probability of the walker hitting the line at relative coordinate $x$:
+\begin{equation}
+    P_{\text{lattice}}(x) = a(x, 1+h) - a(x, 1-h).
+\end{equation}
+\begin{remark}
+To implement this, we follow Loh exactly. For $h \le 60$, we evaluate this using his pre-calculated lookup table of $a(z)$. For larger distances, we use the asymptotic expansion of the potential kernel, given in the appendix of \cite{Loh2014}.
+\end{remark}
+
+\begin{remark}
+Computing the normalisation constant for $P_{\text{lattice}}(x)$ over the infinite line is infeasible. Instead, we once again employ rejection sampling (details in \cref{app:rejection_sampling}).
+\end{remark}
+
+\subsubsection{The Killing Circle}
+While the Walk-to-Line method is theoretically valid for any distance, practical implementations are bound by the limits of 64-bit integer arithmetic. If a walker wanders exceptionally far from the cluster (e.g., $R > 10^{14}$ lattice units), the coordinate calculations may overflow.
+
+To prevent numerical instability, we define a hard "Killing Radius" $R_{kill} = 10^{14}$. In the extremely rare event that a walker's random step projects it beyond this limit, the particle is discarded and a new one is initialised. Given the recurrence of 2D random walks, this truncation introduces a vanishingly small statistical error ($\ll 10^{-10}$), which is acceptable for ensuring numerical robustness.
+
+\section{Near-Field Diffusion}
+\label{sec:near_field}
+As the walker approaches the cluster, the step size must decrease to avoid overshooting the boundary.
+
+\subsection{Off-Lattice: Walk-to-Circle}
+At each step, we calculate the shortest Euclidean distance to the cluster, $d_{min}$. We can construct a circle $C$ of radius $r = d_{min} - \epsilon$ (where $\epsilon$ is a small tolerance). Since the interior of $C$ is empty, the potential is harmonic.
+By the isotropy of Brownian motion (\cref{the:disk_kernel} with $z=0$), the exit distribution is uniform. We therefore advance the walker:
+\begin{equation}
+    z_{new} = z + r e^{i\theta}, \quad \theta \sim U[0, 2\pi).
+\end{equation}
+This allows the walker to adaptively skip over large empty regions, taking large steps in the void and small steps in the fjords.
+
+\subsection{On-Lattice: Walk-to-Square}
+In the discrete setting, circles do not map cleanly to the grid. Instead, we employ Loh's Walk-to-Square method. This relies on the pre-calculation of exit probabilities for a hierarchy of empty square sizes $L_k = 2^k$ (e.g., from $4 \times 4$ up to $512 \times 512$).
+
+Unlike a circle, the exit distribution on the boundary of a square is not uniform, as lattice points near the mid-edges are hit more frequently than the corners. We determine these exact probabilities by solving the discrete Dirichlet problem $\mathcal{L}u = 0$ for each square size $S_k$. For simplicity we used Loh's precomputed solutions (after verification).
+
+\begin{remark}[Alias Sampling]
+To sample from these non-uniform distributions efficiently, we calculate them offline and store them using Walker's Alias Method (detailed in \cref{app:alias_method}). This allows us to sample the discrete exit location in $\mathcal{O}(1)$ time, regardless of the square size.
+\end{remark}
+
+The simulation step proceeds as follows:
+\begin{enumerate}
+    \item \textbf{Scan:} Determine the largest power-of-two square $S_k$ centred at the walker that does not intersect the cluster.
+    \item \textbf{Sample:} Query the pre-computed Alias Table for size $k$ to generate a boundary coordinate $z_{exit}$.
+    \item \textbf{Jump:} Update the walker's position to $z_{exit}$ instantly.
+\end{enumerate}
+This allows the walker to leap across large voids while preserving the exact non-uniform statistics of the lattice random walk.
+
+
+\section{Aggregation}
+\label{sec:aggregation}
+The final stage is the termination of the walk.
+
+\subsection{On-Lattice: Sticky Boundary}
+The aggregation condition on $\mathbb{Z}^2$ is straightforward. We define the boundary $\partial K$ as the set of all empty sites adjacent to occupied sites, as we did in chapter \cref{ch:theory}. The walk terminates when the particle steps onto a site $x \in \partial K$. The site $x$ is then marked as occupied ($x \in K$), and the boundary $\partial K$ is updated locally.
+
+\subsection{Off-Lattice: Analytic Termination}
+In the continuous model, aggregation occurs when the walker touches a cluster particle (distance $2r_p$). Simulating this directly is error-prone; a discrete time-step might overshoot the boundary or miss a ``grazing" collision.
+
+To resolve this, we adopt the Exact Adhering method described by \citet{Bell2019}.
+When the walker is close to a particle $P$ but also near other particles, we must determine whether it hits $P$ or escapes to a safer distance. We define a local domain $\Omega$ formed by the intersection of the ``capture circle" (the boundary of $P$) and a ``safe escape circle" (determined by the second-nearest neighbour).
+
+This domain $\Omega$ forms a circular lune (a geometric shape bounded by two circular arcs). To sample the exit position from $\Omega$ analytically, we conformally map it to the upper half-plane in three stages:
+\begin{enumerate}
+    \item $f_1$: We translate and rotate the system to fix the particle centers.
+    \item $f_2$: We map the two points where the circles intersect to $0$ and $\infty$. This transforms the curved boundaries of the lune into two straight rays emanating from the origin, forming a wedge of angle $\phi$.
+    \item $f_3$: We apply a power map $z \mapsto z^{\pi/\phi}$ to open the wedge into the full upper half-plane.
+\end{enumerate}
+In this final transformed space, the complex exit problem reduces to a Brownian motion hitting the real line. We sample the hit point from the Cauchy distribution (derived in \cref{the:line_kernel}), and then apply the inverse maps $f_1^{-1} \circ f_2^{-1} \circ f_3^{-1}$ to find the exact collision or escape point on the original circles.
+\begin{figure}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{% 
+    \begin{tikzpicture}[
+        node distance=0.8cm, % Gap between boxes
+        >=Latex,
+        thick,
+        % Styles
+        axes/.style={->, gray!60, thin},
+        target boundary/.style={blue, very thick},          % The Cluster (q)
+        escape boundary/.style={red!80!black, thick, dashed}, % The Reset Boundary (p)
+        walker/.style={circle, fill=black, inner sep=1.5pt},
+        domain fill/.style={fill=blue!5, opacity=0.8},      % Increased opacity slightly
+        map arrow/.style={->, shorten >=2pt, shorten <=2pt, very thick, font=\small},
+        stage box/.style={draw=gray!30, rounded corners, inner sep=8pt}
+    ]
+
+    %% --- STAGE 1: Initial Geometry (Physical) ---
+    \node (stage1) [stage box] {
+        \begin{tikzpicture}[scale=0.7]
+            \coordinate (P) at (0, 0);   % p (Safe Center)
+            \coordinate (Q) at (1.8, 0); % q (Target Center) - Adjusted for overlap
+            \def\RSafe{2.2}
+            \def\RTarget{1.5}
+
+            % 1. Fill Valid Region (Safe minus Target)
+            \begin{scope}
+                \clip (P) circle (\RSafe); % Restrict everything to inside Safe Circle
+                \fill[domain fill] (-3,-3) rectangle (3,3); % Fill background
+                \fill[white] (Q) circle (\RTarget);         % Punch hole for Target
+            \end{scope}
+
+            % 2. Draw Boundaries
+            \draw[escape boundary] (P) circle (\RSafe);
+            \draw[target boundary] (Q) circle (\RTarget);
+
+            % 3. Centers
+            \fill[black] (P) circle (1.5pt) node[left, font=\scriptsize] {$p$};
+            \fill[blue] (Q) circle (1.5pt) node[right, font=\scriptsize] {$q$};
+            \draw[dashed, gray] (P) -- (Q);
+
+            % 4. Labels
+            \node[red!80!black, font=\tiny] at (-1.5, 1.5) {Escape};
+            \node[blue, font=\tiny] at (2.5, 1.0) {Target};
+
+            % Walker
+            \node[walker, label={[above, font=\tiny]:$z$}] at (0.2, 0.2) {};
+            
+            \node at (0.9, -2.5) [align=center, font=\small] {\textbf{1. Physical Domain}};
+        \end{tikzpicture}
+    };
+
+    %% --- STAGE 2: Centered & Rotated (f1) ---
+    \node (stage2) [stage box, right=of stage1] {
+        \begin{tikzpicture}[scale=0.7]
+            \draw[axes] (-2.5,0) -- (2.5,0);
+            \draw[axes] (0,-2.5) -- (0,2.5);
+            
+            % New Coordinates after f1: p -> 0, q -> Real Axis
+            \coordinate (P) at (0,0);
+            \coordinate (Q) at (1.8,0); % |p-q|
+            \def\RSafe{2.2}
+            \def\RTarget{1.5}
+
+            % Fill Valid Region
+            \begin{scope}
+                \clip (P) circle (\RSafe);
+                \fill[domain fill] (-3,-3) rectangle (3,3);
+                \fill[white] (Q) circle (\RTarget);
+            \end{scope}
+
+            % Boundaries
+            \draw[escape boundary] (P) circle (\RSafe);
+            \draw[target boundary] (Q) circle (\RTarget);
+
+            % Points w+ and w- (Intersections)
+            % Visual approximation for diagram
+            \fill[gray] (1.1, 1.9) circle (1.5pt) node[above, black, font=\tiny] {$w_+$};
+            \fill[gray] (1.1, -1.9) circle (1.5pt) node[below, black, font=\tiny] {$w_-$};
+
+            \node at (0, -2.5) [align=center, font=\small] {\textbf{2. Centered ($f_1$)}};
+        \end{tikzpicture}
+    };
+
+    %% --- STAGE 3: The Wedge (f2) ---
+    \node (stage3) [stage box, right=of stage2] {
+        \begin{tikzpicture}[scale=0.7]
+            \coordinate (O) at (0,0);
+            \draw[axes] (0,-2.5) -- (0,2.5);
+            \draw[axes] (-0.5,0) -- (2.5,0);
+
+            % Wedge definition (target on bottom, safe on top usually)
+            \def\WedgeAngle{60} 
+
+            % Fill Wedge
+            \fill[domain fill] (O) -- (2.5,0) arc (0:\WedgeAngle:2.5) -- cycle;
+
+            % Draw Rays
+            \draw[target boundary] (O) -- (2.5, 0) node[right, font=\tiny] {Target};
+            \draw[escape boundary] (O) -- (\WedgeAngle:2.5) node[above right, font=\tiny] {Escape};
+
+            % Angle Label
+            \draw[<->, thin] (0.8,0) arc (0:\WedgeAngle:0.8) node[midway, right, font=\footnotesize] {$\phi$};
+
+            \node at (1.2, -2.5) [align=center, font=\small] {\textbf{3. Wedge ($f_2$)}};
+        \end{tikzpicture}
+    };
+
+    %% --- STAGE 4: Upper Half-Plane (f3) ---
+    \node (stage4) [stage box, right=of stage3] {
+        \begin{tikzpicture}[scale=0.7]
+            \draw[axes] (0,-0.5) -- (0,2.5);
+            \draw[axes] (-2.5,0) -- (2.5,0) node[right] {$\mathbb{R}$};
+            
+            % Fill UHP
+            \fill[domain fill] (-2.5,0) rectangle (2.5, 2.5);
+
+            % Boundaries mapping to Real Line
+            % Target -> Positive Real (Arbitrary choice for viz)
+            \draw[target boundary] (0,0) -- (2.5,0);
+            % Escape -> Negative Real
+            \draw[escape boundary] (0,0) -- (-2.5,0);
+
+            % Sample point
+            \node[walker] at (0,1) {};
+            \draw[->, dashed, gray] (0,1) -- (1.5,0) node[below, black, font=\tiny] {Hit $x$};
+
+            \node at (0, -2.5) [align=center, font=\small] {\textbf{4. Half-Plane ($f_3$)}};
+        \end{tikzpicture}
+    };
+
+    %% --- ARROWS ---
+    \draw[map arrow] (stage1) -- node[above] {$f_1$} (stage2);
+    \draw[map arrow] (stage2) -- node[above] {$f_2$} (stage3);
+    \draw[map arrow] (stage3) -- node[above] {$f_3$} (stage4);
+
+    \end{tikzpicture}
+    }
+    \caption{The conformal mapping sequence for exact collision. The physical domain (1), formed by the intersection of the safe region and the target exterior, is centred (2), mapped to an infinite wedge (3), and finally opened to the upper half-plane (4) where the exit position is sampled.}
+    \label{fig:conformal_collision}
+\end{figure}
 
 \section{The Hybrid Model}
 \label{sec:hybrid_model}
 
-\subsection{Motivation}
-% Notes: Relaxing the Belyayev hypothesis [cite: 96]
-% Notes: Goal: does microscopic lattice anisotropy survive? [cite: 96]
+To rigorously investigate the source of anisotropy in DLA, we introduce a hybrid model. This model combines \textbf{continuous transport} (Off-Lattice diffusion) with \textbf{discrete aggregation} (On-Lattice geometry).
 
-\subsection{Theoretical Alternatives}
-% Notes: Intrinsic anisotropy (Antenna method) vs Extrinsic strategies [cite: 96]
-% Notes: "Sticky grid" vs "Contact/Crop" [cite: 96]
-% Notes: Beurling's Estimate equivalence [cite: 96]
-
-\subsection{Selection and Justification}
-% Notes: Rejection of Antenna [cite: 96]
-% Notes: "Rotate + Snap" chosen as closest fit to Belyayev [cite: 96]
+\subsection{Motivation and Design}
+We hypothesise that the anisotropy observed in lattice DLA arises from the aggregation step (the limited availability of attachment slots) rather than the transport step (the discrete random walk). To test this, we require a model where the walker moves via Brownian motion (isotropic) but aggregates onto a grid.
+We considered three aggregation mechanisms:
+\begin{enumerate}
+    \item \textbf{Proximity Snap:} Aggregating if the walker enters a radius $\epsilon$ of a lattice point. This effectively turns lattice points into circular attractors, distorting the harmonic measure.
+    \item \textbf{Antennae Method:} As proposed by \citet{Menshutin2011}, particles are only accepted if they hit the cluster at specific angles aligned with the axes. This introduces an artificial rejection probability that we wish to avoid.
+    \item \textbf{Rotate and Snap:} Our chosen method. The walker diffuses continuously until it physically contacts the cluster (as in the Off-Lattice model). Upon contact, the particle slides along the surface of the hit particle to the nearest valid lattice coordinate.
+\end{enumerate}
 
 \subsection{Implementation}
-% Notes: Ad-hoc Snapping logic [cite: 96]
-% Notes: Includes Visuals [cite: 96]
-We define the specific "snapping" mechanism: particles propagate in continuous $\mathbb{R}^2$ but aggregate to $\mathbb{Z}^2$.
+The algorithm proceeds exactly as the Off-Lattice simulation (Walker on Spheres) until the collision condition $|z_{walker} - z_{cluster}| = 1$ is met.
+Let the contact angle be $\phi$. We map this continuous angle to the discrete set of nearest neighbours $\{0, \pi/2, \pi, 3\pi/2\}$.
+\begin{equation}
+    \theta_{snap} = \frac{\pi}{2} \left\lfloor \frac{4\phi + \pi}{2\pi} \right\rfloor.
+\end{equation}
+The particle is then placed at $z_{new} = z_{cluster} + e^{i\theta_{snap}}$.
 
+One might be concerned that the ``snapped'' position is already occupied. However, a simple geometric argument shows this is impossible. If the particle hits the cluster at angle $\phi$, the nearest lattice site is the one minimising $|\phi - \theta_{grid}|$. For the snapped site to be occupied, the walker would have had to pass through it to reach the current contact point, triggering an earlier collision. Thus, the nearest slot is always empty.
+
+
+This hybrid approach allows us to maintain the conformal invariance of the incoming probability flux (via continuous diffusion) while forcing the final structure to conform to $\mathbb{Z}^2$ constraints.
 
 % =========================================
 % Bibliography
@@ -866,7 +1148,7 @@ We define the specific "snapping" mechanism: particles propagate in continuous $
 % Notes: Power of 2 hierarchy grid [cite: 84]
 % Notes: Static linked lists for spatial hashing instead of re-allocating [cite: 84]
 % Notes: Hybrid's "is_occupied" function [cite: 86]
-% Notes: 3x3 neighbor logic vs vectors [cite: 88]
+% Notes: 3x3 neighbour logic vs vectors [cite: 88]
 
 % --- SPECIAL REQUIREMENT: LATEX TOOLKIT ---
 \chapter{Reference: LaTeX Structure Examples}
@@ -935,6 +1217,39 @@ Figure \ref{fig:comparison} demonstrates how to place two plots next to each oth
 \end{figure}
 
 \section{Algorithms}
+\begin{algorithm}[H]
+\SetAlgoLined
+\DontPrintSemicolon
+\caption{Generalised DLA Simulation (Single Particle)}
+\KwData{Cluster $\mathcal{C}$, Launch Radius $R_{launch}$, Killing Radius $R_{kill}$}
+\KwResult{Updated Cluster $\mathcal{C}$}
+
+
+Generate particle position $\mathbf{r}$ on launch boundary ($|\mathbf{r}| \approx R_{launch}$)\;
+\While{particle is active}{
+    $d \leftarrow$ distance from $\mathbf{r}$ to nearest point in $\mathcal{C}$\;
+    
+    \uIf(\tcp*[f]{Far Field}){distance to centre $> R_{kill}$}{
+        Respawn particle\;
+    }
+    \uElseIf(\tcp*[f]{Outer Vacuum}){$d$ is outside bounding box}{
+        $\mathbf{r} \leftarrow$ Apply \textit{Return-to-Boundary} \;
+    }
+    \uElseIf(\tcp*[f]{Empty Space}){$d >$ local step limit}{
+        $r_{jump} \leftarrow \max(\text{safe step}, d - \delta)$\;
+        Move $\mathbf{r}$ by $r_{jump}$ in random direction\;
+    }
+    \Else(\tcp*[f]{Interaction Zone}){
+        Perform local adhesion step (lattice, continuous or hybrid)\;
+        \If{Aggregation Condition Met}{
+            Add particle to $\mathcal{C}$\;
+            Update Cluster Radius $R_{max}$\;
+            \textbf{break}\;
+        }
+    }
+}
+\end{algorithm}
+
 Algorithm \ref{alg:random_walk} shows a basic random walk loop using the \texttt{algorithm2e} package.
 
 \begin{algorithm}[H]

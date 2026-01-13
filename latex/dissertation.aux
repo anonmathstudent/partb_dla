@@ -110,8 +110,14 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3.4}Solvable Geometries}{17}{subsection.2.3.4}\protected@file@percent }
 \newlabel{sec:solvable_geometries}{{2.3.4}{17}{Solvable Geometries}{subsection.2.3.4}{}}
 \newlabel{sec:solvable_geometries@cref}{{[subsection][4][2,3]2.3.4}{[1][17][]17}}
-\bibstyle{unsrtnat}
-\bibdata{references}
+\newlabel{the:line_kernel}{{2.9}{18}{Poisson Kernel for $\mathbb {H}$}{theorem.2.9}{}}
+\newlabel{the:line_kernel@cref}{{[theorem][9][2]2.9}{[1][18][]18}}
+\newlabel{the:disk_kernel}{{2.10}{18}{Poisson Kernel for $\mathbb {D}$}{theorem.2.10}{}}
+\newlabel{the:disk_kernel@cref}{{[theorem][10][2]2.10}{[1][18][]18}}
+\newlabel{cor:exterior_kernel}{{2.3}{19}{Poisson Kernel for the Exterior of $\mathbb {D}$}{corollary.2.3}{}}
+\newlabel{cor:exterior_kernel@cref}{{[corollary][3][2]2.3}{[1][19][]19}}
+\citation{Loh2014}
+\citation{Bell2019}
 \@writefile{toc}{\contentsline {chapter}{\numberline {3}Algorithms}{20}{chapter.3}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
@@ -121,25 +127,46 @@
 \@writefile{toc}{\contentsline {section}{\numberline {3.1}Introduction}{20}{section.3.1}\protected@file@percent }
 \newlabel{sec:algo_intro}{{3.1}{20}{Introduction}{section.3.1}{}}
 \newlabel{sec:algo_intro@cref}{{[section][1][3]3.1}{[1][20][]20}}
-\@writefile{toc}{\contentsline {section}{\numberline {3.2}On-Lattice Implementation}{20}{section.3.2}\protected@file@percent }
-\newlabel{sec:on_lattice}{{3.2}{20}{On-Lattice Implementation}{section.3.2}{}}
-\newlabel{sec:on_lattice@cref}{{[section][2][3]3.2}{[1][20][]20}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.1}The Fuzzy Annulus Method}{20}{subsection.3.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.2}Walk-to-Line}{20}{subsection.3.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.3}Walk-to-Square}{20}{subsection.3.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3.3}Off-Lattice Implementation}{20}{section.3.3}\protected@file@percent }
-\newlabel{sec:off_lattice}{{3.3}{20}{Off-Lattice Implementation}{section.3.3}{}}
-\newlabel{sec:off_lattice@cref}{{[section][3][3]3.3}{[1][20][]20}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.1}Optimization Strategies}{20}{subsection.3.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.2}Exact Collision}{21}{subsection.3.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.3}Comparison to On-Lattice}{21}{subsection.3.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3.4}The Hybrid Model}{21}{section.3.4}\protected@file@percent }
-\newlabel{sec:hybrid_model}{{3.4}{21}{The Hybrid Model}{section.3.4}{}}
-\newlabel{sec:hybrid_model@cref}{{[section][4][3]3.4}{[1][20][]21}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4.1}Motivation}{21}{subsection.3.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4.2}Theoretical Alternatives}{21}{subsection.3.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4.3}Selection and Justification}{21}{subsection.3.4.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4.4}Implementation}{21}{subsection.3.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.2}Initialisation}{20}{section.3.2}\protected@file@percent }
+\newlabel{sec:initialisation}{{3.2}{20}{Initialisation}{section.3.2}{}}
+\newlabel{sec:initialisation@cref}{{[section][2][3]3.2}{[1][20][]20}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.1}Off-Lattice: The Launching Circle}{20}{subsection.3.2.1}\protected@file@percent }
+\citation{Loh2014}
+\citation{kaiser1966}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.2}On-Lattice: The Fuzzy Annulus}{21}{subsection.3.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.3}Far-Field Diffusion}{21}{section.3.3}\protected@file@percent }
+\newlabel{sec:far_field}{{3.3}{21}{Far-Field Diffusion}{section.3.3}{}}
+\newlabel{sec:far_field@cref}{{[section][3][3]3.3}{[1][21][]21}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.1}Off-Lattice: Re-injection from Infinity}{21}{subsection.3.3.1}\protected@file@percent }
+\citation{menshutin2006}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.2}On-Lattice: Walk-to-Line}{22}{subsection.3.3.2}\protected@file@percent }
+\newlabel{sec:lattice_wtl}{{3.3.2}{22}{On-Lattice: Walk-to-Line}{subsection.3.3.2}{}}
+\newlabel{sec:lattice_wtl@cref}{{[subsection][2][3,3]3.3.2}{[1][22][]22}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2.1}Discrete Method of Images}{22}{subsubsection.3.3.2.1}\protected@file@percent }
+\citation{Loh2014}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2.2}The Killing Circle}{23}{subsubsection.3.3.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.4}Near-Field Diffusion}{23}{section.3.4}\protected@file@percent }
+\newlabel{sec:near_field}{{3.4}{23}{Near-Field Diffusion}{section.3.4}{}}
+\newlabel{sec:near_field@cref}{{[section][4][3]3.4}{[1][23][]23}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4.1}Off-Lattice: Walk-to-Circle}{23}{subsection.3.4.1}\protected@file@percent }
+\citation{Bell2019}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4.2}On-Lattice: Walk-to-Square}{24}{subsection.3.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.5}Aggregation}{24}{section.3.5}\protected@file@percent }
+\newlabel{sec:aggregation}{{3.5}{24}{Aggregation}{section.3.5}{}}
+\newlabel{sec:aggregation@cref}{{[section][5][3]3.5}{[1][24][]24}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5.1}On-Lattice: Sticky Boundary}{24}{subsection.3.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5.2}Off-Lattice: Analytic Termination}{24}{subsection.3.5.2}\protected@file@percent }
+\citation{Menshutin2011}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces The conformal mapping sequence for exact collision. The physical domain (1), formed by the intersection of the safe region and the target exterior, is centred (2), mapped to an infinite wedge (3), and finally opened to the upper half-plane (4) where the exit position is sampled.}}{25}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:conformal_collision}{{3.1}{25}{The conformal mapping sequence for exact collision. The physical domain (1), formed by the intersection of the safe region and the target exterior, is centred (2), mapped to an infinite wedge (3), and finally opened to the upper half-plane (4) where the exit position is sampled}{figure.caption.3}{}}
+\newlabel{fig:conformal_collision@cref}{{[figure][1][3]3.1}{[1][25][]25}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.6}The Hybrid Model}{25}{section.3.6}\protected@file@percent }
+\newlabel{sec:hybrid_model}{{3.6}{25}{The Hybrid Model}{section.3.6}{}}
+\newlabel{sec:hybrid_model@cref}{{[section][6][3]3.6}{[1][25][]25}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6.1}Motivation and Design}{25}{subsection.3.6.1}\protected@file@percent }
+\bibstyle{unsrtnat}
+\bibdata{references}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6.2}Implementation}{26}{subsection.3.6.2}\protected@file@percent }
 \bibcite{witten1981}{{1}{1981}{{Witten and Sander}}{{}}}
 \bibcite{Matsushita1984}{{2}{1984}{{Matsushita et~al.}}{{}}}
 \bibcite{BenJacob1994}{{3}{1994}{{Ben-Jacob et~al.}}{{}}}
@@ -155,47 +182,52 @@
 \bibcite{Priestley2003}{{13}{2003}{{Priestley}}{{}}}
 \bibcite{MortersPeres2010}{{14}{2010}{{Mörters and Peres}}{{}}}
 \bibcite{Cass2009}{{15}{2009}{{Cass}}{{}}}
-\@writefile{toc}{\contentsline {chapter}{\numberline {A}Algorithmic Details and Optimizations}{24}{appendix.A}\protected@file@percent }
+\bibcite{Loh2014}{{16}{2014}{{Loh}}{{}}}
+\bibcite{Bell2019}{{17}{2019}{{Bell}}{{}}}
+\bibcite{kaiser1966}{{18}{1966}{{Kaiser}}{{}}}
+\bibcite{menshutin2006}{{19}{2006}{{Menshutin and Shchur}}{{}}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {A}Algorithmic Details and Optimizations}{29}{appendix.A}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
 \@writefile{loa}{\addvspace {10\p@ }}
-\newlabel{ch:appendix_algo}{{A}{24}{Algorithmic Details and Optimizations}{appendix.A}{}}
-\newlabel{ch:appendix_algo@cref}{{[appendix][1][2147483647]A}{[1][24][]24}}
-\@writefile{toc}{\contentsline {section}{\numberline {A.1}Lattice Core Optimizations}{24}{section.A.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A.2}Off-Lattice and Hybrid Details}{24}{section.A.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A.3}Data Structures}{24}{section.A.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {B}Reference: LaTeX Structure Examples}{25}{appendix.B}\protected@file@percent }
+\newlabel{ch:appendix_algo}{{A}{29}{Algorithmic Details and Optimizations}{appendix.A}{}}
+\newlabel{ch:appendix_algo@cref}{{[appendix][1][2147483647]A}{[1][29][]29}}
+\@writefile{toc}{\contentsline {section}{\numberline {A.1}Lattice Core Optimizations}{29}{section.A.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A.2}Off-Lattice and Hybrid Details}{29}{section.A.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A.3}Data Structures}{29}{section.A.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {B}Reference: LaTeX Structure Examples}{30}{appendix.B}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
 \@writefile{loa}{\addvspace {10\p@ }}
-\newlabel{ch:toolkit}{{B}{25}{Reference: LaTeX Structure Examples}{appendix.B}{}}
-\newlabel{ch:toolkit@cref}{{[appendix][2][2147483647]B}{[1][25][]25}}
-\@writefile{toc}{\contentsline {section}{\numberline {B.1}Aligned Equations}{25}{section.B.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {B.2}Floats}{25}{section.B.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {B.2.1}Single Figure}{25}{subsection.B.2.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {B.1}{\ignorespaces A realization of 2D Brownian motion.}}{25}{figure.caption.4}\protected@file@percent }
-\newlabel{fig:brownian}{{B.1}{25}{A realization of 2D Brownian motion}{figure.caption.4}{}}
-\newlabel{fig:brownian@cref}{{[figure][1][2147483647,2]B.1}{[1][25][]25}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {B.2.2}Side-by-Side Figures (Subfloats)}{25}{subsection.B.2.2}\protected@file@percent }
-\newlabel{fig:lattice}{{B.2a}{26}{On-Lattice DLA}{figure.caption.5}{}}
-\newlabel{fig:lattice@cref}{{[subfigure][1][2147483647,2,2]B.2a}{[1][25][]26}}
-\newlabel{sub@fig:lattice}{{a}{26}{On-Lattice DLA}{figure.caption.5}{}}
-\newlabel{sub@fig:lattice@cref}{{[subfigure][1][2147483647,2,2]B.2a}{[1][25][]26}}
-\newlabel{fig:offlattice}{{B.2b}{26}{Off-Lattice DLA}{figure.caption.5}{}}
-\newlabel{fig:offlattice@cref}{{[subfigure][2][2147483647,2,2]B.2b}{[1][25][]26}}
-\newlabel{sub@fig:offlattice}{{b}{26}{Off-Lattice DLA}{figure.caption.5}{}}
-\newlabel{sub@fig:offlattice@cref}{{[subfigure][2][2147483647,2,2]B.2b}{[1][25][]26}}
-\@writefile{lof}{\contentsline {figure}{\numberline {B.2}{\ignorespaces Comparison of cluster morphology between lattice and continuum models.}}{26}{figure.caption.5}\protected@file@percent }
-\newlabel{fig:comparison}{{B.2}{26}{Comparison of cluster morphology between lattice and continuum models}{figure.caption.5}{}}
-\newlabel{fig:comparison@cref}{{[figure][2][2147483647,2]B.2}{[1][25][]26}}
-\@writefile{lof}{\contentsline {figure}{\numberline {B.3}{\ignorespaces Schematic of the DLA growth process.}}{26}{figure.caption.6}\protected@file@percent }
-\newlabel{fig:dla_schematic}{{B.3}{26}{Schematic of the DLA growth process}{figure.caption.6}{}}
-\newlabel{fig:dla_schematic@cref}{{[figure][3][2147483647,2]B.3}{[1][25][]26}}
-\@writefile{toc}{\contentsline {section}{\numberline {B.3}Algorithms}{26}{section.B.3}\protected@file@percent }
-\@writefile{loa}{\contentsline {algocf}{\numberline {1}{\ignorespaces Basic Random Walk Simulation}}{26}{algocf.1}\protected@file@percent }
-\newlabel{alg:random_walk}{{1}{26}{Algorithms}{algocf.1}{}}
-\newlabel{alg:random_walk@cref}{{[algorithm][1][2147483647]1}{[1][26][]26}}
+\newlabel{ch:toolkit}{{B}{30}{Reference: LaTeX Structure Examples}{appendix.B}{}}
+\newlabel{ch:toolkit@cref}{{[appendix][2][2147483647]B}{[1][30][]30}}
+\@writefile{toc}{\contentsline {section}{\numberline {B.1}Aligned Equations}{30}{section.B.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {B.2}Floats}{30}{section.B.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.2.1}Single Figure}{30}{subsection.B.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {B.1}{\ignorespaces A realization of 2D Brownian motion.}}{30}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:brownian}{{B.1}{30}{A realization of 2D Brownian motion}{figure.caption.5}{}}
+\newlabel{fig:brownian@cref}{{[figure][1][2147483647,2]B.1}{[1][30][]30}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.2.2}Side-by-Side Figures (Subfloats)}{30}{subsection.B.2.2}\protected@file@percent }
+\newlabel{fig:lattice}{{B.2a}{31}{On-Lattice DLA}{figure.caption.6}{}}
+\newlabel{fig:lattice@cref}{{[subfigure][1][2147483647,2,2]B.2a}{[1][30][]31}}
+\newlabel{sub@fig:lattice}{{a}{31}{On-Lattice DLA}{figure.caption.6}{}}
+\newlabel{sub@fig:lattice@cref}{{[subfigure][1][2147483647,2,2]B.2a}{[1][30][]31}}
+\newlabel{fig:offlattice}{{B.2b}{31}{Off-Lattice DLA}{figure.caption.6}{}}
+\newlabel{fig:offlattice@cref}{{[subfigure][2][2147483647,2,2]B.2b}{[1][30][]31}}
+\newlabel{sub@fig:offlattice}{{b}{31}{Off-Lattice DLA}{figure.caption.6}{}}
+\newlabel{sub@fig:offlattice@cref}{{[subfigure][2][2147483647,2,2]B.2b}{[1][30][]31}}
+\@writefile{lof}{\contentsline {figure}{\numberline {B.2}{\ignorespaces Comparison of cluster morphology between lattice and continuum models.}}{31}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:comparison}{{B.2}{31}{Comparison of cluster morphology between lattice and continuum models}{figure.caption.6}{}}
+\newlabel{fig:comparison@cref}{{[figure][2][2147483647,2]B.2}{[1][30][]31}}
+\@writefile{lof}{\contentsline {figure}{\numberline {B.3}{\ignorespaces Schematic of the DLA growth process.}}{31}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:dla_schematic}{{B.3}{31}{Schematic of the DLA growth process}{figure.caption.7}{}}
+\newlabel{fig:dla_schematic@cref}{{[figure][3][2147483647,2]B.3}{[1][30][]31}}
+\@writefile{toc}{\contentsline {section}{\numberline {B.3}Algorithms}{32}{section.B.3}\protected@file@percent }
+\@writefile{loa}{\contentsline {algocf}{\numberline {1}{\ignorespaces Generalised DLA Simulation (Single Particle)}}{32}{algocf.1}\protected@file@percent }
+\@writefile{loa}{\contentsline {algocf}{\numberline {2}{\ignorespaces Basic Random Walk Simulation}}{32}{algocf.2}\protected@file@percent }
+\newlabel{alg:random_walk}{{2}{32}{Algorithms}{algocf.2}{}}
+\newlabel{alg:random_walk@cref}{{[algorithm][2][2147483647]2}{[1][32][]32}}
+\@writefile{toc}{\contentsline {section}{\numberline {B.4}Theorems}{32}{section.B.4}\protected@file@percent }
 \citation{witten1981}
-\@writefile{toc}{\contentsline {section}{\numberline {B.4}Theorems}{27}{section.B.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {B.5}References}{27}{section.B.5}\protected@file@percent }
-\gdef \@abspage@last{28}
+\@writefile{toc}{\contentsline {section}{\numberline {B.5}References}{33}{section.B.5}\protected@file@percent }
+\gdef \@abspage@last{34}
