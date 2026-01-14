@@ -26,7 +26,10 @@
     arrows.meta,              % Required for ">=Latex" arrowheads
     shapes,                   % Required for node shapes
     calc,                     % Required for coordinate calculations
-    backgrounds               % Optional but good for complex figures
+    backgrounds,               % Optional but good for complex figures
+    angles,
+    quotes,
+    decorations.markings
 }
 
 % --- Bibliography & Links ---
@@ -163,6 +166,7 @@ To answer these questions, simulations of DLA must be done both on and off-latti
 
 The purpose of this dissertation is to compare these three different models of DLA, in order to decouple the diffusion process of DLA from the geometry of the aggregation. By analysing various features of the resulting clusters, we hope to better understand the relationship between the continuous and discrete variations of the probability distribution governing DLA growth.
 
+We begin with a brief outline of the mathematical necessary to understand the underlying mechanisms behind DLA in \cref{ch:theory}, before following on by explaining how to utilise this theory to create efficient algorithms, as well as discussing our hybrid approach, which forms \cref{ch:algorithms}. In ?? we begin analysis, focusing on ??? 
 % =========================================
 % CHAPTER 2: POTENTIAL THEORY
 % =========================================
@@ -937,147 +941,162 @@ The final stage is the termination of the walk.
 \subsection{On-Lattice: Sticky Boundary}
 The aggregation condition on $\mathbb{Z}^2$ is straightforward. We define the boundary $\partial K$ as the set of all empty sites adjacent to occupied sites, as we did in chapter \cref{ch:theory}. The walk terminates when the particle steps onto a site $x \in \partial K$. The site $x$ is then marked as occupied ($x \in K$), and the boundary $\partial K$ is updated locally.
 
-\subsection{Off-Lattice: Analytic Termination}
-In the continuous model, aggregation occurs when the walker touches a cluster particle (distance $2r_p$). Simulating this directly is error-prone; a discrete time-step might overshoot the boundary or miss a ``grazing" collision.
+\subsection{Off-Lattice: Exact Adhering}
 
-To resolve this, we adopt the Exact Adhering method described by \citet{Bell2019}.
-When the walker is close to a particle $P$ but also near other particles, we must determine whether it hits $P$ or escapes to a safer distance. We define a local domain $\Omega$ formed by the intersection of the ``capture circle" (the boundary of $P$) and a ``safe escape circle" (determined by the second-nearest neighbour).
-
-This domain $\Omega$ forms a circular lune (a geometric shape bounded by two circular arcs). To sample the exit position from $\Omega$ analytically, we conformally map it to the upper half-plane in three stages:
-\begin{enumerate}
-    \item $f_1$: We translate and rotate the system to fix the particle centers.
-    \item $f_2$: We map the two points where the circles intersect to $0$ and $\infty$. This transforms the curved boundaries of the lune into two straight rays emanating from the origin, forming a wedge of angle $\phi$.
-    \item $f_3$: We apply a power map $z \mapsto z^{\pi/\phi}$ to open the wedge into the full upper half-plane.
-\end{enumerate}
-In this final transformed space, the complex exit problem reduces to a Brownian motion hitting the real line. We sample the hit point from the Cauchy distribution (derived in \cref{the:line_kernel}), and then apply the inverse maps $f_1^{-1} \circ f_2^{-1} \circ f_3^{-1}$ to find the exact collision or escape point on the original circles.
 \begin{figure}[htbp]
     \centering
     \resizebox{\textwidth}{!}{% 
     \begin{tikzpicture}[
-        node distance=0.8cm, % Gap between boxes
+        node distance=0.8cm, 
         >=Latex,
         thick,
         % Styles
         axes/.style={->, gray!60, thin},
-        target boundary/.style={blue, very thick},          % The Cluster (q)
-        escape boundary/.style={red!80!black, thick, dashed}, % The Reset Boundary (p)
+        target boundary/.style={blue, very thick},
+        escape boundary/.style={red!80!black, thick, dashed},
         walker/.style={circle, fill=black, inner sep=1.5pt},
-        domain fill/.style={fill=blue!5, opacity=0.8},      % Increased opacity slightly
+        domain fill/.style={fill=blue!5, opacity=0.8},
         map arrow/.style={->, shorten >=2pt, shorten <=2pt, very thick, font=\small},
         stage box/.style={draw=gray!30, rounded corners, inner sep=8pt}
     ]
 
-    %% --- STAGE 1: Initial Geometry (Physical) ---
+   %% --- STAGE 1: Initial Geometry (Physical) ---
     \node (stage1) [stage box] {
-        \begin{tikzpicture}[scale=0.7]
-            \coordinate (P) at (0, 0);   % p (Safe Center)
-            \coordinate (Q) at (1.8, 0); % q (Target Center) - Adjusted for overlap
-            \def\RSafe{2.2}
-            \def\RTarget{1.5}
+        \begin{tikzpicture}[scale=0.8]
+            % FIX: Increased Bounding Box size to fit q2
+            % Top increased to 4.5, Width to +/- 4.0
+            \path[use as bounding box] (-4.0, -3.5) rectangle (4.0, 4.5);
+            
+            \coordinate (P) at (0, 0);       
+            \coordinate (Q) at (1.8, 0.5);   
+            \def\RTarget{1.4} 
+            \def\RSafe{2.4}   
+            
+            % FIX: Moved q2 to 130 degrees to tuck it into the corner better
+            \coordinate (Q2) at (130:{\RSafe + \RTarget});
 
-            % 1. Fill Valid Region (Safe minus Target)
             \begin{scope}
-                \clip (P) circle (\RSafe); % Restrict everything to inside Safe Circle
-                \fill[domain fill] (-3,-3) rectangle (3,3); % Fill background
-                \fill[white] (Q) circle (\RTarget);         % Punch hole for Target
+                \clip (P) circle (\RSafe); 
+                \fill[domain fill] (-5,-5) rectangle (5,5); 
+                \fill[white] (Q) circle (\RTarget);         
             \end{scope}
 
-            % 2. Draw Boundaries
             \draw[escape boundary] (P) circle (\RSafe);
             \draw[target boundary] (Q) circle (\RTarget);
+            
+            % Ghost Particle q2
+            \draw[target boundary, opacity=0.4] (Q2) circle (\RTarget);
+            \fill[blue, opacity=0.1] (Q2) circle (\RTarget);
+            \fill[blue, opacity=0.4] (Q2) circle (1.5pt) node[below, font=\scriptsize] {$q_{2}$};
 
-            % 3. Centers
-            \fill[black] (P) circle (1.5pt) node[left, font=\scriptsize] {$p$};
-            \fill[blue] (Q) circle (1.5pt) node[right, font=\scriptsize] {$q$};
+            \fill[black] (P) circle (1.5pt) node[below left, font=\scriptsize] {$p$};
+            \fill[blue] (Q) circle (1.5pt) node[above right, font=\scriptsize] {$q$};
             \draw[dashed, gray] (P) -- (Q);
 
-            % 4. Labels
-            \node[red!80!black, font=\tiny] at (-1.5, 1.5) {Escape};
-            \node[blue, font=\tiny] at (2.5, 1.0) {Target};
+            % Distance 'a' label
+            \draw[thin, gray, <->] (P) -- (Q2) node[midway, fill=white, inner sep=1pt, font=\tiny, text=gray] {$dist=a$};
 
-            % Walker
-            \node[walker, label={[above, font=\tiny]:$z$}] at (0.2, 0.2) {};
-            
-            \node at (0.9, -2.5) [align=center, font=\small] {\textbf{1. Physical Domain}};
+            \draw[->, blue, thin] (Q) -- ++(-45:\RTarget) node[midway, below left, font=\tiny, inner sep=0pt] {$r=2$};
+            % Adjusted label angle for visibility
+            \draw[->, red!80!black, thin] (P) -- ++(-100:\RSafe) node[midway, left, font=\tiny] {$r=a-2$};
+
+            \node[red!80!black, font=\tiny, anchor=west] at (0, -1.5) {Safe Boundary};
+            \node[blue, font=\tiny] at (0.9, 0.8) {Capture Circle};
+
+            \node at (0, -3.0) [align=center, font=\small] {\textbf{1. Set-up}};
         \end{tikzpicture}
     };
 
-    %% --- STAGE 2: Centered & Rotated (f1) ---
+   %% --- STAGE 2: Centered (f1) ---
     \node (stage2) [stage box, right=of stage1] {
-        \begin{tikzpicture}[scale=0.7]
-            \draw[axes] (-2.5,0) -- (2.5,0);
-            \draw[axes] (0,-2.5) -- (0,2.5);
+        \begin{tikzpicture}[scale=0.8]
+            % Standardized Box for 1 & 2
+            \path[use as bounding box] (-3, -3.5) rectangle (3, 3);
             
-            % New Coordinates after f1: p -> 0, q -> Real Axis
-            \coordinate (P) at (0,0);
-            \coordinate (Q) at (1.8,0); % |p-q|
-            \def\RSafe{2.2}
-            \def\RTarget{1.5}
+            \draw[axes] (-2.8,0) -- (2.8,0);
+            \draw[axes] (0,-2.6) -- (0,2.6);
+            
+            \coordinate (P) at (0,0);       
+            \coordinate (Q) at (1.8, 0);    
+            \def\RSafe{2.4}
+            \def\RTarget{1.4}
+            \coordinate (Wplus) at (1.95, 1.4);
+            \coordinate (Wminus) at (1.95, -1.4);
 
-            % Fill Valid Region
             \begin{scope}
                 \clip (P) circle (\RSafe);
-                \fill[domain fill] (-3,-3) rectangle (3,3);
+                \fill[domain fill] (-4,-4) rectangle (4,4);
                 \fill[white] (Q) circle (\RTarget);
             \end{scope}
 
-            % Boundaries
             \draw[escape boundary] (P) circle (\RSafe);
             \draw[target boundary] (Q) circle (\RTarget);
 
-            % Points w+ and w- (Intersections)
-            % Visual approximation for diagram
-            \fill[gray] (1.1, 1.9) circle (1.5pt) node[above, black, font=\tiny] {$w_+$};
-            \fill[gray] (1.1, -1.9) circle (1.5pt) node[below, black, font=\tiny] {$w_-$};
+            \fill[black] (Wplus) circle (1.5pt) node[above right, font=\scriptsize, xshift=-2pt] {$w_+$};
+            \fill[black] (Wminus) circle (1.5pt) node[below right, font=\scriptsize, xshift=-2pt] {$w_-$};
+            
+            \fill[black] (P) circle (1.5pt) node[below left, font=\scriptsize] {$f_1(p)=0$};
+            \fill[blue] (Q) circle (1.5pt) node[below, font=\scriptsize, yshift=-2pt] {$f_1(q)$};
 
-            \node at (0, -2.5) [align=center, font=\small] {\textbf{2. Centered ($f_1$)}};
+            \draw[dashed, gray] (P) -- (Q);           
+
+            \node at (0, -3.0) [anchor=north, align=center, font=\small] {\textbf{2. Centered}};
         \end{tikzpicture}
     };
 
-    %% --- STAGE 3: The Wedge (f2) ---
+  %% --- STAGE 3: The Wedge (f2) ---
     \node (stage3) [stage box, right=of stage2] {
-        \begin{tikzpicture}[scale=0.7]
+        \begin{tikzpicture}[scale=0.8]
+            % Compact Box for 3 & 4
+            \path[use as bounding box] (-1, -2.8) rectangle (3.5, 3);
+
             \coordinate (O) at (0,0);
-            \draw[axes] (0,-2.5) -- (0,2.5);
+            \draw[axes] (0,-0.5) -- (0,2.5);
             \draw[axes] (-0.5,0) -- (2.5,0);
 
-            % Wedge definition (target on bottom, safe on top usually)
             \def\WedgeAngle{60} 
-
-            % Fill Wedge
             \fill[domain fill] (O) -- (2.5,0) arc (0:\WedgeAngle:2.5) -- cycle;
-
-            % Draw Rays
+            
             \draw[target boundary] (O) -- (2.5, 0) node[right, font=\tiny] {Target};
             \draw[escape boundary] (O) -- (\WedgeAngle:2.5) node[above right, font=\tiny] {Escape};
-
-            % Angle Label
+            
+            % Correction: "midway, right" prevents label overlapping the arc
             \draw[<->, thin] (0.8,0) arc (0:\WedgeAngle:0.8) node[midway, right, font=\footnotesize] {$\phi$};
 
-            \node at (1.2, -2.5) [align=center, font=\small] {\textbf{3. Wedge ($f_2$)}};
+            \coordinate (WalkerStart) at (\WedgeAngle/2 : 1.5); 
+            \node[walker, label={[right, font=\tiny]:$f_2(0)$}] at (WalkerStart) {};
+            \draw[dotted, gray] (O) -- (WalkerStart);
+
+            % Aligned Caption: y=-1.4 clears the axis at y=-0.5
+            \node at (1.2, -1.4) [anchor=north, align=center, font=\small, text width=3.5cm] 
+                {\textbf{3. Stretched into Wedge}};
         \end{tikzpicture}
     };
 
     %% --- STAGE 4: Upper Half-Plane (f3) ---
     \node (stage4) [stage box, right=of stage3] {
-        \begin{tikzpicture}[scale=0.7]
+        \begin{tikzpicture}[scale=0.8]
+            % Compact Box for 3 & 4
+            \path[use as bounding box] (-3, -2.8) rectangle (3, 3);
+            
             \draw[axes] (0,-0.5) -- (0,2.5);
             \draw[axes] (-2.5,0) -- (2.5,0) node[right] {$\mathbb{R}$};
+            \coordinate (O) at (0,0);
             
-            % Fill UHP
             \fill[domain fill] (-2.5,0) rectangle (2.5, 2.5);
 
-            % Boundaries mapping to Real Line
-            % Target -> Positive Real (Arbitrary choice for viz)
             \draw[target boundary] (0,0) -- (2.5,0);
-            % Escape -> Negative Real
             \draw[escape boundary] (0,0) -- (-2.5,0);
 
-            % Sample point
-            \node[walker] at (0,1) {};
-            \draw[->, dashed, gray] (0,1) -- (1.5,0) node[below, black, font=\tiny] {Hit $x$};
+            \coordinate (WalkerFinal) at (0,1);
+            % Label at left to avoid arrow
+            \node[walker, label={[left, font=\tiny]:$f_3(f_2(0))=i$}] at (WalkerFinal) {};
+            
+            \draw[->, dashed, gray] (WalkerFinal) -- (1.5,0) node[below, black, font=\tiny] {Hit $x$};
 
-            \node at (0, -2.5) [align=center, font=\small] {\textbf{4. Half-Plane ($f_3$)}};
+            % Aligned Caption: Matches Stage 3
+            \node at (0, -1.4) [anchor=north, text width=3.5cm, align=center, font=\small] 
+                {\textbf{4. Flattened to Half-Plane} \\ \footnotesize Walker at $i$};
         \end{tikzpicture}
     };
 
@@ -1092,32 +1111,135 @@ In this final transformed space, the complex exit problem reduces to a Brownian 
     \label{fig:conformal_collision}
 \end{figure}
 
+In the continuous model, aggregation occurs when the walker touches a cluster particle (i.e., the center-to-center distance is 2, since the radius of each particle is 1). Simulating this directly with fixed time-steps is not ideal, due to the potential errors of the walker grazing the cluster or overshooting. 
+
+To resolve this, we adopt the analytic method described by \citet{Bell2019}.
+When the walker is at position $p$, close to a target particle centered at $q$ but constrained by a second-nearest neighbour $q_2$ at distance $a$, we define a local domain $\Omega$. As illustrated in \cref{fig:conformal_collision} (Stage 1), $\Omega$ is the lune formed by the intersection of the ``safe escape circle'' (radius $a-2$, centered at $p$) and the exterior of the ``capture circle'' (radius $2$, centered at $q$).
+
+To sample the exact exit position from $\Omega$ without time-stepping errors, we conformally map this lune to the upper half-plane $\mathbb{H}$ in three stages:
+
+\begin{enumerate}
+    \item \textbf{Centering ($f_1$):} We first translate and rotate the system so that the walker $p$ lies at the origin and the target $q$ lies on the positive real axis:
+    \begin{equation}
+        f_1(z) = |q-p| \frac{z-p}{q-p}.
+    \end{equation}
+    As shown in \cref{fig:conformal_collision} (Stage 2), we identify the intersection points of the two circles in this transformed space, denoted $w_+$ and $w_-$.
+
+    \item \textbf{Stretching ($f_2$):} We apply a Möbius transformation that maps the intersection point $w_+$ to the origin and $w_-$ to infinity:
+    \begin{equation}
+        f_2(z) = \frac{z - f_1(w_+)}{z - f_1(w_-)}.
+    \end{equation}
+    This transformation stretches the circular boundaries into two straight rays emanating from the origin, forming an infinite wedge (\cref{fig:conformal_collision}, Stage 3). The angle $\phi$ between these rays is determined by the intersection geometry. The walker now lies somewhere on the segment of the unit circle within this wedge.
+
+    \item \textbf{Flattening ($f_3$):} Finally, we open the wedge into the full upper half-plane using a power map:
+    \begin{equation}
+        f_3(z) = z^{\pi/\phi}.
+    \end{equation}
+    This maps the target boundary to the positive real line and the escape boundary to the negative real line (\cref{fig:conformal_collision}, Stage 4). Due to the symmetry of the original lune about the $p-q$ axis, the walker is mapped to the point $i$.
+\end{enumerate}
+
+In this final domain, the problem reduces to a standard Brownian motion starting at $i$ and hitting the real line. We sample the hitting point from the Cauchy distribution (derived in \cref{sec:solvable_geometries}, which easily integrates to give the CDF) and map it back to the physical domain using the inverse composition $f_1^{-1} \circ f_2^{-1} \circ f_3^{-1}$. If the mapped point lies on the target circle, the particle adheres; if it lies on the safe circle, the walker is effectively reset, and diffusion continues.
 \section{The Hybrid Model}
 \label{sec:hybrid_model}
 
-To rigorously investigate the source of anisotropy in DLA, we introduce a hybrid model. This model combines \textbf{continuous transport} (Off-Lattice diffusion) with \textbf{discrete aggregation} (On-Lattice geometry).
+To rigorously disentangle the source of anisotropy in DLA, we introduce a hybrid model.
 
 \subsection{Motivation and Design}
-We hypothesise that the anisotropy observed in lattice DLA arises from the aggregation step (the limited availability of attachment slots) rather than the transport step (the discrete random walk). To test this, we require a model where the walker moves via Brownian motion (isotropic) but aggregates onto a grid.
-We considered three aggregation mechanisms:
+We hypothesise that the characteristic cross-shape of on-lattice DLA arises primarily from the restriction of particles to fixed grid sites rather than the transport dynamics. To test this, we develop a model where the transport is purely isotropic (Brownian motion), but the final aggregation is constrained to a grid geometry.
+
+The critical design choice is the aggregation mechanism. We evaluated three potential strategies:
 \begin{enumerate}
-    \item \textbf{Proximity Snap:} Aggregating if the walker enters a radius $\epsilon$ of a lattice point. This effectively turns lattice points into circular attractors, distorting the harmonic measure.
-    \item \textbf{Antennae Method:} As proposed by \citet{Menshutin2011}, particles are only accepted if they hit the cluster at specific angles aligned with the axes. This introduces an artificial rejection probability that we wish to avoid.
-    \item \textbf{Rotate and Snap:} Our chosen method. The walker diffuses continuously until it physically contacts the cluster (as in the Off-Lattice model). Upon contact, the particle slides along the surface of the hit particle to the nearest valid lattice coordinate.
+    \item The Sticky Boundary: A walker aggregates if it enters any square cell within the sticky boundary. We rejected this because the square capture zone imposes lattice anisotropy onto the incoming probability flux before aggregation occurs, preventing a clean separation of transport and packing effects.
+    \item The Antennae Method: As proposed by \citet{Menshutin2011}, particles only stick if they hit a lattice site along specific axes; otherwise, they are reflected. This is similar in some sense to "Noise-Reduced DLA" \cite{Meakin1987} which was designed to accelerate convergence to asymptotic forms. 
+    We don't use this method as it effectively creates an anisotropic sticking probability ($P_{stick} < 1$ for off-axis collisions), which could potentially prevent us from isolating the effects of the packing geometry.
+    \item Rotate and Snap \textbf{(Chosen)}: The walker behaves exactly as a hard sphere in continuous space. Upon collision, the particle relaxes into the nearest valid lattice site. This method preserves the exact continuous harmonic measure of the cluster until the instant of impact, ensuring the arrival statistics are purely isotropic.
 \end{enumerate}
 
+\begin{remark}
+One might question whether the specific choice of aggregation rule significantly alters the growth. Theoretical estimates suggest that these microscopic differences are likely negligible.
+
+As derived from Beurling's estimates on harmonic measure \cite{Kesten1987_2}, once a random walker enters the immediate vicinity of a boundary point, the probability of it escaping to hit a different, distant site decays rapidly.  Specifically, if a walker is at a small distance $\delta$ from a cluster site $P$, the harmonic probability $\omega$ that it diffuses away to hit a different site $Q$ (at distance $r \gg \delta$) is bounded by:
+\begin{equation}
+    \omega(z \to Q) \lesssim \left( \frac{\delta}{r} \right)^{\alpha}
+\end{equation}
+where $\alpha > 0$ depends on the local geometry.
+
+This implies that the decision of where to aggregate is effectively determined by the macroscopic flux before the walker resolves the microscopic shape of the target site.  Therefore the exact adherence rule is likely not overly important, although we still prefer our method for the reasons outlined previously.
+\end{remark}
+
 \subsection{Implementation}
-The algorithm proceeds exactly as the Off-Lattice simulation (Walker on Spheres) until the collision condition $|z_{walker} - z_{cluster}| = 1$ is met.
-Let the contact angle be $\phi$. We map this continuous angle to the discrete set of nearest neighbours $\{0, \pi/2, \pi, 3\pi/2\}$.
+The algorithm proceeds identically to the Off-Lattice simulation (Walk-on-Spheres) until the collision condition $|z_{walker} - z_{cluster}| \le 2$ is met (since particle radius $r_p=1$).
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        scale=1.5,
+        >=latex,
+        thick,
+        % Styles
+        particle/.style={circle, draw=black, very thick, fill=blue!10, minimum size=1cm},
+        ghost/.style={circle, draw=gray, dashed, thick, fill=gray!5, minimum size=1cm},
+        window/.style={fill=green!10, opacity=0.5},
+        snap arrow/.style={->, very thick, blue!80!black}
+    ]
+
+    % --- Coordinates ---
+    \coordinate (Q) at (0,0);      % Cluster Particle
+    % At scale 1.5, a distance of 0.67 units = ~1.0cm visual distance
+    % Since nodes are 1cm, radius is 0.5cm. 0.5+0.5 = 1.0cm.
+    % So 0.67 makes them touch perfectly.
+    \coordinate (N) at (0.67, 0);   % Target Lattice Slot
+    \coordinate (P) at (1.4, 0.6);  % Walker position
+
+    % --- 1. Draw the Angular Window (The "Cone") ---
+    % Drawn first so it appears BEHIND the particles
+    \fill[window] (Q) -- (45:1.6) arc (45:-45:1.6) -- cycle;
+    
+    % Draw the limit lines
+    \draw[gray, dashed] (Q) -- (45:1.6) node[right, font=\tiny, black] {$+\pi/4$};
+    \draw[gray, dashed] (Q) -- (-45:1.6) node[right, font=\tiny, black] {$-\pi/4$};
+
+    % --- 2. Draw Particles ---
+    % The Target Slot N (Ghost)
+    \node[ghost] (ParticleN) at (N) {$N$};
+    
+    % The Cluster Particle Q (Drawn second to overlay N slightly if needed)
+    \node[particle] (ParticleQ) at (Q) {$Q$};
+
+    % The Walker P
+    \node[particle, fill=red!10] (ParticleP) at (P) {$P$};
+
+    % --- 3. Annotations ---
+    % Incoming path
+    \draw[->, black, thin] (ParticleP) -- (ParticleQ) ;
+        %node[midway, above, sloped, font=\tiny, yshift=1pt] {potential path};
+
+    \end{tikzpicture}
+    \caption{The angular window for hybrid aggregation. If a walker $P$ collides with particle $Q$ within the angle $|\phi| < \pi/4$ (shaded region), it is snapped to the nearest lattice slot $N$. We can assume $N$ is empty because if it were occupied, its own collision shell would have intercepted the walker before it could reach $Q$ within this specific angle.}
+    \label{fig:snapping_window}
+\end{figure}
+
+Let the continuous collision angle relative to the target particle center be $\phi \in [0, 2\pi)$. We project this continuous angle onto the discrete set of lattice directions $\Theta = \{0, \pi/2, \pi, 3\pi/2\}$ by minimizing the angular distance:
 \begin{equation}
     \theta_{snap} = \frac{\pi}{2} \left\lfloor \frac{4\phi + \pi}{2\pi} \right\rfloor.
 \end{equation}
-The particle is then placed at $z_{new} = z_{cluster} + e^{i\theta_{snap}}$.
+The particle is then rigidly placed at the lattice coordinate:
+\begin{equation}
+    z_{new} = z_{cluster} + 2 e^{i\theta_{snap}}.
+\end{equation}
 
-One might be concerned that the ``snapped'' position is already occupied. However, a simple geometric argument shows this is impossible. If the particle hits the cluster at angle $\phi$, the nearest lattice site is the one minimising $|\phi - \theta_{grid}|$. For the snapped site to be occupied, the walker would have had to pass through it to reach the current contact point, triggering an earlier collision. Thus, the nearest slot is always empty.
+A potential concern is whether the "snapped" lattice site is available. We provide a simple geometric argument to justify that the target slot is always empty.
 
+Consider a walker $P$ hitting a cluster particle $Q$ at angle $\phi$. The snapped destination is the lattice neighbour $N$ closest to the point of impact. For a grid of spacing 2, the neighbour $N$ is located at distance 2 from $Q$ (centre-to-centre).
+If $N$ were already occupied, its own collision shell (radius 2) would overlap the collision shell of $P$.
 
-This hybrid approach allows us to maintain the conformal invariance of the incoming probability flux (via continuous diffusion) while forcing the final structure to conform to $\mathbb{Z}^2$ constraints.
+Simple trigonometry shows that for any impact angle $\phi$ closer to $N$ than any other neighbour (i.e., $|\phi| < \pi/4$), the distance from the impact point to $N$ is strictly less than 2:
+\begin{equation}
+    |z_{hit} - z_{N}| = |2e^{i\phi} - 2| = 2\sqrt{2 - 2\cos\phi}.
+\end{equation}
+For $|\phi| < \pi/4$, this distance is at most $2\sqrt{2 - \sqrt{2}} \approx 1.53$, which is well inside the collision radius of 2.
+This implies that if $N$ were occupied, the walker would have intersected $N$'s collision shell before reaching $P$'s surface. Since the algorithm halts at the first contact, the target slot $N$ must be empty.
+
 
 % =========================================
 % Bibliography
@@ -1130,26 +1252,139 @@ This hybrid approach allows us to maintain the conformal invariance of the incom
 % =========================================
 \appendix
 
-\chapter{Algorithmic Details and Optimizations}
-\label{ch:appendix_algo}
+\chapter{Implementation Details and Optimisations}
+\label{app:implementation}
 
-\section{Lattice Core Optimizations}
-% Notes: Auto-size grid (adopted from Bell's off-lattice role) [cite: 65]
-% Notes: Look-up tables from Loh [cite: 66]
-% Notes: Large hierarchy to find bounding box size + flattening storage [cite: 68]
+While \cref{ch:algorithms} outlines the mathematical principles of the algorithms, the practical implementation requires specific data structures and optimisations to achieve the necessary scale ($N=10^7$ particles). This appendix details the computational architecture of the simulation code, written in Python and accelerated using the Numba JIT (Just-In-Time) compiler.
 
-\section{Off-Lattice and Hybrid Details}
-% Notes: Walker aliasing sampling explanation [cite: 72]
-% Notes: Explicit Kaiser-Bessel approximation (cite needed) [cite: 73]
-% Notes: Auto-memory management [cite: 75]
-% Notes: Python - Numba JIT vs C++ speed comparisons [cite: 77, 87]
+Throughout this appendix, we highlight where our implementation diverges from the standard reference codes (e.g., \texttt{koh\_lattice.cc} \cite{Loh2014} and \texttt{fastDLA.cpp} \cite{Bell2019}) to improve cache locality, memory stability, or cross-language reproducibility.
 
-\section{Data Structures}
-% Notes: Power of 2 hierarchy grid [cite: 84]
-% Notes: Static linked lists for spatial hashing instead of re-allocating [cite: 84]
-% Notes: Hybrid's "is_occupied" function [cite: 86]
-% Notes: 3x3 neighbour logic vs vectors [cite: 88]
+\section{Computational Framework}
 
+\subsection{The Numba JIT Compiler}
+The simulations are implemented in Python to leverage its high-level data analysis capabilities, but the core numerical routines are decorated with \texttt{@njit(fastmath=True)}. This compiles the Python bytecode into optimised LLVM machine code at runtime, allowing for performance parity with C++ while maintaining a modular, functional codebase.
+
+\subsection{Rounding Semantics}
+A critical and often overlooked detail in discrete stochastic simulations is the rounding behaviour of floating-point coordinates.
+\begin{itemize}
+    \item \textbf{Standard Python (IEEE 754):} Python 3 employs "Banker's Rounding" (round half to even). For example, \texttt{round(2.5) -> 2} and \texttt{round(3.5) -> 4}. This introduces a subtle statistical bias in random walks, as even coordinates are slightly favoured over odd ones.
+    \item \textbf{Standard Lattice DLA:} The reference C++ implementations use the standard library \texttt{round()} function, which rounds half away from zero (e.g., \texttt{round(2.5) -> 3}).
+\end{itemize}
+\textbf{Implementation Difference:} To ensure our random walks match the theoretical lattice statistics and the reference datasets exactly, we implemented a custom kernel \texttt{\_round\_cpp(x)} that explicitly emulates the C++ behaviour.
+
+\section{Data Structures for Spatial Indexing}
+
+\subsection{Flattened Hierarchical Bit-Maps (Lattice)}
+To efficiently query the occupancy of the lattice and its coarse-grained parents, the standard approach (used in \texttt{koh\_lattice.cc}) is to use a "jagged array" or a pointer-to-pointer structure (e.g., \texttt{byte **ss}), where each hierarchy level is a separate memory block. This can lead to cache misses when traversing levels.
+
+\textbf{Implementation Difference:} We instead employ a \textbf{Flattened 1D Array}.
+\begin{itemize}
+    \item All $L$ levels of the hierarchy are packed into a single contiguous \texttt{uint8} array, \texttt{flat\_ss}.
+    \item An auxiliary \texttt{ss\_offsets} array stores the starting integer index of each level.
+    \item Accessing pixel $(x,y)$ at level $l$ becomes a direct offset calculation:
+    \begin{equation*}
+        \text{index} = \text{offset}[l] + (x \cdot \text{width}_l + y) // 8
+    \end{equation*}
+\end{itemize}
+This layout maximises CPU cache locality, as checking a parent cell often brings the associated child cells into the cache line automatically.
+
+\subsection{Static Chained Spatial Hash (Off-Lattice)}
+In the continuous model, finding the nearest neighbour is the bottleneck. Standard implementations (e.g., \texttt{fastDLA.cpp}) typically use an array of C++ vectors (\texttt{std::vector<int> grid[M]}), where each grid cell grows dynamically as particles enter it.
+
+\textbf{Implementation Difference:} To avoid dynamic memory allocation inside the hot loop (which is not supported in Numba's \texttt{nopython} mode), we implement a \textbf{Static Linked List} using two fixed-size integer arrays:
+\begin{enumerate}
+    \item \texttt{grid\_head[cell\_id]}: Stores the index of the \textit{first} particle in the cell. Initialised to -1.
+    \item \texttt{particle\_next[particle\_id]}: Stores the index of the \textit{next} particle in the chain.
+\end{enumerate}
+Insertion is an $\mathcal{O}(1)$ "push-front" operation that requires no memory resizing:
+
+\begin{algorithm}[H]
+\caption{Static Linked List Insertion}
+\SetKwFunction{FAdd}{AddParticle}
+\SetKwProg{Fn}{Function}{:}{}
+\Fn{\FAdd{$p, idx$}}{
+    $cell \gets \text{GetCellIndex}(p)$\;
+    $\texttt{particle\_next}[idx] \gets \texttt{grid\_head}[cell]$ \tcp*{Point to old head}
+    $\texttt{grid\_head}[cell] \gets idx$ \tcp*{Become new head}
+}
+\end{algorithm}
+
+\section{Hierarchical Leap-Frogging}
+Both models use a hierarchical grid to determine the maximum safe step size, but they employ different search strategies optimised for their respective data structures.
+
+\subsection{Top-Down Linear Scan (Lattice)}
+In the lattice model, the walker needs to find the largest empty square centered at its location.
+Our routine \texttt{\_diffuse\_variable\_flat} performs a linear scan from the coarsest level down to the finest.
+\begin{itemize}
+    \item It checks the $3 \times 3$ neighbourhood at level $L_{max}$.
+    \item If occupied, it descends to $L_{max}-1$, and so on.
+    \item The first level with an empty neighbourhood defines the step size.
+\end{itemize}
+This is optimised for "deep" jumps where the walker is far from the cluster.
+
+\subsection{Binary Search (Off-Lattice)}
+In the continuous model, the hierarchy depth can be much larger. Our routine \texttt{find\_best\_layer} employs a **Binary Search** over the layers.
+\begin{itemize}
+    \item We query the hierarchy at $l_{mid}$.
+    \item If the $3 \times 3$ neighbourhood is empty, we know the safe size is at least $l_{mid}$, so we search the upper half $[l_{mid}, l_{high}]$.
+    \item Otherwise, we search the lower half.
+\end{itemize}
+This reduces the complexity of finding the step size from $\mathcal{O}(L)$ to $\mathcal{O}(\log L)$.
+
+\section{Rejection Sampling Implementation}
+Several probability distributions required for the simulation (the Fuzzy Annulus and the Walk-to-Line) do not have easily invertible Cumulative Distribution Functions (CDFs). We therefore employ Rejection Sampling.
+Given a target density $f(x)$ and an envelope density $g(x)$ such that $f(x) \le M g(x)$, we sample $X \sim g(x)$ and accept it with probability $\frac{f(X)}{M g(X)}$.
+
+\subsection{Case 1: The Fuzzy Annulus}
+To eliminate lattice aliasing, we launch particles from a radial distribution proportional to the Kaiser-Bessel function $I_0$.
+\begin{itemize}
+    \item \textbf{Target $f(x)$:} $I_0(\beta \sqrt{1-x^2})$.
+    \item \textbf{Envelope $g(x)$:} A Gaussian distribution $\mathcal{N}(0, \sigma^2)$ that strictly bounds $I_0$.
+\end{itemize}
+We sample candidate radii from the Gaussian (using standard library functions) and reject them based on the Bessel weights.
+
+\subsection{Case 2: Walk-to-Line}
+When a walker projects onto the bounding box face, we must sample the exit position on the line $y=0$.
+\begin{itemize}
+    \item \textbf{Target $f(x)$:} The discrete flux calculated via the Method of Images ($P_{lattice} \propto u(x, 1) - u(x, -1)$).
+    \item \textbf{Envelope $g(x)$:} The Cauchy distribution (the solution for continuous Brownian motion).
+\end{itemize}
+Since the continuous flux is always slightly higher than the discrete flux (due to the sub-harmonicity of the discrete kernel), the Cauchy distribution serves as a valid envelope.
+
+\section{Walker's Alias Method}
+\label{app:alias_method}
+For the "Walk-to-Square" algorithm, we must sample from a non-uniform discrete distribution over the boundary of a square. A standard inverse-CDF search would take $\mathcal{O}(\log N)$ time (where $N$ is the number of boundary points). To achieve $\mathcal{O}(1)$ sampling, we implement **Walker's Alias Method**.
+
+This method redistributes the probability mass of the discrete distribution into $N$ "buckets". Each bucket contains probability mass for exactly two outcomes: the index $i$ itself, and an "alias" index $K_i$.
+
+\textbf{Implementation:}
+We pre-compute two tables for every square size $L=2^k$:
+\begin{itemize}
+    \item \textbf{Prob Table ($U_i$):} A threshold probability.
+    \item \textbf{Alias Table ($K_i$):} The alternate index.
+\end{itemize}
+
+\begin{algorithm}[H]
+\caption{Alias Sampling (Constant Time)}
+\SetKwFunction{FSample}{SampleAlias}
+\SetKwProg{Fn}{Function}{:}{}
+\Fn{\FSample{$U, K$}}{
+    $i \gets \text{RandomInteger}(0, N-1)$ \tcp*{Pick a bucket}
+    $y \gets \text{RandomFloat}(0, 1)$ \tcp*{Biased coin flip}
+    \eIf{$y < U[i]$}{
+        \KwRet $i$\;
+    }{
+        \KwRet $K[i]$\;
+    }
+}
+\end{algorithm}
+This allows us to determine the exact exit site on the square boundary in constant time, regardless of whether the square is $4\times4$ or $4096\times4096$.
+
+\section{Numerical Approximations}
+\subsection{Custom Bessel Functions}
+The Kaiser-Bessel launching distribution requires the Modified Bessel Function of the first kind, $I_0(x)$.
+\textbf{Implementation Difference:} The standard Python implementation, \texttt{scipy.special.i0}, is not supported in Numba's \texttt{nopython} mode (as it links to C Fortran libraries not visible to the JIT compiler).
+We therefore implemented the polynomial approximation from \textit{Abramowitz \& Stegun} (Eq. 9.8.1) directly in Python/Numba. This ensures that the launching bias correction is applied efficiently without breaking the JIT compilation chain or requiring callbacks to the Python interpreter.
 % --- SPECIAL REQUIREMENT: LATEX TOOLKIT ---
 \chapter{Reference: LaTeX Structure Examples}
 \label{ch:toolkit}

@@ -155,25 +155,30 @@
 \newlabel{sec:aggregation}{{3.5}{24}{Aggregation}{section.3.5}{}}
 \newlabel{sec:aggregation@cref}{{[section][5][3]3.5}{[1][24][]24}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.5.1}On-Lattice: Sticky Boundary}{24}{subsection.3.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5.2}Off-Lattice: Analytic Termination}{24}{subsection.3.5.2}\protected@file@percent }
-\citation{Menshutin2011}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5.2}Off-Lattice: Exact Adhering}{24}{subsection.3.5.2}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces The conformal mapping sequence for exact collision. The physical domain (1), formed by the intersection of the safe region and the target exterior, is centred (2), mapped to an infinite wedge (3), and finally opened to the upper half-plane (4) where the exit position is sampled.}}{25}{figure.caption.3}\protected@file@percent }
 \newlabel{fig:conformal_collision}{{3.1}{25}{The conformal mapping sequence for exact collision. The physical domain (1), formed by the intersection of the safe region and the target exterior, is centred (2), mapped to an infinite wedge (3), and finally opened to the upper half-plane (4) where the exit position is sampled}{figure.caption.3}{}}
-\newlabel{fig:conformal_collision@cref}{{[figure][1][3]3.1}{[1][25][]25}}
-\@writefile{toc}{\contentsline {section}{\numberline {3.6}The Hybrid Model}{25}{section.3.6}\protected@file@percent }
-\newlabel{sec:hybrid_model}{{3.6}{25}{The Hybrid Model}{section.3.6}{}}
-\newlabel{sec:hybrid_model@cref}{{[section][6][3]3.6}{[1][25][]25}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6.1}Motivation and Design}{25}{subsection.3.6.1}\protected@file@percent }
+\newlabel{fig:conformal_collision@cref}{{[figure][1][3]3.1}{[1][24][]25}}
+\citation{Menshutin2011}
+\citation{Meakin1987}
+\citation{Kesten1987_2}
+\@writefile{toc}{\contentsline {section}{\numberline {3.6}The Hybrid Model}{26}{section.3.6}\protected@file@percent }
+\newlabel{sec:hybrid_model}{{3.6}{26}{The Hybrid Model}{section.3.6}{}}
+\newlabel{sec:hybrid_model@cref}{{[section][6][3]3.6}{[1][26][]26}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6.1}Motivation and Design}{26}{subsection.3.6.1}\protected@file@percent }
 \bibstyle{unsrtnat}
 \bibdata{references}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6.2}Implementation}{26}{subsection.3.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6.2}Implementation}{27}{subsection.3.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3.2}{\ignorespaces The angular window for hybrid aggregation. If a walker $P$ collides with particle $Q$ within the angle $|\phi | < \pi /4$ (shaded region), it is snapped to the nearest lattice slot $N$. We can assume $N$ is empty because if it were occupied, its own collision shell would have intercepted the walker before it could reach $Q$ within this specific angle.}}{27}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:snapping_window}{{3.2}{27}{The angular window for hybrid aggregation. If a walker $P$ collides with particle $Q$ within the angle $|\phi | < \pi /4$ (shaded region), it is snapped to the nearest lattice slot $N$. We can assume $N$ is empty because if it were occupied, its own collision shell would have intercepted the walker before it could reach $Q$ within this specific angle}{figure.caption.4}{}}
+\newlabel{fig:snapping_window@cref}{{[figure][2][3]3.2}{[1][27][]27}}
 \bibcite{witten1981}{{1}{1981}{{Witten and Sander}}{{}}}
 \bibcite{Matsushita1984}{{2}{1984}{{Matsushita et~al.}}{{}}}
 \bibcite{BenJacob1994}{{3}{1994}{{Ben-Jacob et~al.}}{{}}}
 \bibcite{Paterson1984}{{4}{1984}{{Paterson}}{{}}}
 \bibcite{Lawler2010}{{5}{2010}{{Lawler and Limic}}{{}}}
 \bibcite{Meakin1983}{{6}{1983}{{Meakin}}{{}}}
-\bibcite{Kesten1987}{{7}{1987}{{Kesten}}{{}}}
+\bibcite{Kesten1987}{{7}{1987{}}{{Kesten}}{{}}}
 \bibcite{Grebenkov2017}{{8}{2017}{{Grebenkov and Beliaev}}{{}}}
 \bibcite{Shmyrov2019}{{9}{2019}{{Shmyrov et~al.}}{{Shmyrov, Shmyrova, and Gerasimov}}}
 \bibcite{Menshutin2011}{{10}{2011}{{Menshutin and Shchur}}{{}}}
@@ -186,48 +191,68 @@
 \bibcite{Bell2019}{{17}{2019}{{Bell}}{{}}}
 \bibcite{kaiser1966}{{18}{1966}{{Kaiser}}{{}}}
 \bibcite{menshutin2006}{{19}{2006}{{Menshutin and Shchur}}{{}}}
-\@writefile{toc}{\contentsline {chapter}{\numberline {A}Algorithmic Details and Optimizations}{29}{appendix.A}\protected@file@percent }
+\bibcite{Meakin1987}{{20}{1987}{{Meakin}}{{}}}
+\bibcite{Kesten1987_2}{{21}{1987{}}{{Kesten}}{{}}}
+\citation{Loh2014}
+\citation{Bell2019}
+\@writefile{toc}{\contentsline {chapter}{\numberline {A}Implementation Details and Optimisations}{30}{appendix.A}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
 \@writefile{loa}{\addvspace {10\p@ }}
-\newlabel{ch:appendix_algo}{{A}{29}{Algorithmic Details and Optimizations}{appendix.A}{}}
-\newlabel{ch:appendix_algo@cref}{{[appendix][1][2147483647]A}{[1][29][]29}}
-\@writefile{toc}{\contentsline {section}{\numberline {A.1}Lattice Core Optimizations}{29}{section.A.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A.2}Off-Lattice and Hybrid Details}{29}{section.A.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A.3}Data Structures}{29}{section.A.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {B}Reference: LaTeX Structure Examples}{30}{appendix.B}\protected@file@percent }
+\newlabel{app:implementation}{{A}{30}{Implementation Details and Optimisations}{appendix.A}{}}
+\newlabel{app:implementation@cref}{{[appendix][1][2147483647]A}{[1][30][]30}}
+\@writefile{toc}{\contentsline {section}{\numberline {A.1}Computational Framework}{30}{section.A.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.1.1}The Numba JIT Compiler}{30}{subsection.A.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.1.2}Rounding Semantics}{30}{subsection.A.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A.2}Data Structures for Spatial Indexing}{31}{section.A.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.2.1}Flattened Hierarchical Bit-Maps (Lattice)}{31}{subsection.A.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.2.2}Static Chained Spatial Hash (Off-Lattice)}{31}{subsection.A.2.2}\protected@file@percent }
+\@writefile{loa}{\contentsline {algocf}{\numberline {1}{\ignorespaces Static Linked List Insertion}}{31}{algocf.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A.3}Hierarchical Leap-Frogging}{31}{section.A.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.3.1}Top-Down Linear Scan (Lattice)}{32}{subsection.A.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.3.2}Binary Search (Off-Lattice)}{32}{subsection.A.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A.4}Rejection Sampling Implementation}{32}{section.A.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.4.1}Case 1: The Fuzzy Annulus}{32}{subsection.A.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.4.2}Case 2: Walk-to-Line}{33}{subsection.A.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A.5}Walker's Alias Method}{33}{section.A.5}\protected@file@percent }
+\newlabel{app:alias_method}{{A.5}{33}{Walker's Alias Method}{section.A.5}{}}
+\newlabel{app:alias_method@cref}{{[subappendix][5][2147483647,1]A.5}{[1][33][]33}}
+\@writefile{loa}{\contentsline {algocf}{\numberline {2}{\ignorespaces Alias Sampling (Constant Time)}}{33}{algocf.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A.6}Numerical Approximations}{33}{section.A.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.6.1}Custom Bessel Functions}{33}{subsection.A.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {B}Reference: LaTeX Structure Examples}{35}{appendix.B}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
 \@writefile{loa}{\addvspace {10\p@ }}
-\newlabel{ch:toolkit}{{B}{30}{Reference: LaTeX Structure Examples}{appendix.B}{}}
-\newlabel{ch:toolkit@cref}{{[appendix][2][2147483647]B}{[1][30][]30}}
-\@writefile{toc}{\contentsline {section}{\numberline {B.1}Aligned Equations}{30}{section.B.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {B.2}Floats}{30}{section.B.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {B.2.1}Single Figure}{30}{subsection.B.2.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {B.1}{\ignorespaces A realization of 2D Brownian motion.}}{30}{figure.caption.5}\protected@file@percent }
-\newlabel{fig:brownian}{{B.1}{30}{A realization of 2D Brownian motion}{figure.caption.5}{}}
-\newlabel{fig:brownian@cref}{{[figure][1][2147483647,2]B.1}{[1][30][]30}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {B.2.2}Side-by-Side Figures (Subfloats)}{30}{subsection.B.2.2}\protected@file@percent }
-\newlabel{fig:lattice}{{B.2a}{31}{On-Lattice DLA}{figure.caption.6}{}}
-\newlabel{fig:lattice@cref}{{[subfigure][1][2147483647,2,2]B.2a}{[1][30][]31}}
-\newlabel{sub@fig:lattice}{{a}{31}{On-Lattice DLA}{figure.caption.6}{}}
-\newlabel{sub@fig:lattice@cref}{{[subfigure][1][2147483647,2,2]B.2a}{[1][30][]31}}
-\newlabel{fig:offlattice}{{B.2b}{31}{Off-Lattice DLA}{figure.caption.6}{}}
-\newlabel{fig:offlattice@cref}{{[subfigure][2][2147483647,2,2]B.2b}{[1][30][]31}}
-\newlabel{sub@fig:offlattice}{{b}{31}{Off-Lattice DLA}{figure.caption.6}{}}
-\newlabel{sub@fig:offlattice@cref}{{[subfigure][2][2147483647,2,2]B.2b}{[1][30][]31}}
-\@writefile{lof}{\contentsline {figure}{\numberline {B.2}{\ignorespaces Comparison of cluster morphology between lattice and continuum models.}}{31}{figure.caption.6}\protected@file@percent }
-\newlabel{fig:comparison}{{B.2}{31}{Comparison of cluster morphology between lattice and continuum models}{figure.caption.6}{}}
-\newlabel{fig:comparison@cref}{{[figure][2][2147483647,2]B.2}{[1][30][]31}}
-\@writefile{lof}{\contentsline {figure}{\numberline {B.3}{\ignorespaces Schematic of the DLA growth process.}}{31}{figure.caption.7}\protected@file@percent }
-\newlabel{fig:dla_schematic}{{B.3}{31}{Schematic of the DLA growth process}{figure.caption.7}{}}
-\newlabel{fig:dla_schematic@cref}{{[figure][3][2147483647,2]B.3}{[1][30][]31}}
-\@writefile{toc}{\contentsline {section}{\numberline {B.3}Algorithms}{32}{section.B.3}\protected@file@percent }
-\@writefile{loa}{\contentsline {algocf}{\numberline {1}{\ignorespaces Generalised DLA Simulation (Single Particle)}}{32}{algocf.1}\protected@file@percent }
-\@writefile{loa}{\contentsline {algocf}{\numberline {2}{\ignorespaces Basic Random Walk Simulation}}{32}{algocf.2}\protected@file@percent }
-\newlabel{alg:random_walk}{{2}{32}{Algorithms}{algocf.2}{}}
-\newlabel{alg:random_walk@cref}{{[algorithm][2][2147483647]2}{[1][32][]32}}
-\@writefile{toc}{\contentsline {section}{\numberline {B.4}Theorems}{32}{section.B.4}\protected@file@percent }
+\newlabel{ch:toolkit}{{B}{35}{Reference: LaTeX Structure Examples}{appendix.B}{}}
+\newlabel{ch:toolkit@cref}{{[appendix][2][2147483647]B}{[1][35][]35}}
+\@writefile{toc}{\contentsline {section}{\numberline {B.1}Aligned Equations}{35}{section.B.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {B.2}Floats}{35}{section.B.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.2.1}Single Figure}{35}{subsection.B.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {B.1}{\ignorespaces A realization of 2D Brownian motion.}}{35}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:brownian}{{B.1}{35}{A realization of 2D Brownian motion}{figure.caption.6}{}}
+\newlabel{fig:brownian@cref}{{[figure][1][2147483647,2]B.1}{[1][35][]35}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.2.2}Side-by-Side Figures (Subfloats)}{35}{subsection.B.2.2}\protected@file@percent }
+\newlabel{fig:lattice}{{B.2a}{36}{On-Lattice DLA}{figure.caption.7}{}}
+\newlabel{fig:lattice@cref}{{[subfigure][1][2147483647,2,2]B.2a}{[1][35][]36}}
+\newlabel{sub@fig:lattice}{{a}{36}{On-Lattice DLA}{figure.caption.7}{}}
+\newlabel{sub@fig:lattice@cref}{{[subfigure][1][2147483647,2,2]B.2a}{[1][35][]36}}
+\newlabel{fig:offlattice}{{B.2b}{36}{Off-Lattice DLA}{figure.caption.7}{}}
+\newlabel{fig:offlattice@cref}{{[subfigure][2][2147483647,2,2]B.2b}{[1][35][]36}}
+\newlabel{sub@fig:offlattice}{{b}{36}{Off-Lattice DLA}{figure.caption.7}{}}
+\newlabel{sub@fig:offlattice@cref}{{[subfigure][2][2147483647,2,2]B.2b}{[1][35][]36}}
+\@writefile{lof}{\contentsline {figure}{\numberline {B.2}{\ignorespaces Comparison of cluster morphology between lattice and continuum models.}}{36}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:comparison}{{B.2}{36}{Comparison of cluster morphology between lattice and continuum models}{figure.caption.7}{}}
+\newlabel{fig:comparison@cref}{{[figure][2][2147483647,2]B.2}{[1][35][]36}}
+\@writefile{lof}{\contentsline {figure}{\numberline {B.3}{\ignorespaces Schematic of the DLA growth process.}}{36}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:dla_schematic}{{B.3}{36}{Schematic of the DLA growth process}{figure.caption.8}{}}
+\newlabel{fig:dla_schematic@cref}{{[figure][3][2147483647,2]B.3}{[1][35][]36}}
+\@writefile{toc}{\contentsline {section}{\numberline {B.3}Algorithms}{37}{section.B.3}\protected@file@percent }
+\@writefile{loa}{\contentsline {algocf}{\numberline {3}{\ignorespaces Generalised DLA Simulation (Single Particle)}}{37}{algocf.3}\protected@file@percent }
+\@writefile{loa}{\contentsline {algocf}{\numberline {4}{\ignorespaces Basic Random Walk Simulation}}{37}{algocf.4}\protected@file@percent }
+\newlabel{alg:random_walk}{{4}{37}{Algorithms}{algocf.4}{}}
+\newlabel{alg:random_walk@cref}{{[algorithm][4][2147483647]4}{[1][37][]37}}
+\@writefile{toc}{\contentsline {section}{\numberline {B.4}Theorems}{37}{section.B.4}\protected@file@percent }
 \citation{witten1981}
-\@writefile{toc}{\contentsline {section}{\numberline {B.5}References}{33}{section.B.5}\protected@file@percent }
-\gdef \@abspage@last{34}
+\@writefile{toc}{\contentsline {section}{\numberline {B.5}References}{38}{section.B.5}\protected@file@percent }
+\gdef \@abspage@last{39}

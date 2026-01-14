@@ -1,4 +1,4 @@
-\begin{thebibliography}{19}
+\begin{thebibliography}{21}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -35,10 +35,10 @@ Paul Meakin.
 \newblock Diffusion-controlled cluster formation in 2-6-dimensional space.
 \newblock \emph{Phys. Rev. A}, 27:\penalty0 1495--1507, 1983.
 
-\bibitem[Kesten(1987)]{Kesten1987}
+\bibitem[Kesten(1987{\natexlab{a}})]{Kesten1987}
 Harry Kesten.
 \newblock How long are the arms in {DLA}?
-\newblock \emph{J. Phys. A: Math. Gen.}, 20:\penalty0 L29--L33, 1987.
+\newblock \emph{J. Phys. A: Math. Gen.}, 20:\penalty0 L29--L33, 1987{\natexlab{a}}.
 
 \bibitem[Grebenkov and Beliaev(2017)]{Grebenkov2017}
 D.~S. Grebenkov and D.~Beliaev.
@@ -101,5 +101,15 @@ Anton~Yu Menshutin and Lev~N Shchur.
 \newblock Test of multiscaling in a diffusion-limited-aggregation model using an off-lattice killing-free algorithm.
 \newblock \emph{Physical Review E}, 73\penalty0 (1):\penalty0 011407, 2006.
 \newblock \doi{10.1103/PhysRevE.73.011407}.
+
+\bibitem[Meakin(1987)]{Meakin1987}
+Paul Meakin.
+\newblock Noise-reduced diffusion-limited aggregation.
+\newblock \emph{Physical Review A}, 36\penalty0 (1):\penalty0 332, 1987.
+
+\bibitem[Kesten(1987{\natexlab{b}})]{Kesten1987_2}
+Harry Kesten.
+\newblock Hitting probabilities of random walks on $\mathbb{Z}^d$.
+\newblock \emph{Stochastic Processes and their Applications}, 25:\penalty0 165--184, 1987{\natexlab{b}}.
 
 \end{thebibliography}

@@ -33,19 +33,31 @@
 \contentsline {subsection}{\numberline {3.4.2}On-Lattice: Walk-to-Square}{24}{subsection.3.4.2}%
 \contentsline {section}{\numberline {3.5}Aggregation}{24}{section.3.5}%
 \contentsline {subsection}{\numberline {3.5.1}On-Lattice: Sticky Boundary}{24}{subsection.3.5.1}%
-\contentsline {subsection}{\numberline {3.5.2}Off-Lattice: Analytic Termination}{24}{subsection.3.5.2}%
-\contentsline {section}{\numberline {3.6}The Hybrid Model}{25}{section.3.6}%
-\contentsline {subsection}{\numberline {3.6.1}Motivation and Design}{25}{subsection.3.6.1}%
-\contentsline {subsection}{\numberline {3.6.2}Implementation}{26}{subsection.3.6.2}%
-\contentsline {chapter}{\numberline {A}Algorithmic Details and Optimizations}{29}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Lattice Core Optimizations}{29}{section.A.1}%
-\contentsline {section}{\numberline {A.2}Off-Lattice and Hybrid Details}{29}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Data Structures}{29}{section.A.3}%
-\contentsline {chapter}{\numberline {B}Reference: LaTeX Structure Examples}{30}{appendix.B}%
-\contentsline {section}{\numberline {B.1}Aligned Equations}{30}{section.B.1}%
-\contentsline {section}{\numberline {B.2}Floats}{30}{section.B.2}%
-\contentsline {subsection}{\numberline {B.2.1}Single Figure}{30}{subsection.B.2.1}%
-\contentsline {subsection}{\numberline {B.2.2}Side-by-Side Figures (Subfloats)}{30}{subsection.B.2.2}%
-\contentsline {section}{\numberline {B.3}Algorithms}{32}{section.B.3}%
-\contentsline {section}{\numberline {B.4}Theorems}{32}{section.B.4}%
-\contentsline {section}{\numberline {B.5}References}{33}{section.B.5}%
+\contentsline {subsection}{\numberline {3.5.2}Off-Lattice: Exact Adhering}{24}{subsection.3.5.2}%
+\contentsline {section}{\numberline {3.6}The Hybrid Model}{26}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Motivation and Design}{26}{subsection.3.6.1}%
+\contentsline {subsection}{\numberline {3.6.2}Implementation}{27}{subsection.3.6.2}%
+\contentsline {chapter}{\numberline {A}Implementation Details and Optimisations}{30}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Computational Framework}{30}{section.A.1}%
+\contentsline {subsection}{\numberline {A.1.1}The Numba JIT Compiler}{30}{subsection.A.1.1}%
+\contentsline {subsection}{\numberline {A.1.2}Rounding Semantics}{30}{subsection.A.1.2}%
+\contentsline {section}{\numberline {A.2}Data Structures for Spatial Indexing}{31}{section.A.2}%
+\contentsline {subsection}{\numberline {A.2.1}Flattened Hierarchical Bit-Maps (Lattice)}{31}{subsection.A.2.1}%
+\contentsline {subsection}{\numberline {A.2.2}Static Chained Spatial Hash (Off-Lattice)}{31}{subsection.A.2.2}%
+\contentsline {section}{\numberline {A.3}Hierarchical Leap-Frogging}{31}{section.A.3}%
+\contentsline {subsection}{\numberline {A.3.1}Top-Down Linear Scan (Lattice)}{32}{subsection.A.3.1}%
+\contentsline {subsection}{\numberline {A.3.2}Binary Search (Off-Lattice)}{32}{subsection.A.3.2}%
+\contentsline {section}{\numberline {A.4}Rejection Sampling Implementation}{32}{section.A.4}%
+\contentsline {subsection}{\numberline {A.4.1}Case 1: The Fuzzy Annulus}{32}{subsection.A.4.1}%
+\contentsline {subsection}{\numberline {A.4.2}Case 2: Walk-to-Line}{33}{subsection.A.4.2}%
+\contentsline {section}{\numberline {A.5}Walker's Alias Method}{33}{section.A.5}%
+\contentsline {section}{\numberline {A.6}Numerical Approximations}{33}{section.A.6}%
+\contentsline {subsection}{\numberline {A.6.1}Custom Bessel Functions}{33}{subsection.A.6.1}%
+\contentsline {chapter}{\numberline {B}Reference: LaTeX Structure Examples}{35}{appendix.B}%
+\contentsline {section}{\numberline {B.1}Aligned Equations}{35}{section.B.1}%
+\contentsline {section}{\numberline {B.2}Floats}{35}{section.B.2}%
+\contentsline {subsection}{\numberline {B.2.1}Single Figure}{35}{subsection.B.2.1}%
+\contentsline {subsection}{\numberline {B.2.2}Side-by-Side Figures (Subfloats)}{35}{subsection.B.2.2}%
+\contentsline {section}{\numberline {B.3}Algorithms}{37}{section.B.3}%
+\contentsline {section}{\numberline {B.4}Theorems}{37}{section.B.4}%
+\contentsline {section}{\numberline {B.5}References}{38}{section.B.5}%
