@@ -193,6 +193,7 @@
 \bibcite{menshutin2006}{{19}{2006}{{Menshutin and Shchur}}{{}}}
 \bibcite{Meakin1987}{{20}{1987}{{Meakin}}{{}}}
 \bibcite{Kesten1987_2}{{21}{1987{}}{{Kesten}}{{}}}
+\bibcite{Abramowitz1965}{{22}{1965}{{Abramowitz and Stegun}}{{}}}
 \citation{Loh2014}
 \citation{Bell2019}
 \@writefile{toc}{\contentsline {chapter}{\numberline {A}Implementation Details and Optimisations}{30}{appendix.A}\protected@file@percent }
@@ -204,55 +205,69 @@
 \@writefile{toc}{\contentsline {section}{\numberline {A.1}Computational Framework}{30}{section.A.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {A.1.1}The Numba JIT Compiler}{30}{subsection.A.1.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {A.1.2}Rounding Semantics}{30}{subsection.A.1.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A.2}Data Structures for Spatial Indexing}{31}{section.A.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.2.1}Flattened Hierarchical Bit-Maps (Lattice)}{31}{subsection.A.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.2.2}Static Chained Spatial Hash (Off-Lattice)}{31}{subsection.A.2.2}\protected@file@percent }
-\@writefile{loa}{\contentsline {algocf}{\numberline {1}{\ignorespaces Static Linked List Insertion}}{31}{algocf.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A.3}Hierarchical Leap-Frogging}{31}{section.A.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.3.1}Top-Down Linear Scan (Lattice)}{32}{subsection.A.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.3.2}Binary Search (Off-Lattice)}{32}{subsection.A.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A.4}Rejection Sampling Implementation}{32}{section.A.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.4.1}Case 1: The Fuzzy Annulus}{32}{subsection.A.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.4.2}Case 2: Walk-to-Line}{33}{subsection.A.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A.5}Walker's Alias Method}{33}{section.A.5}\protected@file@percent }
-\newlabel{app:alias_method}{{A.5}{33}{Walker's Alias Method}{section.A.5}{}}
-\newlabel{app:alias_method@cref}{{[subappendix][5][2147483647,1]A.5}{[1][33][]33}}
-\@writefile{loa}{\contentsline {algocf}{\numberline {2}{\ignorespaces Alias Sampling (Constant Time)}}{33}{algocf.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {A.6}Numerical Approximations}{33}{section.A.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.6.1}Custom Bessel Functions}{33}{subsection.A.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {B}Reference: LaTeX Structure Examples}{35}{appendix.B}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A.2}Spatial Indexing and Hierarchical Skipping}{31}{section.A.2}\protected@file@percent }
+\newlabel{app:spatial_indexing}{{A.2}{31}{Spatial Indexing and Hierarchical Skipping}{section.A.2}{}}
+\newlabel{app:spatial_indexing@cref}{{[subappendix][2][2147483647,1]A.2}{[1][31][]31}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.2.1}Lattice: Flattened Bit-Map}{31}{subsection.A.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.2.2}Off-Lattice: Dual-Structure Strategy}{32}{subsection.A.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.2.2.1}1. The Coarse Hierarchy (Skipping)}{32}{subsubsection.A.2.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.2.3}2. The Spatial Hash (Hitting)}{32}{subsection.A.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A.3}Rejection Sampling}{32}{section.A.3}\protected@file@percent }
+\newlabel{app:rejection_sampling}{{A.3}{32}{Rejection Sampling}{section.A.3}{}}
+\newlabel{app:rejection_sampling@cref}{{[subappendix][3][2147483647,1]A.3}{[1][32][]32}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.3.1}Concept and Motivation}{32}{subsection.A.3.1}\protected@file@percent }
+\citation{Loh2014}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.3.2}The Algorithm}{33}{subsection.A.3.2}\protected@file@percent }
+\@writefile{loa}{\contentsline {algocf}{\numberline {1}{\ignorespaces Rejection Sampling}}{33}{algocf.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.3.3}Application 1: The Fuzzy Annulus}{33}{subsection.A.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.3.4}Application 2: Walk-to-Line}{33}{subsection.A.3.4}\protected@file@percent }
+\citation{Abramowitz1965}
+\@writefile{toc}{\contentsline {section}{\numberline {A.4}Walker's Alias Method}{34}{section.A.4}\protected@file@percent }
+\newlabel{app:alias_method}{{A.4}{34}{Walker's Alias Method}{section.A.4}{}}
+\newlabel{app:alias_method@cref}{{[subappendix][4][2147483647,1]A.4}{[1][33][]34}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.4.1}Motivation}{34}{subsection.A.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.4.2}Implementation}{34}{subsection.A.4.2}\protected@file@percent }
+\@writefile{loa}{\contentsline {algocf}{\numberline {2}{\ignorespaces Alias Sampling (Constant Time)}}{34}{algocf.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A.5}Numerical Approximations}{35}{section.A.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.5.1}Custom Bessel Functions}{35}{subsection.A.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A.6}Usability and Data Management}{35}{section.A.6}\protected@file@percent }
+\newlabel{app:usability}{{A.6}{35}{Usability and Data Management}{section.A.6}{}}
+\newlabel{app:usability@cref}{{[subappendix][6][2147483647,1]A.6}{[1][35][]35}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.6.1}Heuristic Grid Sizing}{35}{subsection.A.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.6.2}Standardised Coordinate Output}{35}{subsection.A.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {B}Reference: LaTeX Structure Examples}{37}{appendix.B}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
 \@writefile{loa}{\addvspace {10\p@ }}
-\newlabel{ch:toolkit}{{B}{35}{Reference: LaTeX Structure Examples}{appendix.B}{}}
-\newlabel{ch:toolkit@cref}{{[appendix][2][2147483647]B}{[1][35][]35}}
-\@writefile{toc}{\contentsline {section}{\numberline {B.1}Aligned Equations}{35}{section.B.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {B.2}Floats}{35}{section.B.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {B.2.1}Single Figure}{35}{subsection.B.2.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {B.1}{\ignorespaces A realization of 2D Brownian motion.}}{35}{figure.caption.6}\protected@file@percent }
-\newlabel{fig:brownian}{{B.1}{35}{A realization of 2D Brownian motion}{figure.caption.6}{}}
-\newlabel{fig:brownian@cref}{{[figure][1][2147483647,2]B.1}{[1][35][]35}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {B.2.2}Side-by-Side Figures (Subfloats)}{35}{subsection.B.2.2}\protected@file@percent }
-\newlabel{fig:lattice}{{B.2a}{36}{On-Lattice DLA}{figure.caption.7}{}}
-\newlabel{fig:lattice@cref}{{[subfigure][1][2147483647,2,2]B.2a}{[1][35][]36}}
-\newlabel{sub@fig:lattice}{{a}{36}{On-Lattice DLA}{figure.caption.7}{}}
-\newlabel{sub@fig:lattice@cref}{{[subfigure][1][2147483647,2,2]B.2a}{[1][35][]36}}
-\newlabel{fig:offlattice}{{B.2b}{36}{Off-Lattice DLA}{figure.caption.7}{}}
-\newlabel{fig:offlattice@cref}{{[subfigure][2][2147483647,2,2]B.2b}{[1][35][]36}}
-\newlabel{sub@fig:offlattice}{{b}{36}{Off-Lattice DLA}{figure.caption.7}{}}
-\newlabel{sub@fig:offlattice@cref}{{[subfigure][2][2147483647,2,2]B.2b}{[1][35][]36}}
-\@writefile{lof}{\contentsline {figure}{\numberline {B.2}{\ignorespaces Comparison of cluster morphology between lattice and continuum models.}}{36}{figure.caption.7}\protected@file@percent }
-\newlabel{fig:comparison}{{B.2}{36}{Comparison of cluster morphology between lattice and continuum models}{figure.caption.7}{}}
-\newlabel{fig:comparison@cref}{{[figure][2][2147483647,2]B.2}{[1][35][]36}}
-\@writefile{lof}{\contentsline {figure}{\numberline {B.3}{\ignorespaces Schematic of the DLA growth process.}}{36}{figure.caption.8}\protected@file@percent }
-\newlabel{fig:dla_schematic}{{B.3}{36}{Schematic of the DLA growth process}{figure.caption.8}{}}
-\newlabel{fig:dla_schematic@cref}{{[figure][3][2147483647,2]B.3}{[1][35][]36}}
-\@writefile{toc}{\contentsline {section}{\numberline {B.3}Algorithms}{37}{section.B.3}\protected@file@percent }
-\@writefile{loa}{\contentsline {algocf}{\numberline {3}{\ignorespaces Generalised DLA Simulation (Single Particle)}}{37}{algocf.3}\protected@file@percent }
-\@writefile{loa}{\contentsline {algocf}{\numberline {4}{\ignorespaces Basic Random Walk Simulation}}{37}{algocf.4}\protected@file@percent }
-\newlabel{alg:random_walk}{{4}{37}{Algorithms}{algocf.4}{}}
-\newlabel{alg:random_walk@cref}{{[algorithm][4][2147483647]4}{[1][37][]37}}
-\@writefile{toc}{\contentsline {section}{\numberline {B.4}Theorems}{37}{section.B.4}\protected@file@percent }
+\newlabel{ch:toolkit}{{B}{37}{Reference: LaTeX Structure Examples}{appendix.B}{}}
+\newlabel{ch:toolkit@cref}{{[appendix][2][2147483647]B}{[1][37][]37}}
+\@writefile{toc}{\contentsline {section}{\numberline {B.1}Aligned Equations}{37}{section.B.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {B.2}Floats}{37}{section.B.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.2.1}Single Figure}{37}{subsection.B.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {B.1}{\ignorespaces A realization of 2D Brownian motion.}}{37}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:brownian}{{B.1}{37}{A realization of 2D Brownian motion}{figure.caption.6}{}}
+\newlabel{fig:brownian@cref}{{[figure][1][2147483647,2]B.1}{[1][37][]37}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.2.2}Side-by-Side Figures (Subfloats)}{37}{subsection.B.2.2}\protected@file@percent }
+\newlabel{fig:lattice}{{B.2a}{38}{On-Lattice DLA}{figure.caption.7}{}}
+\newlabel{fig:lattice@cref}{{[subfigure][1][2147483647,2,2]B.2a}{[1][37][]38}}
+\newlabel{sub@fig:lattice}{{a}{38}{On-Lattice DLA}{figure.caption.7}{}}
+\newlabel{sub@fig:lattice@cref}{{[subfigure][1][2147483647,2,2]B.2a}{[1][37][]38}}
+\newlabel{fig:offlattice}{{B.2b}{38}{Off-Lattice DLA}{figure.caption.7}{}}
+\newlabel{fig:offlattice@cref}{{[subfigure][2][2147483647,2,2]B.2b}{[1][37][]38}}
+\newlabel{sub@fig:offlattice}{{b}{38}{Off-Lattice DLA}{figure.caption.7}{}}
+\newlabel{sub@fig:offlattice@cref}{{[subfigure][2][2147483647,2,2]B.2b}{[1][37][]38}}
+\@writefile{lof}{\contentsline {figure}{\numberline {B.2}{\ignorespaces Comparison of cluster morphology between lattice and continuum models.}}{38}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:comparison}{{B.2}{38}{Comparison of cluster morphology between lattice and continuum models}{figure.caption.7}{}}
+\newlabel{fig:comparison@cref}{{[figure][2][2147483647,2]B.2}{[1][37][]38}}
+\@writefile{lof}{\contentsline {figure}{\numberline {B.3}{\ignorespaces Schematic of the DLA growth process.}}{38}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:dla_schematic}{{B.3}{38}{Schematic of the DLA growth process}{figure.caption.8}{}}
+\newlabel{fig:dla_schematic@cref}{{[figure][3][2147483647,2]B.3}{[1][37][]38}}
+\@writefile{toc}{\contentsline {section}{\numberline {B.3}Algorithms}{39}{section.B.3}\protected@file@percent }
+\@writefile{loa}{\contentsline {algocf}{\numberline {3}{\ignorespaces Generalised DLA Simulation (Single Particle)}}{39}{algocf.3}\protected@file@percent }
+\@writefile{loa}{\contentsline {algocf}{\numberline {4}{\ignorespaces Basic Random Walk Simulation}}{39}{algocf.4}\protected@file@percent }
+\newlabel{alg:random_walk}{{4}{39}{Algorithms}{algocf.4}{}}
+\newlabel{alg:random_walk@cref}{{[algorithm][4][2147483647]4}{[1][39][]39}}
+\@writefile{toc}{\contentsline {section}{\numberline {B.4}Theorems}{39}{section.B.4}\protected@file@percent }
 \citation{witten1981}
-\@writefile{toc}{\contentsline {section}{\numberline {B.5}References}{38}{section.B.5}\protected@file@percent }
-\gdef \@abspage@last{39}
+\@writefile{toc}{\contentsline {section}{\numberline {B.5}References}{40}{section.B.5}\protected@file@percent }
+\gdef \@abspage@last{41}

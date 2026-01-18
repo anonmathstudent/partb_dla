@@ -1,4 +1,4 @@
-\begin{thebibliography}{21}
+\begin{thebibliography}{22}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -111,5 +111,11 @@ Paul Meakin.
 Harry Kesten.
 \newblock Hitting probabilities of random walks on $\mathbb{Z}^d$.
 \newblock \emph{Stochastic Processes and their Applications}, 25:\penalty0 165--184, 1987{\natexlab{b}}.
+
+\bibitem[Abramowitz and Stegun(1965)]{Abramowitz1965}
+Milton Abramowitz and Irene~A. Stegun, editors.
+\newblock \emph{Handbook of Mathematical Functions: With Formulas, Graphs, and Mathematical Tables}.
+\newblock Dover Publications, New York, 1965.
+\newblock Eq. 9.8.1.
 
 \end{thebibliography}

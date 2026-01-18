@@ -1,14 +1,14 @@
 # Fdb version 4
-["bibtex dissertation"] 1768407719.49479 "dissertation.aux" "dissertation.bbl" "dissertation" 1768407733.65858 0
-  "./references.bib" 1768402084.12495 5159 244363bae0208f18a5eda0dc4919b566 ""
+["bibtex dissertation"] 1768507534.89871 "dissertation.aux" "dissertation.bbl" "dissertation" 1768507929.6569 0
+  "./references.bib" 1768507418.11564 5430 5680ee99bb607896cdf3336853ac54ad ""
   "/usr/local/texlive/2024/texmf-dist/bibtex/bst/natbib/unsrtnat.bst" 1233624470 24550 a41a6405f4de768c43e871d9fbce2bc8 ""
-  "dissertation.aux" 1768407731.93047 22188 e33752d72e0727eafe597222775bf303 "pdflatex"
+  "dissertation.aux" 1768507928.29248 23595 733e053b61086b9a974d548e31e12ea4 "pdflatex"
   (generated)
   "dissertation.bbl"
   "dissertation.blg"
   (rewritten before read)
-["pdflatex"] 1768407720.03236 "/Users/ramsaydavis/dla/latex/dissertation.tex" "dissertation.pdf" "dissertation" 1768407733.65892 0
-  "/Users/ramsaydavis/dla/latex/dissertation.tex" 1768407700.40061 93789 2e8bd94a10a6e9dd56018af828a2cb1c ""
+["pdflatex"] 1768507919.15126 "/Users/ramsaydavis/dla/latex/dissertation.tex" "dissertation.pdf" "dissertation" 1768507929.65732 0
+  "/Users/ramsaydavis/dla/latex/dissertation.tex" 1768507918.33924 100298 d1241e470dc1827d58beca76ccdc78f3 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc" 1136849721 2971 def0b6c1f0b107b3b936def894055589 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -277,11 +277,11 @@
   "/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1740675583.32708 5467645 128b85b7cde5f5edc5cb7f1dd7ff8736 ""
   "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1740675457 8221422 02ba7606d53eeddb5fed6abede84bcfd ""
   "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
-  "dissertation.aux" 1768407731.93047 22188 e33752d72e0727eafe597222775bf303 "pdflatex"
-  "dissertation.bbl" 1768407720.01273 4802 ffe5403f67ff404feddd3eadbfcc5314 "bibtex dissertation"
-  "dissertation.out" 1768407731.94096 11058 715f139c236be2dddd4345d96c86d521 "pdflatex"
-  "dissertation.tex" 1768407700.40061 93789 2e8bd94a10a6e9dd56018af828a2cb1c ""
-  "dissertation.toc" 1768407731.94252 5649 bcdd34be456f3a24042d2c69e4eaab8f "pdflatex"
+  "dissertation.aux" 1768507928.29248 23595 733e053b61086b9a974d548e31e12ea4 "pdflatex"
+  "dissertation.bbl" 1768507535.215 5073 320a7d99dda9e19009b777674334e5cc "bibtex dissertation"
+  "dissertation.out" 1768507928.29712 11712 836392bf00f212ba7051485c717c320a "pdflatex"
+  "dissertation.tex" 1768507918.33924 100298 d1241e470dc1827d58beca76ccdc78f3 ""
+  "dissertation.toc" 1768507928.29882 6189 4786b49da2102357de851bee9f8000b7 "pdflatex"
   "images/off_lattice_intro.png" 1767360384.97696 354912 e33d2aab940cde8037da9c35a44b43a6 ""
   "images/on_lattice_intro.png" 1767360363.42824 212561 e317e9087bf67c83c5533b6a6bad9ea1 ""
   "images/zinc_intro.png" 1767360611.18283 77917 0d1b755f0bff3133e947f2fc321129bd ""

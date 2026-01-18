@@ -1255,136 +1255,193 @@ This implies that if $N$ were occupied, the walker would have intersected $N$'s 
 \chapter{Implementation Details and Optimisations}
 \label{app:implementation}
 
-While \cref{ch:algorithms} outlines the mathematical principles of the algorithms, the practical implementation requires specific data structures and optimisations to achieve the necessary scale ($N=10^7$ particles). This appendix details the computational architecture of the simulation code, written in Python and accelerated using the Numba JIT (Just-In-Time) compiler.
+While \cref{ch:algorithms} outlines the mathematical principles of the algorithms, the practical implementation requires specific data structures and optimisations to achieve the necessary scale. This appendix details the computational architecture of the simulation code, written in Python and accelerated using the Numba JIT (Just-In-Time) compiler.
 
-Throughout this appendix, we highlight where our implementation diverges from the standard reference codes (e.g., \texttt{koh\_lattice.cc} \cite{Loh2014} and \texttt{fastDLA.cpp} \cite{Bell2019}) to improve cache locality, memory stability, or cross-language reproducibility.
+The lattice and off-lattice versions of the algorithm are versions of code created by Loh \cite{Loh2014} and Bell \cite{Bell2019} respectively. However, these were originally done in C and C++, and in translating to Python our implementation diverges both to account for differences in the language structure, and to account for the limitations of our computer (a 2017 Macbook with 8GB RAM). We will highlight some of these changes here, as well as explain some of the more programming-related concepts and structures behind the algorithms.
 
+The full source code for all models and analysis scripts is available at \url{https://github.com/RamsayDavis/dla}.
 \section{Computational Framework}
 
 \subsection{The Numba JIT Compiler}
-The simulations are implemented in Python to leverage its high-level data analysis capabilities, but the core numerical routines are decorated with \texttt{@njit(fastmath=True)}. This compiles the Python bytecode into optimised LLVM machine code at runtime, allowing for performance parity with C++ while maintaining a modular, functional codebase.
+The simulations are implemented in Python to leverage its flexibility, to consistent with the analysis section of this project, and as it is the language we are most comfortable with. The core numerical routines are decorated with \texttt{@njit(fastmath=True)}. This compiles the Python bytecode into optimised LLVM machine code at runtime, allowing for performance parity with C++ while maintaining a modular, functional codebase. Our code is likely somewhat slower than the original implementations, but this mitigates this difference, and allows us to generate clusters of size $10^7$ particles in about 10 to 15 minutes on our CPU.
 
 \subsection{Rounding Semantics}
-A critical and often overlooked detail in discrete stochastic simulations is the rounding behaviour of floating-point coordinates.
+One minor but important detail to consider in stochasti simulations is the rounding behaviour of floating-point co-ordinates, particularly in the lattice and hybrid models where the output is in integers.
 \begin{itemize}
-    \item \textbf{Standard Python (IEEE 754):} Python 3 employs "Banker's Rounding" (round half to even). For example, \texttt{round(2.5) -> 2} and \texttt{round(3.5) -> 4}. This introduces a subtle statistical bias in random walks, as even coordinates are slightly favoured over odd ones.
-    \item \textbf{Standard Lattice DLA:} The reference C++ implementations use the standard library \texttt{round()} function, which rounds half away from zero (e.g., \texttt{round(2.5) -> 3}).
+    \item Python: Python 3 employs "Banker's Rounding" (round half to even). For example, \texttt{round(2.5) -> 2} and \texttt{round(3.5) -> 4}. This introduces a subtle statistical bias in random walks, as even coordinates are slightly favoured over odd ones.
+    \item C and C++: The reference C++ implementations use the standard library \texttt{round()} function, which rounds half away from zero (e.g., \texttt{round(2.5) -> 3}).
 \end{itemize}
-\textbf{Implementation Difference:} To ensure our random walks match the theoretical lattice statistics and the reference datasets exactly, we implemented a custom kernel \texttt{\_round\_cpp(x)} that explicitly emulates the C++ behaviour.
+To ensure our random walks match the theoretical lattice statistics and the reference datasets exactly, we implemented a custom kernel \texttt{\_round\_cpp(x)} that explicitly emulates the C++ behaviour in Python.
 
-\section{Data Structures for Spatial Indexing}
+\section{Spatial Indexing and Hierarchical Skipping}
+\label{app:spatial_indexing}
 
-\subsection{Flattened Hierarchical Bit-Maps (Lattice)}
-To efficiently query the occupancy of the lattice and its coarse-grained parents, the standard approach (used in \texttt{koh\_lattice.cc}) is to use a "jagged array" or a pointer-to-pointer structure (e.g., \texttt{byte **ss}), where each hierarchy level is a separate memory block. This can lead to cache misses when traversing levels.
+In the diffusion steps of all versions of DLA, we require the distance from the walker to the nearest particle in the cluster, in order to work out the maximum allowed step-size. Additionally it is needed in the off-lattice algorithm for the adhesion step, since we need the two nearest particles. 
 
-\textbf{Implementation Difference:} We instead employ a \textbf{Flattened 1D Array}.
-\begin{itemize}
-    \item All $L$ levels of the hierarchy are packed into a single contiguous \texttt{uint8} array, \texttt{flat\_ss}.
-    \item An auxiliary \texttt{ss\_offsets} array stores the starting integer index of each level.
-    \item Accessing pixel $(x,y)$ at level $l$ becomes a direct offset calculation:
-    \begin{equation*}
-        \text{index} = \text{offset}[l] + (x \cdot \text{width}_l + y) // 8
-    \end{equation*}
-\end{itemize}
-This layout maximises CPU cache locality, as checking a parent cell often brings the associated child cells into the cache line automatically.
+To do this efficiently, we employ a Hierarchical Map. The exact implementation differs between the two models, but the essential idea is we overlay different sized grids over the cluster and surrounding area, and record whether the cells in each grid are occupied or not. By traversing the different grid layers, we can quickly work out these distances.  
 
-\subsection{Static Chained Spatial Hash (Off-Lattice)}
-In the continuous model, finding the nearest neighbour is the bottleneck. Standard implementations (e.g., \texttt{fastDLA.cpp}) typically use an array of C++ vectors (\texttt{std::vector<int> grid[M]}), where each grid cell grows dynamically as particles enter it.
+\subsection{Lattice: Flattened Bit-Map}
+\textbf{Data Structure:} 
+In the discrete model, the hierarchy must have enough layers to view individual lattice sites at the finest level. Loh's code uses a 2D array of pointers, one per hierarchy level. However for large grids this can be problematic in Python, with memory fragmentation and cache locality issues.
 
-\textbf{Implementation Difference:} To avoid dynamic memory allocation inside the hot loop (which is not supported in Numba's \texttt{nopython} mode), we implement a \textbf{Static Linked List} using two fixed-size integer arrays:
+We instead implement a Flattened 1D Bit-Map. All levels are packed into a single contiguous \texttt{uint8} array, \texttt{flat\_ss}, indexed via an offset table. We track occupancy at the bit level (1 bit per site).
+
+
+\noindent \textbf{Linear Search:}
+We utilise pre-computed Green's function tables for jumps of radius $2^0$ to $2^8$ (corresponding to the squares of sizes 2 to 512).
+The routine \texttt{\_diffuse\_variable\_flat} performs a linear scan starting from the coarsest useful level (pixel size $\approx 256$) down to the finest:
 \begin{enumerate}
-    \item \texttt{grid\_head[cell\_id]}: Stores the index of the \textit{first} particle in the cell. Initialised to -1.
-    \item \texttt{particle\_next[particle\_id]}: Stores the index of the \textit{next} particle in the chain.
+    \item Start: Check level $L_{start} = \max(2, L_{max} - 9)$.
+    \item Check: If the $3 \times 3$ neighbourhood is empty, the walker is in a void of radius $\ge 256$. We immediately apply the maximum jump ($R=256$) and exit.
+    \item Repeat: If occupied, we increment the level index to check finer resolutions ($R=128, 64 \dots 1$).
 \end{enumerate}
-Insertion is an $\mathcal{O}(1)$ "push-front" operation that requires no memory resizing:
+While $L_{max}$ is often greater than 9, we only have precalculated tables for up to this size, hence the restriction. A potential improvement to the on-lattice code would be to include pre-calculated tables of larger sizes, but this was not a priority for achieving our goal cluster sizes.
+
+A linear scan is preferred over binary search here because DLA walkers spend most time in voids, where the first (coarsest) check succeeds immediately.
+
+\subsection{Off-Lattice: Dual-Structure Strategy}
+The continuous model separates "Skipping" and "Hitting" into two distinct structures to optimise for dynamic memory usage.
+
+\subsubsection{1. The Coarse Hierarchy (Skipping)}
+\textbf{Structure:} A dynamic list of 2D arrays. Unlike the lattice version, we do not flatten this into a single array. At the finest level, the mesh width is approximately 24 units, meaning the memory pressure is orders of magnitude lower than the unit-resolution lattice grid.
+
+\textbf{Binary Search:} Since continuous walkers can jump any distance, we utilise the full depth of the hierarchy. We use a binary search to efficiently locate the transition layer between "Occupied" and "Empty". This guarantees $\mathcal{O}(\log L)$ performance, ensuring stability whether the walker is in a void or a deep fjord. The greater number of layers makes a binary search worthwhile here.
+
+\subsection{2. The Spatial Hash (Hitting)}
+\textbf{Structure:} When the hierarchy indicates the walker is close to the cluster, we require the exact particle coordinates for the adhesion step. However, the coarse hierarchy only records occupancy and not the precise coordinates. To query nearest neighbours in $\mathcal{O}(1)$ time without dynamic memory allocation, we implement a static chained hash table on a fine grid.
+
+This mimics a ``List of Lists" using two pre-allocated integer arrays:
+\begin{enumerate}
+    \item \texttt{grid\_head[cell\_index]}: Stores the index of the most recently added particle in the grid cell. Initialised to -1.
+    \item \texttt{particle\_next[particle\_index]}: Stores the index of the next particle in the same cell, forming a linked list.
+\end{enumerate}
+
+\noindent \textbf{Insertion:}
+When a new particle $P_{new}$ is added to cell $C$:
+\begin{equation}
+    \texttt{particle\_next}[P_{new}] = \texttt{grid\_head}[C] \quad ; \quad \texttt{grid\_head}[C] = P_{new}
+\end{equation}
+
+Bell's code used C++ vectors, with one vector per cell in the finest layer of the hierarchy. We prefer our linked list approach as we avoid resizing arrays or allocating objects. In both cases we can iterate through the (linked) list to find the closest particle to the walker.
+
+\section{Rejection Sampling}
+\label{app:rejection_sampling}
+
+\subsection{Concept and Motivation}
+Several probability distributions required for the on-lattice simulation possess Cumulative Distribution Functions (CDFs) that are computationally expensive or impossible to invert analytically.
+
+A naive approach would be to discretise the domain and build a lookup table (numerical integration). However, this introduces systematic discretisation error. Instead, we employ rejection sampling. This method allows us to generate samples from a complex target distribution $f(x)$ using a simpler "proposal" distribution $g(x)$, producing exact samples from $f(x)$ without any approximation error.
+
+\subsection{The Algorithm}
+Given a target density $f(x)$ and an envelope density $g(x)$ such that $f(x) \le M g(x)$ for all $x$ (where $M$ is a constant scaling factor), the algorithm proceeds as follows:
 
 \begin{algorithm}[H]
-\caption{Static Linked List Insertion}
-\SetKwFunction{FAdd}{AddParticle}
+\caption{Rejection Sampling}
+\SetKwFunction{FSample}{SampleRejection}
 \SetKwProg{Fn}{Function}{:}{}
-\Fn{\FAdd{$p, idx$}}{
-    $cell \gets \text{GetCellIndex}(p)$\;
-    $\texttt{particle\_next}[idx] \gets \texttt{grid\_head}[cell]$ \tcp*{Point to old head}
-    $\texttt{grid\_head}[cell] \gets idx$ \tcp*{Become new head}
+\Fn{\FSample{$f, g, M$}}{
+    \While{True}{
+        $X \gets \text{Sample}(g)$ \tcp*{Propose from envelope}
+        $U \gets \text{RandomFloat}(0, 1)$ \tcp*{Verification variable}
+        
+        \If{$U \le \frac{f(X)}{M \cdot g(X)}$}{
+            \KwRet $X$ \tcp*{Accept and return}
+        }
+        \tcp{Else: Reject and loop again}
+    }
 }
 \end{algorithm}
 
-\section{Hierarchical Leap-Frogging}
-Both models use a hierarchical grid to determine the maximum safe step size, but they employ different search strategies optimised for their respective data structures.
+Geometrically, this is equivalent to generating uniform random points under the curve $M g(x)$ and keeping only those that fall under the curve $f(x)$. While the runtime is non-deterministic (dependent on the acceptance rate $1/M$), it is often computationally superior to numerical inversion because it avoids evaluating expensive special functions (like integrals of Bessel functions) for every rejected sample.
 
-\subsection{Top-Down Linear Scan (Lattice)}
-In the lattice model, the walker needs to find the largest empty square centered at its location.
-Our routine \texttt{\_diffuse\_variable\_flat} performs a linear scan from the coarsest level down to the finest.
-\begin{itemize}
-    \item It checks the $3 \times 3$ neighbourhood at level $L_{max}$.
-    \item If occupied, it descends to $L_{max}-1$, and so on.
-    \item The first level with an empty neighbourhood defines the step size.
-\end{itemize}
-This is optimised for "deep" jumps where the walker is far from the cluster.
-
-\subsection{Binary Search (Off-Lattice)}
-In the continuous model, the hierarchy depth can be much larger. Our routine \texttt{find\_best\_layer} employs a **Binary Search** over the layers.
-\begin{itemize}
-    \item We query the hierarchy at $l_{mid}$.
-    \item If the $3 \times 3$ neighbourhood is empty, we know the safe size is at least $l_{mid}$, so we search the upper half $[l_{mid}, l_{high}]$.
-    \item Otherwise, we search the lower half.
-\end{itemize}
-This reduces the complexity of finding the step size from $\mathcal{O}(L)$ to $\mathcal{O}(\log L)$.
-
-\section{Rejection Sampling Implementation}
-Several probability distributions required for the simulation (the Fuzzy Annulus and the Walk-to-Line) do not have easily invertible Cumulative Distribution Functions (CDFs). We therefore employ Rejection Sampling.
-Given a target density $f(x)$ and an envelope density $g(x)$ such that $f(x) \le M g(x)$, we sample $X \sim g(x)$ and accept it with probability $\frac{f(X)}{M g(X)}$.
-
-\subsection{Case 1: The Fuzzy Annulus}
+\subsection{Application 1: The Fuzzy Annulus}
 To eliminate lattice aliasing, we launch particles from a radial distribution proportional to the Kaiser-Bessel function $I_0$.
 \begin{itemize}
-    \item \textbf{Target $f(x)$:} $I_0(\beta \sqrt{1-x^2})$.
-    \item \textbf{Envelope $g(x)$:} A Gaussian distribution $\mathcal{N}(0, \sigma^2)$ that strictly bounds $I_0$.
+    \item \textbf{$f(x)$:} $I_0(\beta \sqrt{1-x^2})$.
+    \item \textbf{$g(x)$:} A Gaussian distribution $\mathcal{N}(0, \sigma^2)$ that strictly bounds $I_0$.
 \end{itemize}
-We sample candidate radii from the Gaussian (using standard library functions) and reject them based on the Bessel weights.
+We sample candidate radii from the Gaussian (using standard library functions) and reject them based on the ratio of the Bessel weight to the Gaussian weight.
 
-\subsection{Case 2: Walk-to-Line}
+\subsection{Application 2: Walk-to-Line}
 When a walker projects onto the bounding box face, we must sample the exit position on the line $y=0$.
 \begin{itemize}
-    \item \textbf{Target $f(x)$:} The discrete flux calculated via the Method of Images ($P_{lattice} \propto u(x, 1) - u(x, -1)$).
-    \item \textbf{Envelope $g(x)$:} The Cauchy distribution (the solution for continuous Brownian motion).
+    \item \textbf{$f(x)$:} The exact discrete flux calculated via the Method of Images ($P_{lattice} \propto u(x, 1) - u(x, -1)$).
+    \item \textbf{$g(x)$:} The Cauchy distribution (the analytical solution for continuous Brownian motion).
 \end{itemize}
-Since the continuous flux is always slightly higher than the discrete flux (due to the sub-harmonicity of the discrete kernel), the Cauchy distribution serves as a valid envelope.
+As established by \citet{Loh2014}, the continuous flux serves as a valid envelope for the discrete flux. By setting the scaling constant $M \approx 1$, we ensure the condition $f(x) \le M g(x)$ holds, resulting in a computationally efficient sampling routine with a high acceptance rate.
 
 \section{Walker's Alias Method}
 \label{app:alias_method}
-For the "Walk-to-Square" algorithm, we must sample from a non-uniform discrete distribution over the boundary of a square. A standard inverse-CDF search would take $\mathcal{O}(\log N)$ time (where $N$ is the number of boundary points). To achieve $\mathcal{O}(1)$ sampling, we implement **Walker's Alias Method**.
 
-This method redistributes the probability mass of the discrete distribution into $N$ "buckets". Each bucket contains probability mass for exactly two outcomes: the index $i$ itself, and an "alias" index $K_i$.
+\subsection{Motivation}
+For the "Walk-to-Square" algorithm, we must sample the exit location of a walker from the boundary of a square. This distribution is non-uniform (the exit probability is highest at the midpoints of the edges and lowest at the corners).
 
-\textbf{Implementation:}
-We pre-compute two tables for every square size $L=2^k$:
+A naive approach be to search a Cumulative Distribution Function (CDF). For a square of perimeter $N$, this requires a binary search, scaling as $\mathcal{O}(\log N)$. As the square size increases (e.g., $N=2048$ for a $512 \times 512$ square), this $\log N$ cost inside the inner loop becomes a significant bottleneck.
+
+To eliminate this overhead, we follow Loh and implement Walker's Alias Method, which reduces the sampling complexity to $\mathcal{O}(1)$—constant time, regardless of the square size.
+
+Intuitively, the Alias Method works by reshaping the uneven probability histogram into a perfectly rectangular block.
+
+Imagine the probability mass function as a set of vertical bars. We normalize them so the average height is 1. The method then "slices" the excess height from "over-full" bins (where $P > 1$) and moves these blocks to fill the gaps in the "under-full" bins (where $P < 1$).
+
+The result is a table of size $N$ where every bucket contains exactly the same total probability mass ($1/N$), but that mass is shared between at most two outcomes: the original occupant of that bucket, and the overflow from one other bin.
+
+\subsection{Implementation}
+We pre-compute two lookup tables for every square size $L=2^k$:
 \begin{itemize}
-    \item \textbf{Prob Table ($U_i$):} A threshold probability.
-    \item \textbf{Alias Table ($K_i$):} The alternate index.
+    \item \textbf{Prob Table ($U_i$):} The threshold probability for keeping the original index $i$.
+    \item \textbf{Alias Table ($K_i$):} The alternate index if the threshold check fails.
 \end{itemize}
+
+Sampling is then performed by first a discrete uniform random sample, and then a continuous uniform sample which is compared to the threshold value:
 
 \begin{algorithm}[H]
 \caption{Alias Sampling (Constant Time)}
 \SetKwFunction{FSample}{SampleAlias}
 \SetKwProg{Fn}{Function}{:}{}
 \Fn{\FSample{$U, K$}}{
-    $i \gets \text{RandomInteger}(0, N-1)$ \tcp*{Pick a bucket}
-    $y \gets \text{RandomFloat}(0, 1)$ \tcp*{Biased coin flip}
+    $i \gets \text{RandomInteger}(0, N-1)$ \tcp*{Select a bucket uniformly}
+    $y \gets \text{RandomFloat}(0, 1)$ \tcp*{Select height within bucket}
     \eIf{$y < U[i]$}{
-        \KwRet $i$\;
+        \KwRet $i$ \tcp*{Return bucket owner}
     }{
-        \KwRet $K[i]$\;
+        \KwRet $K[i]$ \tcp*{Return bucket alias}
     }
 }
 \end{algorithm}
-This allows us to determine the exact exit site on the square boundary in constant time, regardless of whether the square is $4\times4$ or $4096\times4096$.
 
 \section{Numerical Approximations}
 \subsection{Custom Bessel Functions}
 The Kaiser-Bessel launching distribution requires the Modified Bessel Function of the first kind, $I_0(x)$.
-\textbf{Implementation Difference:} The standard Python implementation, \texttt{scipy.special.i0}, is not supported in Numba's \texttt{nopython} mode (as it links to C Fortran libraries not visible to the JIT compiler).
-We therefore implemented the polynomial approximation from \textit{Abramowitz \& Stegun} (Eq. 9.8.1) directly in Python/Numba. This ensures that the launching bias correction is applied efficiently without breaking the JIT compilation chain or requiring callbacks to the Python interpreter.
+The standard Python implementation, \texttt{scipy.special.i0}, is not supported in Numba's \texttt{nopython} mode (as it links to C Fortran libraries not visible to the JIT compiler).
+We therefore implemented the polynomial approximation from \citet{Abramowitz1965} (Eq. 9.8.1) directly in Python/Numba. This ensures that the launching bias correction is applied efficiently without breaking the JIT compilation chain or requiring callbacks to the Python interpreter.
+
+\section{Usability and Data Management}
+\label{app:usability}
+
+To facilitate large-scale parameter sweeps and ensure consistency between the discrete and continuous datasets, we introduced two workflow improvements to the reference implementation.
+
+\subsection{Heuristic Grid Sizing}
+The spatial extent of a DLA cluster is stochastic and difficult to predict a priori. Loh's code requires the user to manually define the grid dimension $L_{max}$. Underestimating this parameter leads to runtime failures (truncation), while overestimating it increases memory overhead.
+
+To automate this, we implemented a heuristic initialisation step. Before memory allocation, we estimate the expected cluster radius $R_{est}$ using the known fractal dimension $D_f \approx 1.71$ and apply a safety factor of 1.5 to account for the irregularity of the dendritic arms:
+\begin{equation}
+    L_{max} = \lceil \log_2(1.5 \times 2.2 \times N^{1/1.71}) \rceil
+\end{equation}
+This ensures the simulation domain dynamically scales to accommodate the target particle count $N$ without manual intervention.
+
+\subsection{Standardised Coordinate Output}
+The internal state representations of the two models are fundamentally different: the lattice model uses a boolean bit-map of occupancy, while the off-lattice model uses complex floating-point numbers with a particle radius $r=1$ (effective diameter $d=2$).
+
+To enable a unified analysis pipeline, we implemented a standardisation layer that normalises both outputs into an identical format: a centered $(N, 2)$ array of dimensionless coordinates.
+
+\begin{itemize}
+    \item \textbf{Lattice Conversion:} We convert the sparse bit-map into a list of integer coordinates representing the centers of the occupied sites, shifting the seed to the origin $(0,0)$. We also ensure these are only the occupied cells, as Loh's code includes the sticky sites as well.
+    \item \textbf{Off-Lattice and Hybrid Normalisation:} We rescale the continuous coordinates by a factor of $0.5$. Since the off-lattice physics uses $d=2$ and the lattice uses unit spacing $d=1$, this normalisation ensures that spatial metrics (such as the Radius of Gyration) are directly comparable across models.
+\end{itemize}
+
+This post-processing step allows us to apply the exact same analysis scripts (fractal dimension estimation, radial density functions) to all datasets agnostically, eliminating potential errors arising from manual unit conversion.
+
 % --- SPECIAL REQUIREMENT: LATEX TOOLKIT ---
 \chapter{Reference: LaTeX Structure Examples}
 \label{ch:toolkit}
