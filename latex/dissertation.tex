@@ -92,7 +92,7 @@
 \end{center}
 \vspace{0.5cm}
 \begin{quote}
-    This dissertation investigates the universality class of Diffusion Limited Aggregation (DLA) through the lens of conformal mapping and harmonic measure theory. We compare on-lattice, off-lattice, and hybrid "snapping" algorithms to determine if microscopic lattice anisotropy survives in the macroscopic scaling limit. Particular attention is paid to the dimension of the harmonic measure and the dynamics of the active growth zone. [Placeholder: Finish this summary with your specific results regarding the Hybrid model's classification, totaling approx. 300 words.]
+add abstract here (or delete)
 \end{quote}
 \newpage
 
@@ -148,7 +148,7 @@ The model was first proposed in 1981 by Witten and Sander to model the colloidal
 \end{figure}
 
 \section{Theoretical Context}
-While DLA is defined by a stochastic algorithm (random walkers), its theoretical significance lies in its connection to potential theory, the study of harmonic functions. As will be detailed in the following chapters, the probability density $\phi(u)$ of a diffusing particle at position $u$ satisfies the Laplace equation $\nabla^2 \phi = 0$. Intuitively, this is because both random walks and harmonic functions are defined by the property that the value at any point is the average of its neighbours. Each additional walker to aggregate onto the cluster distorts this probability field, creating a Laplacian instability that amplifies irregularities into the observed complicated structure \cite{Lawler2010}.
+While DLA is defined by a stochastic algorithm (random walkers), its theoretical significance lies in its connection to potential theory, the study of harmonic functions. As will be detailed in the following chapters, the probability density $\phi(u)$ of a diffusing particle at position $u$ satisfies the Laplace equation $\nabla^2 \phi = 0$. This is because both random walks and harmonic functions are defined by the property that the value at any point is the average of its neighbours. Each additional walker to aggregate onto the cluster distorts this probability field, creating a Laplacian instability that amplifies irregularities into the observed complicated structure \cite{Lawler2010}.
 
 \section{Fractal Dimension}
 Visually, DLA clusters exhibit self-similarity, where small branches look statistically identical to large branches. Mathematically this can be understood via fractal dimension $D$. This will be formally defined later, but can be thought of as the relationship between the mass of a cluster (number of particles $N$) and its linear size $R$, where:
@@ -177,12 +177,13 @@ We begin with a brief outline of the mathematical necessary to understand the un
 \label{sec:preliminaries}
 
 \subsection{Martingales and the Optional Stopping Theorem}
-In this section, we review the probabilistic tools required to link random walks to potential theory. We assume standard measure-theoretic knowledge (equivalent to the Part A Integration course).
+In this section, we review the necessary tools in probability for linking random walks to potential theory. We assume standard measure-theoretic knowledge (equivalent to the Part A Integration course). We begin by defining a probability space.
 
 \begin{definition}[Probability Space]
 A probability space $(\Omega, \mathcal{F}, \mathbb{P})$ is a triple where $\Omega$ is a sample set, $\mathcal{F}$ is a $\sigma$-algebra on $\Omega$ representing the set of events, and $\mathbb{P} \colon \mathcal{F}\to[0,1]$ is a countably additive set function such that $\mathbb{P}(\Omega)=1$.
 \end{definition}
 
+\noindent We now introduce filtrations, which formalise the idea of accumulating information over time. 
 \begin{definition}[Filtration]
 A filtration on a probability space $(\Omega, \mathcal{F}, \mathbb{P})$ is a sequence of sub-$\sigma$-algebras $(\mathcal{F}_n)_{n \geq 0}$ such that:
 \begin{equation*}
@@ -191,8 +192,7 @@ A filtration on a probability space $(\Omega, \mathcal{F}, \mathbb{P})$ is a seq
 The tuple $(\Omega, \mathcal{F}, (\mathcal{F}_n)_{n \geq 0}, \mathbb{P})$ is called a filtered probability space.
 \end{definition}
 
-\noindent \textit{Intuition:} The filtration $(\mathcal{F}_n)$ represents the accumulation of information over time. $\mathcal{F}_n$ contains all events whose occurrence (or non-occurrence) is known by time $n$.
-
+\noindent We now consider how decisions can be made at a given time based on the information available up to that time.
 \begin{definition}[Stopping Time]
 A random variable $\tau \colon \Omega \to \{0, 1, \dots, \infty\}$ is called a stopping time with respect to the filtration $(\mathcal{F}_n)_{n \geq 0}$ if for every $n \geq 0$:
 \begin{equation*}
@@ -200,19 +200,21 @@ A random variable $\tau \colon \Omega \to \{0, 1, \dots, \infty\}$ is called a s
 \end{equation*}
 \end{definition}
 
-\noindent \textit{Intuition:} A stopping time represents a strategy where the decision to stop at time $n$ depends only on the history of the process up to time $n$. For example, ``stop when the walker hits the cluster" is a valid stopping time but ``stop at the step before the walker hits the cluster" is not.
+\noindent For example, ``stop when the walker hits the cluster" is a valid stopping time but ``stop at the step before the walker hits the cluster" is not.
 
+\noindent With this in place, we model an unbiased process via the concept of a martingale.
 \begin{definition}[Martingale]
 A discrete-time stochastic process $(X_n)_{n \geq 0}$ is a martingale with respect to a filtration $(\mathcal{F}_n)_{n \geq 0}$ if:
 \begin{enumerate}
     \item $X_n$ is adapted to the filtration (i.e., $X_n$ is $\mathcal{F}_n$-measurable for all $n$),
-    \item $\mathbb{E}[|X_n|] < \infty$ for all $n$ (integrability),
-    \item $\mathbb{E}[X_{n+1} \mid \mathcal{F}_n] = X_n$ almost surely (conditional expectation).
+    \item $\mathbb{E}[|X_n|] < \infty$ for all $n$,
+    \item $\mathbb{E}[X_{n+1} \mid \mathcal{F}_n] = X_n$ almost surely.
 \end{enumerate}
 \end{definition}
 
-\noindent \textit{Intuition:} A martingale models a ``fair game" with no drift. The condition $\mathbb{E}[X_{n+1} \mid \mathcal{F}_n] = X_n$ implies that given the entire history of the process, the best prediction for the next value is the current value.
+\noindent  A martingale essentially encapsulates the idea of a ``fair game". The condition $\mathbb{E}[X_{n+1} \mid \mathcal{F}_n] = X_n$ implies that the best prediction for the next value is the current value, even with the entire history of the process. 
 
+\noindent A key result regarding martingales is the Optional Stopping Theorem. There are multiple versions, and we only state one here sufficient for our purposes.
 \begin{theorem}[Doob's Optional Stopping Theorem]
 \label{thm:ost}
     Let $X$ be a martingale on a filtered probability space. If $\tau$ is a stopping time such that $\mathbb{P}(\tau < \infty) = 1$, and $X$ is uniformly bounded (i.e., there exists $K$ such that $|X_n(\omega)| \leq K$ for all $n, \omega$), then:
@@ -222,15 +224,17 @@ A discrete-time stochastic process $(X_n)_{n \geq 0}$ is a martingale with respe
 \end{theorem}
 
 \begin{proof}
-See \citet[Section 10.9]{Williams1991}.
+See \citet[Section 10.10]{Williams1991}.
 \end{proof}
 
-\noindent \textit{Intuition:} The Optional Stopping Theorem states that for a fair game, no stopping strategy $\tau$ can change the expected payout. This will allow us to relate the value of a harmonic function at a starting point $x$ (start of the walk) to its expected value at the boundary $\partial D$ (end of the walk).
+\noindent This means that no stopping strategy $\tau$ can change the expected payout of a fair game. This will allow us to relate the value of a harmonic function at a starting point $x$ (start of the walk) to its expected value at the boundary $\partial D$ (end of the walk).
 
 \subsection{Measure Theory Concepts}
 
 In the study of potential theory, we will want to understand the relationship between the geometric length of a boundary (Lebesgue measure) and the probability that a random walker hits that boundary (harmonic measure). To rigorously define a probability density function linking these two concepts we require the notion of the Radon-Nikodym derivative.
 
+
+We begin by defining absolute continuity between two measures, which is a necessary pre-requisite.
 \noindent \textit{Remark:} throughout this work, we assume our measurable spaces are equipped with the Borel $\sigma$-algebra.
 \begin{definition}[Absolute Continuity]
 Let $(\Omega, \mathcal{F})$ be a measurable space equipped with two measures $\mu$ and $\nu$. We say that $\nu$ is absolutely continuous with respect to $\mu$, denoted $\nu \ll \mu$, if for every $A \in \mathcal{F}$:
@@ -238,8 +242,6 @@ Let $(\Omega, \mathcal{F})$ be a measurable space equipped with two measures $\m
     \mu(A) = 0 \implies \nu(A) = 0.
 \end{equation}
 \end{definition}
-
-\noindent \textit{Intuition:} If $\nu \ll \mu$, then $\nu$ assigns zero mass to any set where $\mu$ assigns zero mass. This ensures that we can't have a "probability" of being in a region with zero "volume."
 
 \begin{theorem}[The Radon-Nikodym Theorem]
 Let $(\Omega, \mathcal{F})$ be a measurable space, and let $\mu$ and $\nu$ be two finite measures such that $\nu \ll \mu$. Then, there exists a non-negative measurable function $f \colon \Omega \to [0, \infty)$, unique $\mu$-almost everywhere, such that for any $A \in \mathcal{F}$:
@@ -253,14 +255,15 @@ The function $f$ is called the Radon-Nikodym derivative of $\nu$ with respect to
 \end{theorem}
 
 \begin{proof}
-See \citet[Section 5.14]{Williams1991}.
+See \citet[Section 14.13]{Williams1991}.
 \end{proof}
 
 %add LCLT and also Ito's Lemma?
 
 \subsection{Conformal Maps}
 
-Here we state the definition of a conformal map, and the Riemann mapping theorem. Conformal maps will be very important for two reasons: theoretically, the Riemann Mapping Theorem guarantees that the Dirichlet problem is well-posed even on the fractal boundary of a DLA cluster; algorithmically, these maps allow us to exploit the 'conformal invariance' of Brownian motion (discussed later)
+Here we state the definition of a conformal map, and the Riemann mapping theorem, both from \citet{Ahlfors1979}. Conformal maps will be very important for two reasons: theoretically, the Riemann Mapping Theorem guarantees that the Dirichlet problem we consider later in this chapter is well-posed even on the potentially fractal boundary of a DLA cluster. Algorithmically, these maps allow us to exploit the 'conformal invariance' of Brownian motion, which we discuss in the latter parts of this chapter and into the next.
+%remove conformal map defintion?
 \begin{definition}[Conformal Map]
 Let $U, V \subseteq \mathbb{C}$ be open sets. A function $f \colon U \to V$ is called \textbf{conformal} at a point $z_0 \in U$ if it preserves angles and orientation locally. 
 
@@ -268,7 +271,7 @@ Analytically, a holomorphic function $f$ is conformal at every point where its d
 \end{definition}
 
 \begin{theorem}[Riemann Mapping Theorem]
-Let $U \subsetneq \mathbb{C}$ be a non-empty, simply connected open subset of the complex plane (i.e., $U$ is the whole plane minus at least one point, with no holes). Then, there exists a unique bijective conformal map $f$ from $U$ onto the open unit disk $\mathbb{D} = \{z \in \mathbb{C} : |z| < 1\}$ such that:
+Let $U \subsetneq \mathbb{C}$ be a non-empty, simply connected open subset of the complex plane. Then, there exists a unique bijective conformal map $f$ from $U$ onto the open unit disk $\mathbb{D} = \{z \in \mathbb{C} : |z| < 1\}$ such that:
 \begin{equation}
     f(z_0) = 0 \quad \text{and} \quad f'(z_0) > 0,
 \end{equation}
@@ -276,7 +279,7 @@ for any prescribed point $z_0 \in U$.
 \end{theorem}
 
 \begin{proof}
-See \citet[Chapter 6]{Ahlfors1979} or \citet[Chapter 9]{Priestley2003}.
+See \citet[Chapter 6.1]{Ahlfors1979}.
 \end{proof}
 
 \section[Discrete Potential Theory]{Discrete Potential Theory\footnote{The theoretical framework in this section is largely adapted from \citet{Lawler2010}, applied here to the specific case of 2D DLA.}}\label{sec:discrete_theory}
@@ -302,7 +305,7 @@ A random walk is called a Simple Symmetric Random Walk (SSRW) if the increment d
 \end{equation}
 \end{definition}
 
-\noindent We can now define the operator that governs the evolution of the expectation of functions under this flow.
+\noindent We now define the operator that governs the evolution of the expectation of functions under this flow.
 
 \begin{definition}[Discrete Generator]
 Let $p(\cdot)$ be the increment distribution of a random walk. The generator $\mathcal{L}$ is a linear operator acting on functions $f: \mathbb{Z}^2 \to \mathbb{R}$ defined by:
@@ -315,14 +318,13 @@ Probabilistically, this represents the expected change in the function $f$ in a 
 \end{equation}
 \end{definition}
 
-\noindent \textit{Remark:} For Simple Symmetric Random Walk, the generator is proportional to the unnormalised discrete Laplacian, $\mathcal{L} = \frac{1}{4} \Delta$, where $\Delta f(x) = \sum_{y \sim x} (f(y) - f(x))$.
+\noindent \textit{Remark:} For SSRW, the generator is proportional to the (unnormalised) discrete Laplacian, $\mathcal{L} = \frac{1}{4} \Delta$, where $\Delta f(x) = \sum_{y \sim x} (f(y) - f(x))$.
 
 \begin{definition}[Discrete Harmonic Functions]
 A function $f: A \cup \partial A \to \mathbb{R}$ is said to be harmonic in a subset $A \subset \mathbb{Z}^2$ if:
 \begin{equation}
     \mathcal{L}f(x) = 0 \quad \text{for all } x \in A.
 \end{equation}
-%Note that the value of $f$ is required on the boundary $\partial A$ to compute $\mathcal{L}f$ for points in $A$ adjacent to the boundary.
 \end{definition}
 
 %check this
@@ -477,11 +479,10 @@ See \citet[Theorem 4.4.4]{Lawler2010}.
 \begin{remark}
 \label{rem:log_growth}
 The logarithmic growth may seem arbitrary, but can in fact be justified with some geometric intuition:
-Consider a large circle of radius $R$ centred on the cluster (large so that it contains the entire cluster). For a steady flow of random walkers coming from infinity to reach the cluster, the total flux (rate of flow) across this circle must be independent of $R$. The total flux is the product of the circumference ($2\pi R$) and the radial gradient of the potential ($\nabla f(R)$). This implies that the gradient must decay as $\nabla f(R) \propto 1/R$. Integrating this gradient yields:
+Consider a circle of radius $R$ centred on the cluster (large enough so that it contains the entire cluster). For a steady flow of random walkers coming from infinity to reach the cluster, the total flux (rate of flow) across this circle must be independent of $R$. Else walkers would have to spontaneously appear or disappear which does not fit the model. The total flux is the product of the circumference ($2\pi R$) and the radial gradient of the potential ($\nabla f(R)$). This implies that the gradient must decay as $\nabla f(R) \propto 1/R$. Integrating this gradient yields:
 \begin{equation}
     f(R) \propto \int \frac{1}{R} \, dR = \ln R.
 \end{equation}
-Non-logarithmic growth would imply that the flux across a circle varies depending on its radius, violating physical conservation laws. 
 \end{remark}
 
 \subsection{Discrete Harmonic Measure}
@@ -509,7 +510,7 @@ For a function $u: \mathbb{Z}^2 \to \mathbb{R}$ that vanishes on $K$, the discre
 Since $u(y)=0$ on the boundary, this simplifies to the sum of the external neighbours: $\Phi(y) = \sum_{z \sim y, z \notin K} u(z)$.
 \end{definition}
 
-\noindent The fundamental result that we require from discrete potential theory is the equivalence of flux and the harmonic measure.
+\noindent A fundamental result that we require from discrete potential theory is the equivalence of flux and the harmonic measure.
 
 \begin{proposition}[Harmonic Measure as Flux]
 The harmonic measure at $y \in \partial K$ is proportional to the discrete flux at $y$:
@@ -522,7 +523,7 @@ The harmonic measure at $y \in \partial K$ is proportional to the discrete flux 
 For a formal rigorous proof connecting hitting probabilities to the Laplacian of the Green's function, see \citet[Proposition 1.6.3]{Lawler2010}.
 \end{proof}
 
-\noindent To understand this link intuitively, we interpret the potential $u(x)$ as the density of a stream of random walkers originating from infinity and disappearing upon hitting the cluster $K$.
+\noindent To understand this link conceptually, we interpret the potential $u(x)$ as the density of a stream of random walkers originating from infinity and disappearing upon hitting the cluster $K$.
 In the exterior free space, the condition $\mathcal{L}u(x) = 0$ implies a sort of conservation law: the expected number of walkers entering any site $x$ equals the number leaving it.
 However, at a boundary site $y \in \partial K$, walkers arrive from neighbours but do not continue; they form the cluster. The operator $\mathcal{L}u(y)$ represents this absorption rate:
 \begin{equation}
@@ -533,16 +534,16 @@ Since the harmonic measure $H(y)$ is the proportion of all walkers that terminat
 
 This concludes the discrete formulation of the DLA process. The growth mechanism can be summarised as follows:
 \begin{enumerate}
-    \item The system is governed by a harmonic potential $u(x)$ determined by the geometry of the cluster $K$.
+    \item The system is governed by a harmonic potential $u(x)$, which is determined by the geometry of the cluster $K$.
     \item This potential is the solution to the discrete Laplace equation $\mathcal{L}u=0$ with $u|_K = 0$ and $u(x) \sim \ln|x|$ as $|x| \to \infty$.
     \item The growth probability at a boundary site $y$ is determined by the local flux $\Phi(y) = \sum_{z \sim y} u(z)$, where a new particle is added with probability $H(y) \propto \Phi(y)$.
 \end{enumerate}
 %\subsection{Link to Electrostatics} - needed/ appendix?
 
-\section{Continuous Potential Theory}
+\section{Continuous Potential Theory} \footnote{Again, this is all existing theory, we merely synthesise results regarding Brownian motion and potential theory given in \citet{MortersPeres2010} for the context of DLA.}
 \label{sec:continuous_theory}
 
-Much of this section parallels the discrete theory presented in \cref{sec:discrete_theory}, though the derivations here require the delicate machinery of stochastic calculus. However, for our purposes, an understanding of the main results is sufficient to build a robust intuition for DLA. The fundamental shift is replacing the discrete random walker with its scaling limit: Brownian motion.
+We now provide an introduction to potential theory in the continuous setting. Much of this section is formally derived by extending \cref{sec:discrete_theory} to the continuous case using stochastic calculus. However, for our purposes, an understanding of the main results is sufficient to build a robust intuition for DLA, so we focus only on the useful results. The fundamental change is replacing the discrete random walker with its scaling limit: Brownian motion.
 
 \subsection{Brownian Motion and the Laplacian}
 We start by defining Brownian motion in both $\mathbb{R}^d$ and $\mathbb{C}$.
@@ -567,20 +568,22 @@ A canonical complex Brownian motion $Z_t$ is a process taking values in $\mathbb
 where $X_t$ and $Y_t$ are two independent, standard one-dimensional Brownian motions.
 \end{definition}
 
-\noindent The utility of this complex formulation becomes clear when we consider what is known as the quadratic variation of the process. In stochastic calculus, standard Brownian motions satisfy the formal rules $(dX_t)^2 = dt$ and $(dY_t)^2 = dt$. Applying this yields:
-\begin{equation}
-    (dZ_t)^2 = (dX_t + i dY_t)^2 = (dX_t)^2 - (dY_t)^2 + 2i dX_t dY_t.
-\end{equation}
-Since $X$ and $Y$ are independent identical copies, their variances match ($dt - dt = 0$), and the cross-term is negligible for variation. Thus, we effectively have $(dZ_t)^2 = 0$.
-This property identifies $Z_t$ as a conformal martingale, which is the stochastic equivalent of an analytic function (where derivative depends only on $z$, not $\bar{z}$, as given by Wirtinger derivatives), and will be why we get the conformal invariance result later.
+\noindent The utility of this complex formulation will be apparent in \cref{sec:conformal_invariance}. 
+%\noindent The utility of this complex formulation becomes clear when we consider what is known as the quadratic variation of the process. In stochastic calculus, standard Brownian motions satisfy the formal rules $(dX_t)^2 = dt$ and $(dY_t)^2 = dt$. Applying this yields:
+%\begin{equation}
+    %(dZ_t)^2 = (dX_t + i dY_t)^2 = (dX_t)^2 - (dY_t)^2 + 2i dX_t dY_t.
+%\end{equation}
+%Since $X$ and $Y$ are independent identical copies, their variances match ($dt - dt = 0$), and the cross-term is negligible for variation. Thus, we effectively have $(dZ_t)^2 = 0$.
+%This property identifies $Z_t$ as a conformal martingale, which is the stochastic equivalent of an analytic function (where derivative depends only on $z$, not $\bar{z}$, as given by Wirtinger derivatives), and will be why we get the conformal invariance result later.
 
 \begin{remark}
-Much of this section has been somewhat hand-wavy. However, for our purposes a complete rigourous introduction to stochastic calculus is unnecessary. If nothing else, think of Brownian motion as the continuous limit of a random walk. In fact, this has been rigorously proven as Donsker's Invariance Principle. For DLA, this implies that large clusters formed by random walks should exhibit the same macroscopic properties as those formed by Brownian particles.
+We gloss over much of the detail in this section, as for our purposes a complete rigourous introduction to stochastic calculus is unnecessary. Intuitively, Brownian motion can be understood as the continuous limit of a random walk. In fact, this has been rigorously proven as Donsker's Invariance Principle (see \citet[Theorem 5.22]{MortersPeres2010}). For DLA, this implies that large clusters formed by random walks should exhibit the same macroscopic properties as those formed by Brownian particles. For a full treatment of stochastic calculus and Brownian motion, see Course B8.2 or \citet{MortersPeres2010}.
 \end{remark}
 
 The connection between the physical process (Brownian motion) and the geometric potential (Laplace's equation) is provided by the infinitesimal generator.
 
 \begin{definition}[Continuous Generator and Laplacian]
+    \label{def:laplacian}
 The Laplace operator (or Laplacian) $\Delta$ in $\mathbb{R}^d$ is the sum of the second partial derivatives:
 \begin{equation}
 \Delta = \sum_{i=1}^d \frac{\partial^2}{\partial x_i^2}.
@@ -592,7 +595,7 @@ M_t = f(B_t) - f(B_0) - \int_0^t \frac{1}{2}\Delta f(B_s) \, ds
 is a martingale with respect to the filtration of $B_t$.
 \end{definition}
 
-\noindent This definition can be understood as a stochastic analogue to the Fundamental Theorem of Calculus. The integral term represents the expected drift of the function along the path. By subtracting this drift, we isolate the centred random noise, which is a martingale.
+\noindent The integral term in \cref{def:laplacian} represents the expected drift of the function along the path. By subtracting this drift, we isolate the centred random noise, which is a martingale. 
 
 \begin{remark}[Scaling Factors and Independence]
 We point out here that the scaling factor here differs from that in \cref{sec:rw_generator}. This discrepancy stems from the second-order term of the Taylor expansion used to derive the Brownian limit. However, since the potential distribution for DLA is determined by the condition $\mathcal{L}u = 0$ $($or $\Delta u = 0)$, this constant factor cancels out. The resulting harmonic measure is invariant. For a full derivation of this limit, see \citet[Section 2.1]{Lawler2010}.
@@ -608,6 +611,7 @@ A twice continuously differentiable function $u: D \to \mathbb{R}$ defined on a 
 \noindent By comparing this with the generator definition above, we see immediately that if $u$ is harmonic, the drift term vanishes. This yields the critical result that $u(B_t)$ is a martingale, implying that the "average value" of a harmonic function is conserved along Brownian paths. We formalise this as the mean value property.
 
 \begin{theorem}[Mean Value Property]
+\label{the:mean_value}
 A locally integrable function $u: D \to \mathbb{R}$ is harmonic ($\Delta u = 0$) if and only if for every ball $B(x,r)$ strictly contained in the domain $D$:
 \begin{equation}
     u(x) = \frac{1}{|\partial B(x,r)|} \int_{\partial B(x,r)} u(y) \, d\sigma(y),
@@ -617,7 +621,7 @@ where $\sigma$ denotes the surface measure on the boundary sphere.
 
 \noindent This is the continuous equivalent to the `average of its neighbours' property of in the discrete setting.
 
-\subsection{Harmonic Measure and the Poisson Kernel}
+\subsection{Harmonic Measure}
 
 Before we present the continuous analogue to \cref{thm:dirichlet_sol}, we define the continuous version of the harmonic measure.
 \begin{definition}[Harmonic Measure]
@@ -652,7 +656,7 @@ Let $B_t$ be a complex Brownian motion starting at $z_0$ within the annulus $A =
 \end{equation}
 \end{lemma}
 \begin{proof}
-See \citet[Lemma 43]{Cass2009}. The proof uses It\^o's formula (stochastic chain rule) on the function $\ln|Z_t|$.
+See \citet[Theorem 3.18]{MortersPeres2010}. The proof uses It\^o's formula (stochastic chain rule) on the function $\ln|Z_t|$.
 \end{proof}
 
 \begin{corollary}[Recurrence]
@@ -666,6 +670,7 @@ Taking the limit $R \to \infty$ in the annulus exit probability yields $\mathbb{
 \end{proof}
 
 \subsection{Conformal Invariance}
+\label{sec:conformal_invariance}
 While in the discrete case we resolved this recurrence issue by turning to (regularised) Green's functions, we will instead utilise a fundamental property of Brownian motion: conformal invariance.
 
 \begin{theorem}[L\'evy's Conformal Invariance Theorem]
@@ -673,7 +678,7 @@ Let $U \subset \mathbb{C}$ be a domain and $f: U \to V$ be a non-constant analyt
 Specifically, if $\tau_t = \int_0^t |f'(Z_s)|^2 ds$, then $f(Z_{\tau^{-1}(t)})$ is a standard Brownian motion in $V$.
 \end{theorem}
 \begin{proof}
-See \citet[Theorem 40]{Cass2009}.
+See \citet[Theorem 7.20]{MortersPeres2010}.
 \end{proof}
 
 
@@ -692,7 +697,7 @@ for any Borel set $E \subset \partial D$.
 We conclude by introducing the probability density function for the hitting probabilities, and finding it explicitly for two fundamental domains used in DLA algorithms: the Upper Half-Plane ($\mathbb{H}$) and the Unit Disk ($\mathbb{D}$).
 
 \begin{definition}[Poisson Kernel]
-Let $\sigma$ be the surface measure on $\partial D$. If the harmonic measure is absolutely continuous with respect to $\zeta$, the Poisson kernel $P(x,y)$ is defined as the Radon-Nikodym derivative:
+Let $\sigma$ be the surface measure on $\partial D$. If the harmonic measure is absolutely continuous with respect to $\sigma$, the Poisson kernel $P(x,y)$ is defined as the Radon-Nikodym derivative:
 \begin{equation}
     P(x,y) = \frac{d\omega_x}{d\sigma}(y).
 \end{equation}
@@ -803,67 +808,70 @@ This concludes the continuous formulation of the DLA process. The theoretical fr
 \section{Introduction}
 \label{sec:algo_intro}
 
-Simulating DLA presents a significant computational challenge. A naive implementation, where a walker moves one lattice step at a time from a large distance, is prohibitively expensive; the number of steps required for a walker to hit a cluster of radius $R$ scales as $O(R^2)$. To generate large clusters (e.g., $N=10^7$ particles) required for useful analysis, we must employ accelerated algorithms that exploit the potential theory derived in \cref{ch:theory}.
+Simulating DLA presents a significant computational challenge. Directly simulating the random walk of each particle from large distance is prohibitively expensive. As the radius $R$ of the cluster grows, the number of steps scales as $O(R^2)$. To generate large enough clusters for useful analysis, we employ accelerated algorithms that exploit the theory developed in \cref{ch:theory}
 
-In this chapter, we develop three distinct implementation models:
+In this chapter, we develop three distinct models:
 \begin{enumerate}
-    \item \textbf{On-Lattice DLA:} A high-precision discrete implementation adapted from bias-free algorithm by \citet{Loh2014}.
-    \item \textbf{Off-Lattice DLA:} A continuous implementation utilising conformal mapping techniques adapted from \citet{Bell2019}.
-    \item \textbf{Hybrid DLA:} A novel semi-discrete model designed to decouple transport dynamics from aggregation geometry.
+    \item \textbf{On-Lattice DLA:} A discrete implementation adapted from the algorithm by \citet{Loh2014}.
+    \item \textbf{Off-Lattice DLA:} A continuous implementation using conformal mappings adapted from \citet{Bell2019}.
+    \item \textbf{Hybrid DLA:} A novel model which combines continuous diffusion with on-lattice aggregation.
 \end{enumerate}
 
-Despite the differing domains ($\mathbb{Z}^2$ vs $\mathbb{R}^2$), all three algorithms share a common three-stage architecture: Initialisation, Diffusion, and Aggregation. We analyse each stage in turn.
-
+These models all share roughly the same structure, which we split into four stages: Initialisation, Far-Field Diffusion, Near-Field Diffusion and Aggregation. We will detail each of the stages for the first two models in the following sections. We will then present the hybrid model in \cref{sec:hybrid_model}, which we implement as a variation of the off-lattice model.
 \section{Initialisation}
 \label{sec:initialisation}
 
-The mathematical definition of DLA requires particles to originate ``from infinity.'' In practice, we must approximate this by launching particles from a boundary $\partial \Omega$ sufficiently far from the cluster $K$.
+The mathematical definition of DLA requires particles to originate ``from infinity''. In practice, we must approximate this by launching particles from a boundary $\partial \Omega$ sufficiently far from the cluster $K$. We now detail how this is achieved in both the off-lattice and on-lattice settings.
 
 \subsection{Off-Lattice: The Launching Circle}
-In the continuous setting, initialising at infinity is mathematically equivalent to initialising uniformly on a large bounding circle.
-Let $R_{max}$ be the radius of the smallest circle centred at the origin containing the cluster. We define a launching circle of radius $R_{l} > R_{max}$.
+In the continuous setting, initialising at infinity is equivalent to initialising uniformly on a large bounding circle.
+To see this, let $R_{max}$ be the radius of the smallest circle centred at the origin containing the cluster. We define a launching circle of radius $R_{l} > R_{max}$.
 
+Now consider the conformal map $\phi(z) = \frac{R_{l}}{z}$. This creates a bijection between the exterior of the launching circle and its interior, mapping infinity to the origin. By \cref{the:mean_value}, the harmonic measure of the origin in the disk is uniform (\cref{the:disk_kernel} with $z=0$). Consequently, the hitting distribution of a Brownian motion starting at infinity on the circle $|z|=R_{l}$ is uniform.
+Thus, our off-lattice algorithm simply samples a starting angle $\theta \sim U[0, 2\pi)$ and initialises the walker at $z_0 = R_{l}e^{i\theta}$. 
+This is therefore exactly equivalent analytically to starting ``at infinity''. 
 
-
-Consider the conformal map $\phi(z) = \frac{R_{l}}{z}$. This creates a bijection between the exterior of the launching circle and its interior, mapping infinity to the origin. By the Mean Value Property, the harmonic measure of the origin in the disk is uniform (\cref{the:disk_kernel} with $z=0$). Consequently, the hitting distribution of a Brownian motion starting at infinity on the circle $|z|=R_{launch}$ is uniform.
-Thus, our off-lattice algorithm simply samples a starting angle $\theta \sim U[0, 2\pi)$ and initialises the walker at $z_0 = R_{l}e^{i\theta}$. This is therefore exactly equivalent analytically to starting ``at infinity''. Note also that provided the circle contains the entire cluster, there is no size restriction, so we scale it dynamically.
+Note also that provided the circle contains the entire cluster there is no size restriction, so we can scale it dynamically, thereby improving the efficiency of the simulation.
 
 \subsection{On-Lattice: The Fuzzy Annulus}
-In the discrete setting, the "launching circle" approach introduces a subtle but significant bias. As detailed by \citet{Loh2014}, analytically projecting a continuous circle onto a discrete grid forces the starting positions to "snap" to the nearest integer coordinates. This discreteness creates a `lattice aliasing` effect (also referred to as a Moire\'e interference pattern), resulting in a bias. For clusters of size $N > 10^5$, this bias is sufficient to distort the fractal dimension.
+However in the discrete setting, the above approach introduces a bias. As detailed by \citet{Loh2014}, projecting a circle onto a discrete grid forces the starting positions to snap to the nearest integer coordinates. This creates a `lattice aliasing' effect (also referred to as a Moire\'e interference pattern). For large enough clusters, this bias is sufficient to distort key metrics including the fractal dimension.
 
 To eliminate this, we implement Loh's Fuzzy Annulus method. Instead of a fixed radius $R$, the starting position is sampled from a probability distribution spread over an annulus. This probability distribution utilises the Kaiser-Bessel function $I_0$, which was developed to suppress high-frequency aliasing artifacts in signal processing \cite{kaiser1966}:
 \begin{equation}
     P(x) \propto \frac{I_0(x)}{I_0(R_{l})}.
 \end{equation}
-By sampling from this ``fuzzy'' distribution, the grid aliasing effects interfere destructively and cancel out, reducing the initialisation bias to negligible levels.
+By sampling from this distribution, we smoothen out the grid aliasing effects, reducing the bias to computationally neglible levels.
 
 Like in the off-lattice case, we can scale the launching annulus dynamically, but to further reduce the bias, the inner boundary of the annulus is at $2R_{max}$.
 \begin{remark}[Rejection Sampling]
-Rather than directly sampling from this distribution, we use an optimisation technique called `rejection sampling', which we explain in the appendix.
+Rather than directly sampling from this distribution, we use an optimisation technique called `rejection sampling', which we explain in \cref{app:rejection_sampling}.
 \end{remark}
 
 
 \section{Far-Field Diffusion}
 \label{sec:far_field}
-Once initialised, the walker is far from the cluster. Simulating every step of a random walk is inefficient. We therefore use skipping strategies based on the properties of harmonic functions.
+Once initialised, or indeed at any point during the diffusion, the walker may be far from the cluster. To improve the efficiency of our algorithms, we exploit the properties of harmonic functinos to quickly return the walker to `near' the cluster.
 
 \subsection{Off-Lattice: Re-injection from Infinity}
-If the walker strays outside the launching circle ($|z_{out}| > R_l$), we exploit the conformal invariance established in \cref{sec:continuous_theory}.
+In the continuous case, if the walker strays outside the launching circle ($|z_{out}| > R_l$), we exploit the conformal invariance established in \cref{sec:continuous_theory} to immediately map it back to this boundary.
 
-Rather than discarding the particle or simulating the return trajectory step-by-step, we sample the first hitting point on the circle directly. As shown in \cref{cor:exterior_kernel}, the return probability is governed by the exterior Poisson kernel.
-To sample from this efficiently, we avoid numerical integration of this density function. Instead, we directly utilise the conformal invariance of Brownian motion. This principle establishes a statistical equivalence between geometries: to sample the hitting distribution on a physical boundary $\partial \Omega$, we can sample the hitting distribution on a reference domain $\partial D$ (where the distribution is known, e.g., Uniform) and transform the result via the conformal map $f: D \to \Omega$. In this instance, we map the uniform distribution of the unit circle to the exterior harmonic measure via the following steps:
+We do this by sampling the first hitting point on the circle directly. As shown in \cref{cor:exterior_kernel}, the return probability is governed by the exterior Poisson kernel.
+To efficiently sample from this distribution, we first note that the conformal invariance of Brownian motion establishes a statistical equivalence between geometries: to sample the hitting distribution on a physical boundary $\partial \Omega$, we can sample the hitting distribution on a reference domain $\partial D$ (where the distribution is known, e.g., Uniform) and transform the result via the conformal map $f: D \to \Omega$. This is the key idea for applying conformal maps to our DLA algorithm. 
+
+In this instance, we map the uniform exit distribution on the unit circle to the exterior harmonic measure via the following steps:
  \begin{enumerate}
-    \item Normalisation: We normalise the walker's position to $r = |z_{out}|/R_l$ and map it to the interior point $a = 1/r$ via inversion.
+    \item Normalisation: We normalise the walker's position $z$ to $r = |z|/R_l$ and map it to the interior point $a = 1/r$ via inversion. Note that $r$ and $a$ are real numbers.
     \item Möbius Transformation: We generate a uniform variate $\zeta$ on the unit circle (representing an isotropic exit from the origin). We then apply the real-axis Möbius map:
     \begin{equation}
         w = \frac{r\zeta + 1}{r + \zeta}.
     \end{equation}
-    \item Reconstruction: The resulting point $w$ is distributed exactly according to the exterior harmonic measure. We rotate $w$ by $\arg(z_{out})$ and scale by $R_l$ to obtain the true re-entry position.
+    This maps the unit circle to itself, sending the origin to the point $a$ inside the disk. By the conformal invariance of harmonic measure, the transformed variate $w$ is now distributed according to the harmonic measure relative to $a$.
+    \item Reconstruction: Inverting now does not change the distribution on the unit circle, so $w$ is distributed exactly according to the exterior harmonic measure. We rotate $w$ by $\arg(z_{out})$ and scale by $R_l$ to obtain the true re-entry position.
 \end{enumerate}
 This effectively folds the infinite exterior space back onto the launch circle in $\mathcal{O}(1)$ operations. 
 
 \begin{remark}
-This `no-killing' approach was formally introduced by Menshutin and Schur \cite{menshutin2006} as a 'killing-free' algorithm, where they sampled from the exact hitting distribution (via the Poisson Kernel). We instead adopt Bell's conformal mapping approach, although we map to the unit disk while Bell maps to a straight line, which should make our code very slightly more computationally efficient. 
+This `no-killing' approach was formally introduced by Menshutin and Schur \cite{menshutin2006} as a 'killing-free' algorithm, where they sampled from the exact hitting distribution (via the Poisson Kernel). We instead adopt Bell's conformal mapping approach, although we map to the unit disk while Bell maps to a straight line.
 \end{remark}
 
 \subsection{On-Lattice: Walk-to-Line}
@@ -881,7 +889,7 @@ As established in \cref{ch:theory}, the exit probability (harmonic measure) at a
 
 To calculate this, we must construct a potential $u(z)$ that is harmonic in the upper half-plane but strictly satisfies the Dirichlet boundary condition $u(x, 0) = 0$ (representing the absorbing line). We achieve this via the Method of Images.
 
-The fundamental idea is to place a fictitious "negative walker" (or sink) at the reflected position $(0, -h)$, opposite the true walker at $(0, h)$. Due to the symmetry of the lattice, the potential generated by the real walker at any point on the boundary line $y=0$ is identical to the potential generated by the image. By subtracting the image potential from the source potential, these contributions cancel out exactly along the line, ensuring $u(x, 0) = 0$ by construction.
+The key idea is to place a virtual "negative walker" (or sink) at the reflected position $(0, -h)$, opposite the true walker at $(0, h)$. Due to the symmetry of the lattice, the potential generated by the real walker at any point on the boundary line $y=0$ is identical to the potential generated by the image. By subtracting the image potential from the source potential, these contributions cancel out exactly along the line, ensuring $u(x, 0) = 0$ by construction.
 
 Using the discrete potential kernel $a(z)$ defined in \cref{sec:potential_kernel}, the resulting field is:
 \begin{equation}
@@ -896,7 +904,7 @@ To implement this, we follow Loh exactly. For $h \le 60$, we evaluate this using
 \end{remark}
 
 \begin{remark}
-Computing the normalisation constant for $P_{\text{lattice}}(x)$ over the infinite line is infeasible. Instead, we once again employ rejection sampling (details in \cref{app:rejection_sampling}).
+Computing the normalisation constant for $P_{\text{lattice}}(x)$ over the infinite line is computationally problematic. Instead, we once again employ rejection sampling (details in \cref{app:rejection_sampling}).
 \end{remark}
 
 \subsubsection{The Killing Circle}
@@ -910,7 +918,7 @@ As the walker approaches the cluster, the step size must decrease to avoid overs
 
 \subsection{Off-Lattice: Walk-to-Circle}
 At each step, we calculate the shortest Euclidean distance to the cluster, $d_{min}$. We can construct a circle $C$ of radius $r = d_{min} - \epsilon$ (where $\epsilon$ is a small tolerance). Since the interior of $C$ is empty, the potential is harmonic.
-By the isotropy of Brownian motion (\cref{the:disk_kernel} with $z=0$), the exit distribution is uniform. We therefore advance the walker:
+By the isotropy of Brownian motion (\cref{the:disk_kernel} with $z=0$), the exit distribution is uniform. We therefore advance the walker (at position $z$) to a random point on the boundary of $C$:
 \begin{equation}
     z_{new} = z + r e^{i\theta}, \quad \theta \sim U[0, 2\pi).
 \end{equation}
@@ -927,9 +935,9 @@ To sample from these non-uniform distributions efficiently, we calculate them of
 
 The simulation step proceeds as follows:
 \begin{enumerate}
-    \item \textbf{Scan:} Determine the largest power-of-two square $S_k$ centred at the walker that does not intersect the cluster.
-    \item \textbf{Sample:} Query the pre-computed Alias Table for size $k$ to generate a boundary coordinate $z_{exit}$.
-    \item \textbf{Jump:} Update the walker's position to $z_{exit}$ instantly.
+    \item Determine the largest square $S_k$ centred at the walker that does not intersect the cluster.
+    \item Query the pre-computed Alias Table for size $k$ to generate a boundary coordinate $z_{exit}$.
+    \item Update the walker's position to $z_{exit}$.
 \end{enumerate}
 This allows the walker to leap across large voids while preserving the exact non-uniform statistics of the lattice random walk.
 
@@ -1142,7 +1150,7 @@ In this final domain, the problem reduces to a standard Brownian motion starting
 \section{The Hybrid Model}
 \label{sec:hybrid_model}
 
-To rigorously disentangle the source of anisotropy in DLA, we introduce a hybrid model.
+To disentangle the source of anisotropy in DLA, we introduce a hybrid model.
 
 \subsection{Motivation and Design}
 We hypothesise that the characteristic cross-shape of on-lattice DLA arises primarily from the restriction of particles to fixed grid sites rather than the transport dynamics. To test this, we develop a model where the transport is purely isotropic (Brownian motion), but the final aggregation is constrained to a grid geometry.
@@ -1151,7 +1159,7 @@ The critical design choice is the aggregation mechanism. We evaluated three pote
 \begin{enumerate}
     \item The Sticky Boundary: A walker aggregates if it enters any square cell within the sticky boundary. We rejected this because the square capture zone imposes lattice anisotropy onto the incoming probability flux before aggregation occurs, preventing a clean separation of transport and packing effects.
     \item The Antennae Method: As proposed by \citet{Menshutin2011}, particles only stick if they hit a lattice site along specific axes; otherwise, they are reflected. This is similar in some sense to "Noise-Reduced DLA" \cite{Meakin1987} which was designed to accelerate convergence to asymptotic forms. 
-    We don't use this method as it effectively creates an anisotropic sticking probability ($P_{stick} < 1$ for off-axis collisions), which could potentially prevent us from isolating the effects of the packing geometry.
+    We don't use this method as it potentially alters both the rate of convergence of the cluster (as in Noise-Reduced DLA) and the harmonic measure itself, since walkers are artificially redirected. 
     \item Rotate and Snap \textbf{(Chosen)}: The walker behaves exactly as a hard sphere in continuous space. Upon collision, the particle relaxes into the nearest valid lattice site. This method preserves the exact continuous harmonic measure of the cluster until the instant of impact, ensuring the arrival statistics are purely isotropic.
 \end{enumerate}
 
@@ -1168,7 +1176,7 @@ This implies that the decision of where to aggregate is effectively determined b
 \end{remark}
 
 \subsection{Implementation}
-The algorithm proceeds identically to the Off-Lattice simulation (Walk-on-Spheres) until the collision condition $|z_{walker} - z_{cluster}| \le 2$ is met (since particle radius $r_p=1$).
+The algorithm proceeds identically to the Off-Lattice simulation until the collision condition $|z_{walker} - z_{cluster}| \le 2$ is met (since particle radius $r_p=1$).
 
 \begin{figure}[htbp]
     \centering
@@ -1380,7 +1388,7 @@ A naive approach be to search a Cumulative Distribution Function (CDF). For a sq
 
 To eliminate this overhead, we follow Loh and implement Walker's Alias Method, which reduces the sampling complexity to $\mathcal{O}(1)$—constant time, regardless of the square size.
 
-Intuitively, the Alias Method works by reshaping the uneven probability histogram into a perfectly rectangular block.
+Essentially the Alias Method works by reshaping the uneven probability histogram into a perfectly rectangular block.
 
 Imagine the probability mass function as a set of vertical bars. We normalize them so the average height is 1. The method then "slices" the excess height from "over-full" bins (where $P > 1$) and moves these blocks to fill the gaps in the "under-full" bins (where $P < 1$).
 
@@ -1442,141 +1450,5 @@ To enable a unified analysis pipeline, we implemented a standardisation layer th
 
 This post-processing step allows us to apply the exact same analysis scripts (fractal dimension estimation, radial density functions) to all datasets agnostically, eliminating potential errors arising from manual unit conversion.
 
-% --- SPECIAL REQUIREMENT: LATEX TOOLKIT ---
-\chapter{Reference: LaTeX Structure Examples}
-\label{ch:toolkit}
-
-This section provides templates for common mathematical structures used in this dissertation.
-
-\section{Aligned Equations}
-Below is a multi-line derivation showing the alignment of the equals sign using the \texttt{align} environment.
-\begin{align}
-    \nabla^2 \phi(r, \theta) &= \frac{1}{r} \frac{\partial}{\partial r} \left( r \frac{\partial \phi}{\partial r} \right) + \frac{1}{r^2} \frac{\partial^2 \phi}{\partial \theta^2} \\
-    &= 0 \quad \text{(Laplace Equation)} \nonumber \\
-    \implies \phi(r, \theta) &= \sum_{n=0}^\infty r^n (A_n \cos n\theta + B_n \sin n\theta).
-\end{align}
-
-\section{Floats}
-\subsection{Single Figure}
-Figure \ref{fig:brownian} shows a standard inclusion of a graphic.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.4\textwidth]{example-image-b} % Replace with actual file
-    \caption{A realization of 2D Brownian motion.}
-    \label{fig:brownian}
-\end{figure}
-
-\subsection{Side-by-Side Figures (Subfloats)}
-Figure \ref{fig:comparison} demonstrates how to place two plots next to each other for comparison.
-
-\begin{figure}[h]
-    \centering
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{example-image-a}
-        \caption{On-Lattice DLA}
-        \label{fig:lattice}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{example-image-c}
-        \caption{Off-Lattice DLA}
-        \label{fig:offlattice}
-    \end{subfigure}
-    \caption{Comparison of cluster morphology between lattice and continuum models.}
-    \label{fig:comparison}
-\end{figure}
-
-% --- FIGURE 1: GROWTH SCHEMATIC ---
-\begin{figure}[ht]
-    \centering
-    \begin{tikzpicture}[scale=0.8]
-        % Circle at infinity
-        \draw[dashed, gray] (0,0) circle (4cm);
-        \node[gray, anchor=south] at (0,4.1) {Release Boundary ($R \to \infty$)};
-        
-        % Seed
-        \fill[black] (0,0) circle (4pt) node[below right] {Seed};
-        
-        % Random Walk Path
-        \draw[blue, ->, decorate, decoration={random steps,segment length=3pt,amplitude=2pt}] 
-            (2.5, 3.12) -- (0.2, 0.2);
-        \fill[blue] (2.5, 3.12) circle (2pt) node[above right] {Particle Release};
-        \node[blue, font=\footnotesize] at (1.5, 2) {Random Walk};
-    \end{tikzpicture}
-    \caption{Schematic of the DLA growth process.}
-    \label{fig:dla_schematic}
-\end{figure}
-
-\section{Algorithms}
-\begin{algorithm}[H]
-\SetAlgoLined
-\DontPrintSemicolon
-\caption{Generalised DLA Simulation (Single Particle)}
-\KwData{Cluster $\mathcal{C}$, Launch Radius $R_{launch}$, Killing Radius $R_{kill}$}
-\KwResult{Updated Cluster $\mathcal{C}$}
-
-
-Generate particle position $\mathbf{r}$ on launch boundary ($|\mathbf{r}| \approx R_{launch}$)\;
-\While{particle is active}{
-    $d \leftarrow$ distance from $\mathbf{r}$ to nearest point in $\mathcal{C}$\;
-    
-    \uIf(\tcp*[f]{Far Field}){distance to centre $> R_{kill}$}{
-        Respawn particle\;
-    }
-    \uElseIf(\tcp*[f]{Outer Vacuum}){$d$ is outside bounding box}{
-        $\mathbf{r} \leftarrow$ Apply \textit{Return-to-Boundary} \;
-    }
-    \uElseIf(\tcp*[f]{Empty Space}){$d >$ local step limit}{
-        $r_{jump} \leftarrow \max(\text{safe step}, d - \delta)$\;
-        Move $\mathbf{r}$ by $r_{jump}$ in random direction\;
-    }
-    \Else(\tcp*[f]{Interaction Zone}){
-        Perform local adhesion step (lattice, continuous or hybrid)\;
-        \If{Aggregation Condition Met}{
-            Add particle to $\mathcal{C}$\;
-            Update Cluster Radius $R_{max}$\;
-            \textbf{break}\;
-        }
-    }
-}
-\end{algorithm}
-
-Algorithm \ref{alg:random_walk} shows a basic random walk loop using the \texttt{algorithm2e} package.
-
-\begin{algorithm}[H]
-\SetAlgoLined
-\KwResult{Final position of particle}
- Initialize particle at $r_{start}$\;
- \While{particle not stuck AND particle within bounds}{
-  Generate random angle $\theta \in [0, 2\pi)$\;
-  $x \leftarrow x + \delta \cos \theta$\;
-  $y \leftarrow y + \delta \sin \theta$\;
-  \If{distance to cluster $< \epsilon$}{
-   Stick particle\;
-   break\;
-  }
- }
- \caption{Basic Random Walk Simulation}
- \label{alg:random_walk}
-\end{algorithm}
-
-\section{Theorems}
-Standard environments for formal mathematical statements.
-
-\begin{definition}[Harmonic Measure]
-The harmonic measure $\omega(z, E, \Omega)$ is the probability that a Brownian motion starting at $z \in \Omega$ first hits the boundary $\partial \Omega$ in the set $E \subset \partial \Omega$.
-\end{definition}
-
-\begin{theorem}[Kakutani's Theorem]
-If $D$ is a bounded domain and $g$ is a continuous function on $\partial D$, then the function defined by:
-\begin{equation}
-    u(x) = \mathbb{E}^x[g(B_{\tau_D})] = \int_{\partial D} g(y) \, d\omega_x(y)
-\end{equation}
-is harmonic in $D$ and satisfies $\lim_{x \to y} u(x) = g(y)$ for regular boundary points $y \in \partial D$.
-\end{theorem}
-
-\section{References}
-This is an example of a citation. Witten and Sander introduced the model in 1981 \cite{witten1981}.
 
 \end{document}

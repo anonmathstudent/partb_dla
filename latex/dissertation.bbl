@@ -1,4 +1,4 @@
-\begin{thebibliography}{22}
+\begin{thebibliography}{20}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -65,21 +65,10 @@ Lars~V. Ahlfors.
 \newblock \emph{Complex Analysis: An Introduction to the Theory of Analytic Functions of One Complex Variable}.
 \newblock McGraw-Hill, New York, 3rd edition, 1979.
 
-\bibitem[Priestley(2003)]{Priestley2003}
-H.~A. Priestley.
-\newblock \emph{Introduction to Complex Analysis}.
-\newblock Oxford University Press, Oxford, 2nd edition, 2003.
-
 \bibitem[Mörters and Peres(2010)]{MortersPeres2010}
 Peter Mörters and Yuval Peres.
 \newblock \emph{Brownian Motion}.
 \newblock Cambridge University Press, Cambridge, 2010.
-
-\bibitem[Cass(2009)]{Cass2009}
-Thomas Cass.
-\newblock {Brownian Motion in Complex Analysis}.
-\newblock Lecture Notes, Mathematical Institute, University of Oxford, 2009.
-\newblock Course C10.1b, Hilary Term.
 
 \bibitem[Loh(2014)]{Loh2014}
 Yen~Lee Loh.
