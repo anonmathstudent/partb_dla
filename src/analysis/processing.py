@@ -141,6 +141,47 @@ def batch_sector_analysis(file_pattern, num_sectors=360, num_workers=4, limit=No
     print(f'Aggregated shape: {agg_data.shape} (files, sectors, time_steps)')
     return checkpoints, agg_data
 
+def compute_anisotropy_metrics(time_points, agg_data):
+    """
+    Iterates over the batch of sector grids and computes anisotropy statistics.
+    Returns:
+        df_metrics: DataFrame with one row per file.
+        summary: Dictionary with Mean +/- Std for key metrics.
+    """
+    num_files = agg_data.shape[0]
+    records = []
+    
+    print(f"Computing anisotropy metrics for {num_files} files...")
+    
+    for i in tqdm(range(num_files), desc ="Anisotropy Metrics"):
+        grid = agg_data[i]
+        
+        # 1. axes vs diag ratio
+        b_ax, b_dg, b_ratio = metrics.anisotropy_ratio(time_points, grid)
+        
+        # 2. fourier score
+        a0, a4, f_score = metrics.anisotropy_fourier(time_points, grid)
+        
+        records.append({
+            'beta_axis': b_ax,
+            'beta_diag': b_dg,
+            'beta_ratio': b_ratio,
+            'A0': a0,
+            'A4': a4,
+            'fourier_score': f_score
+        })
+        
+    df_metrics = pd.DataFrame(records)
+    
+    # Summary Statistics (Mean +/- Std)
+    summary = {
+        'beta_ratio_mean': df_metrics['beta_ratio'].mean(),
+        'beta_ratio_std':  df_metrics['beta_ratio'].std(),
+        'fourier_score_mean': df_metrics['fourier_score'].mean(),
+        'fourier_score_std':  df_metrics['fourier_score'].std()
+    }
+    
+    return df_metrics, summary 
 
 def generate_density_grid(file_pattern, snapshot_N, grid_size=1000, limit_files=None):
     """
