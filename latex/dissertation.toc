@@ -37,25 +37,37 @@
 \contentsline {section}{\numberline {3.6}The Hybrid Model}{26}{section.3.6}%
 \contentsline {subsection}{\numberline {3.6.1}Motivation and Design}{26}{subsection.3.6.1}%
 \contentsline {subsection}{\numberline {3.6.2}Implementation}{27}{subsection.3.6.2}%
-\contentsline {chapter}{\numberline {A}Implementation Details and Optimisations}{31}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Computational Framework}{31}{section.A.1}%
-\contentsline {subsection}{\numberline {A.1.1}The Numba JIT Compiler}{31}{subsection.A.1.1}%
-\contentsline {subsection}{\numberline {A.1.2}Rounding Semantics}{31}{subsection.A.1.2}%
-\contentsline {section}{\numberline {A.2}Spatial Indexing and Hierarchical Skipping}{32}{section.A.2}%
-\contentsline {subsection}{\numberline {A.2.1}Lattice: Flattened Bit-Map}{32}{subsection.A.2.1}%
-\contentsline {subsection}{\numberline {A.2.2}Off-Lattice: Dual-Structure Strategy}{33}{subsection.A.2.2}%
-\contentsline {subsubsection}{\numberline {A.2.2.1}1. The Coarse Hierarchy (Skipping)}{33}{subsubsection.A.2.2.1}%
-\contentsline {subsection}{\numberline {A.2.3}2. The Spatial Hash (Hitting)}{33}{subsection.A.2.3}%
-\contentsline {section}{\numberline {A.3}Rejection Sampling}{33}{section.A.3}%
-\contentsline {subsection}{\numberline {A.3.1}Concept and Motivation}{33}{subsection.A.3.1}%
-\contentsline {subsection}{\numberline {A.3.2}The Algorithm}{34}{subsection.A.3.2}%
-\contentsline {subsection}{\numberline {A.3.3}Application 1: The Fuzzy Annulus}{34}{subsection.A.3.3}%
-\contentsline {subsection}{\numberline {A.3.4}Application 2: Walk-to-Line}{34}{subsection.A.3.4}%
-\contentsline {section}{\numberline {A.4}Walker's Alias Method}{35}{section.A.4}%
-\contentsline {subsection}{\numberline {A.4.1}Motivation}{35}{subsection.A.4.1}%
-\contentsline {subsection}{\numberline {A.4.2}Implementation}{35}{subsection.A.4.2}%
-\contentsline {section}{\numberline {A.5}Numerical Approximations}{36}{section.A.5}%
-\contentsline {subsection}{\numberline {A.5.1}Custom Bessel Functions}{36}{subsection.A.5.1}%
-\contentsline {section}{\numberline {A.6}Usability and Data Management}{36}{section.A.6}%
-\contentsline {subsection}{\numberline {A.6.1}Heuristic Grid Sizing}{36}{subsection.A.6.1}%
-\contentsline {subsection}{\numberline {A.6.2}Standardised Coordinate Output}{36}{subsection.A.6.2}%
+\contentsline {chapter}{\numberline {4}Results and Analysis: Dimension and Anisotropy}{29}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Overview and Visual Characterization}{29}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Visual Comparison}{29}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Density and Structure}{29}{subsection.4.1.2}%
+\contentsline {section}{\numberline {4.2}Fractal Dimension and Growth Rate}{29}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Theoretical Framework}{29}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Growth Rate Benchmarks and Robustness}{29}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}Divergence of Geometric vs. Dynamic Dimension}{29}{subsection.4.2.3}%
+\contentsline {section}{\numberline {4.3}Quantifying Anisotropy}{30}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Geometric Analysis: Angular Radius of Gyration}{30}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Dynamic Analysis: Angular Growth Rate}{30}{subsection.4.3.2}%
+\contentsline {section}{\numberline {4.4}Discussion: The Origin of Lattice Artifacts}{30}{section.4.4}%
+\contentsline {chapter}{\numberline {A}Implementation Details and Optimisations}{33}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Computational Framework}{33}{section.A.1}%
+\contentsline {subsection}{\numberline {A.1.1}The Numba JIT Compiler}{33}{subsection.A.1.1}%
+\contentsline {subsection}{\numberline {A.1.2}Rounding Semantics}{33}{subsection.A.1.2}%
+\contentsline {section}{\numberline {A.2}Spatial Indexing and Hierarchical Skipping}{34}{section.A.2}%
+\contentsline {subsection}{\numberline {A.2.1}Lattice: Flattened Bit-Map}{34}{subsection.A.2.1}%
+\contentsline {subsection}{\numberline {A.2.2}Off-Lattice: Dual-Structure Strategy}{35}{subsection.A.2.2}%
+\contentsline {subsubsection}{\numberline {A.2.2.1}1. The Coarse Hierarchy (Skipping)}{35}{subsubsection.A.2.2.1}%
+\contentsline {subsection}{\numberline {A.2.3}2. The Spatial Hash (Hitting)}{35}{subsection.A.2.3}%
+\contentsline {section}{\numberline {A.3}Rejection Sampling}{35}{section.A.3}%
+\contentsline {subsection}{\numberline {A.3.1}Concept and Motivation}{35}{subsection.A.3.1}%
+\contentsline {subsection}{\numberline {A.3.2}The Algorithm}{36}{subsection.A.3.2}%
+\contentsline {subsection}{\numberline {A.3.3}Application 1: The Fuzzy Annulus}{36}{subsection.A.3.3}%
+\contentsline {subsection}{\numberline {A.3.4}Application 2: Walk-to-Line}{36}{subsection.A.3.4}%
+\contentsline {section}{\numberline {A.4}Walker's Alias Method}{37}{section.A.4}%
+\contentsline {subsection}{\numberline {A.4.1}Motivation}{37}{subsection.A.4.1}%
+\contentsline {subsection}{\numberline {A.4.2}Implementation}{37}{subsection.A.4.2}%
+\contentsline {section}{\numberline {A.5}Numerical Approximations}{38}{section.A.5}%
+\contentsline {subsection}{\numberline {A.5.1}Custom Bessel Functions}{38}{subsection.A.5.1}%
+\contentsline {section}{\numberline {A.6}Usability and Data Management}{38}{section.A.6}%
+\contentsline {subsection}{\numberline {A.6.1}Heuristic Grid Sizing}{38}{subsection.A.6.1}%
+\contentsline {subsection}{\numberline {A.6.2}Standardised Coordinate Output}{38}{subsection.A.6.2}%

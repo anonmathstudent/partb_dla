@@ -489,7 +489,7 @@ class BellOffSimulator:
         - Lattice physics uses Spacing=1.0 (Diameter=1.0).
         
         To ensure consistency between models, we divide the off-lattice
-        coordinates by 2.0. This normalizes both models to units of
+        coordinates by 2.0. This normalises both models to units of
         'particle diameter'.
         """
         if self.pts is None:

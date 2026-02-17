@@ -52,13 +52,6 @@ def process_single(filepath, snapshots):
         max_box = int(np.max(np.abs(sub_coords))) + 1
         res_box = metrics.calculate_box_dim(sub_coords, max_box_size=max_box)
 
-        # 3. Anisotropy
-        # only run for N > 5000 to save time
-        '''if N >= 5000:
-            res_aniso = metrics.calculate_anisotropy_old(sub_coords, sub_t)
-        else:
-            res_aniso = {'A0': np.nan, 'A4': np.nan, 'A4_A0': np.nan}
-'''
         # --- Aggregate Results ---
         row = {
             'filepath': filepath,

@@ -25,7 +25,7 @@ def calculate_radius_gyration(coords, t, fit_start=1000):
 def calculate_box_dim(coords, max_box_size = None):
     """
     Calculate box-counting dimension (D) using 1D Hashing
-    Scales: 2^2 to max_size/16 (skips atoms and finite effects)
+    Scales: 2^4 to max_size/16 (skips atoms and finite effects)
     """
     if max_box_size is None:
         max_box_size = int(np.max(np.abs(coords))) + 1
@@ -35,7 +35,7 @@ def calculate_box_dim(coords, max_box_size = None):
     if upper_limit < 4:
         return {'D': np.nan, 'D_err': np.nan}
     
-    scales = np.logspace(2, np.log2(upper_limit), num=20, base=2, dtype=int)
+    scales = np.logspace(4, np.log2(upper_limit), num=30, base=2, dtype=int)
     scales = np.unique(scales)
 
     counts = []

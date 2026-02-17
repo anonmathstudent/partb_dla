@@ -1248,6 +1248,78 @@ Simple trigonometry shows that for any impact angle $\phi$ closer to $N$ than an
 For $|\phi| < \pi/4$, this distance is at most $2\sqrt{2 - \sqrt{2}} \approx 1.53$, which is well inside the collision radius of 2.
 This implies that if $N$ were occupied, the walker would have intersected $N$'s collision shell before reaching $P$'s surface. Since the algorithm halts at the first contact, the target slot $N$ must be empty.
 
+% =========================================
+% CHAPTER 4: Results + Analysis (Part 1)
+% =========================================
+\chapter{Results and Analysis: Dimension and Anisotropy}
+\label{ch:anal1}
+
+\section{Overview and Visual Characterization}
+\label{sec:anal1_overview}
+
+% 4.1.1 The Trio
+In this chapter, we analyse the three variant of DLA explained in \cref{ch:algorithms}, in particular looking to understand the dimension of DLA and the cause of anisotropy in on-lattice models. For each of the models we have generated 1000 clusters of size $10^6$, as well as 100 clusters of size $10^7$.
+
+
+% 4.1.2 Morphological Comparison
+\subsection{Visual Comparison}
+
+% TODO: Insert Figure - 3-Panel comparison at N=10^7.
+% Comparison: Lattice/Hybrid (Cross) vs Off-Lattice (Round).
+
+
+\subsection{Density and Structure}
+% TODO: Insert Figure - Density Heatmaps.
+% Comparison: "Arms" of Lattice vs Uniform Cloud of Off-Lattice.
+
+\section{Fractal Dimension and Growth Rate}
+\label{sec:anal1_dim}
+
+% 4.2.1 Theory
+\subsection{Theoretical Framework}
+We distinguish between two dimension metrics:
+\begin{itemize}
+    \item \textbf{Minkowski-Bouligand (Box-Counting) Dimension ($D_{box}$):} A geometric measure of space-filling.
+    \item \textbf{Growth Dimension ($D_\beta$):} Derived from the scaling relation $R_g \sim N^\beta$, representing the dynamic expansion rate.
+\end{itemize}
+
+% 4.2.2 Results (Growth Rate Focus)
+\subsection{Growth Rate Benchmarks and Robustness}
+% TODO: Insert Table - Comparison of D_beta for all 3 models vs Theory (1.71).
+% TODO: Insert Figure - Growth Robustness (L2 vs Theil-Sen).
+
+We find that Off-Lattice growth is stable ($D \approx 1.71$). However, Lattice and Hybrid models exhibit significant "drift," where the growth dimension systematically decreases as the cluster size increases ($N \to 10^7$).
+
+% 4.2.3 Metric Divergence
+\subsection{Divergence of Geometric vs. Dynamic Dimension}
+% TODO: Insert Figure - Histogram Overlay (Box Dim vs Growth Dim).
+% TODO: Insert Figure - Temporal Evolution (Snapshot Analysis: D vs N).
+
+A key finding is the decoupling of geometry and kinetics in anisotropic models. While $D_{box}$ slowly increases due to interior filling, $D_\beta$ decreases due to axial acceleration. This divergence is absent in the isotropic Off-Lattice control.
+
+\section{Quantifying Anisotropy}
+\label{sec:anal1_anisotropy}
+
+% 4.3.1 Geometric Analysis
+\subsection{Geometric Analysis: Angular Radius of Gyration}
+To quantify the "lobes" observed visually, we calculate the Angular Radius of Gyration $R_g(\theta)$.
+
+% TODO: Insert Figure - Polar Plot (R_g vs Angle).
+% TODO: Insert Figure - Log-Log Scaling (R_g(Axis) vs R_g(Diagonal) vs N).
+
+The polar plots confirm a 4-fold symmetry for Lattice and Hybrid models. Crucially, the scaling exponent along the axes ($\nu_{0}$) is strictly larger than along the diagonals ($\nu_{45}$), confirming that the anisotropy is scale-invariant.
+
+% 4.3.2 Dynamic Analysis
+\subsection{Dynamic Analysis: Angular Growth Rate}
+We further analyze the velocity of the growing interface using Fourier decomposition.
+
+% TODO: Insert Figure - Harmonic Analysis (Amplitude of A4 mode).
+% TODO: Insert Figure - Axis/Diagonal Growth Ratio.
+
+The dominance of the 4th harmonic ($A_4$) in the Lattice and Hybrid models quantifies the strength of the cross shape. The Off-Lattice model shows no statistically significant harmonic modes above the noise floor.
+
+\section{Discussion: The Origin of Lattice Artifacts}
+\label{sec:anal1_discussion}
 
 % =========================================
 % Bibliography
@@ -1449,6 +1521,7 @@ To enable a unified analysis pipeline, we implemented a standardisation layer th
 \end{itemize}
 
 This post-processing step allows us to apply the exact same analysis scripts (fractal dimension estimation, radial density functions) to all datasets agnostically, eliminating potential errors arising from manual unit conversion.
+
 
 
 \end{document}
