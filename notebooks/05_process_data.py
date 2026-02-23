@@ -8,7 +8,6 @@ Or from notebooks/:     python 05_process_data.py
 import os
 import sys
 
-# Script may live in notebooks/ or project root; resolve repo root for paths and imports
 _SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.dirname(_SCRIPT_DIR) if os.path.basename(_SCRIPT_DIR) == "notebooks" else _SCRIPT_DIR
 if PROJECT_ROOT not in sys.path:
@@ -47,10 +46,18 @@ def process_model_size(model: str, size_label: str) -> None:
     base_name = f"{model}_{size_label}"
 
     # Step A: Scalars (beta, Rg, D, etc.)
-    snapshots = [snapshot_N]
+    # Take regular snapshots from 10^5 particles to max
+    start_log = 5.0  
+    end_log = np.log10(snapshot_N)
+    num_snaps = int(5 * (end_log - start_log)) + 1 
+    snapshots = np.logspace(start_log, end_log, num=num_snaps).astype(int)
+    snapshots = np.unique(snapshots) # Ensure no duplicate sizes
+    if len(snapshots) == 0 or snapshots[-1] != snapshot_N: 
+        snapshots = np.append(snapshots, snapshot_N) # Guarantee the absolute final N is always the last snapshot
+
     df_scalars = proc.batch_analysis(
         file_pattern=pattern,
-        snapshots=snapshots,
+        snapshots=snapshots.tolist(), # Convert to standard Python list
         num_workers=NUM_WORKERS,
         limit=LIMIT,
     )
@@ -60,6 +67,7 @@ def process_model_size(model: str, size_label: str) -> None:
     # Step B: Sector data (raw 360-sector resolution)
     times, sector_grid = proc.batch_sector_analysis(
         file_pattern=pattern,
+        max_time=snapshot_N,
         num_sectors=NUM_SECTORS,
         num_workers=NUM_WORKERS,
         limit=LIMIT,

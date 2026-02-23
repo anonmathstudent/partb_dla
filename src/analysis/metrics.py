@@ -2,25 +2,57 @@ import numpy as np
 from scipy.stats import linregress
 from scipy.fft import rfft
 
-def calculate_radius_gyration(coords, t, fit_start=1000):
-    """
-    Calculate the growth rate (beta) from the radius of gyration
-    Matches Grebenkov and Beliaev (2017): Fit log(Rg) ~ beta * log(t)
-    """
-    # 1. calculate Rg trajectory
-    r_sq = np.sum(coords**2, axis=1) # squared distance from origin
-    cum_r_sq = np.cumsum(r_sq) # cumulative sum
-    Rg = np.sqrt(cum_r_sq / t) # radius of gyration
+from scipy.stats import linregress
+import numpy as np
 
-    # 2. fit log-log to get beta
-    start_idx = fit_start if len(t) > fit_start + 10 else 10
-    if start_idx >= len(t):
-        return{'beta': np.nan, 'beta_err': np.nan, 'Rg_final': Rg[-1] if len(Rg)>0 else 0}
+def calculate_radius_gyration(coords, t, fit_start=1000, pts_per_decade=50):
+    """
+    Calculate the growth rate (beta) from the radius of gyration.
+    Matches Grebenkov and Beliaev (2017): Fit log(Rg) ~ beta * log(t).
+    """
+    N_total = len(t)
+
+    # 1. Calculate full Rg trajectory
+    r_sq = np.sum(coords**2, axis=1) # squared distance from origin
+    cum_r_sq = np.cumsum(r_sq)       # cumulative sum
+    Rg = np.sqrt(cum_r_sq / t)       # radius of gyration
     
-    log_t = np.log(t[start_idx:])
-    log_Rg = np.log(Rg[start_idx:])
+    Rg_final = Rg[-1] if len(Rg) > 0 else 0
+
+    # Handle tiny clusters
+    start_idx = fit_start if N_total > fit_start + 10 else 10
+    if start_idx >= N_total:
+        return {'beta': np.nan, 'beta_err': np.nan, 'Rg_final': Rg_final}
+    
+    # --- 2. Generate Log-Spaced Checkpoints ---
+    start_log = np.log10(start_idx)
+    end_log = np.log10(N_total)
+    
+    # Determine number of points based on the decades
+    num_points = int(pts_per_decade * (end_log - start_log))
+    
+    if num_points < 2: # Failsafe
+         return {'beta': np.nan, 'beta_err': np.nan, 'Rg_final': Rg_final}
+         
+    checkpoints = np.unique(np.logspace(start_log, end_log, num=num_points).astype(int))
+    checkpoints = checkpoints[checkpoints <= N_total]
+
+    # --- 3. Extract Sampled Data ---
+    # Since 't' usually goes [1, 2, ..., N], checkpoint 1000 is at index 999.
+    # We subtract 1 to get the correct 0-based index from the Rg array.
+    sampled_indices = checkpoints - 1
+    
+    t_sampled = t[sampled_indices]
+    Rg_sampled = Rg[sampled_indices]
+    assert np.array_equal(t_sampled, checkpoints), "Time alignment failed!"
+
+    # --- 4. Fit Log-Log to get Beta ---
+    log_t = np.log(t_sampled)
+    log_Rg = np.log(Rg_sampled)
+    
     slope, intercept, r_value, p_value, std_err = linregress(log_t, log_Rg)
-    return {'beta': slope, 'beta_err': std_err, 'Rg_final': Rg[-1]}
+    
+    return {'beta': slope, 'beta_err': std_err, 'Rg_final': Rg_final}
 
 def calculate_box_dim(coords, max_box_size = None):
     """
@@ -39,16 +71,16 @@ def calculate_box_dim(coords, max_box_size = None):
     scales = np.unique(scales)
 
     counts = []
-
-    #1D Hashing
-    y_multiplier = int(max_box_size * 2 + 10000) #large constant to avoid collisions
-    coords_pos = coords + max_box_size
+    coords_pos = coords + max_box_size # Shift coordinates to be strictly positive
+    max_possible_coord = np.max(coords_pos) # The absolute maximum coordinate value in our new positive space
 
     for eps in scales:
         grid_x = np.floor(coords_pos[:,0] / eps).astype(np.int64)
         grid_y = np.floor(coords_pos[:,1] / eps).astype(np.int64)
+        safe_multiplier = int((max_possible_coord / eps) + 1) # Calculate a mathematically perfect multiplier for this specific eps
 
-        grid_hash = grid_x + (grid_y * y_multiplier)
+        # 1D Fast Hashing
+        grid_hash = grid_x + (grid_y * safe_multiplier)
         unique_count = len(np.unique(grid_hash))
         counts.append(unique_count)
     
@@ -62,81 +94,112 @@ def calculate_box_dim(coords, max_box_size = None):
 
 def calculate_sector_evolution(coords, t, num_sectors=360, checkpoints=None):
     """
-    Calculate radius of gyration per angular sector over time
-    Returns: 1D array of angles, 1D array of times, 2D array of Rg values [sector, time]
+    Calculate Radius of Gyration (RMS distance from Seed) per angular sector.
     """
+    N_total = len(t)
+
+    # --- 1. Log-Spaced Checkpoints ---
     if checkpoints is None:
-        #default is powers of 2 from 2^10 up until max time
-        max_p = int(np.log2(len(t)))
-        checkpoints = np.logspace(10, max_p, num=(max_p-10)+1, base=2, dtype=int) #why is this num?
-        checkpoints = np.unique(checkpoints[checkpoints < len(t)])
+        start_log = 3.0  # Start at particle 1000 to avoid small-number noise
+        end_log = np.log10(N_total)
+        num_points = int(20 * (end_log - start_log)) # 20 pts/decade
+        checkpoints = np.unique(np.logspace(start_log, end_log, num=num_points).astype(int))
+        checkpoints = checkpoints[checkpoints < N_total]
 
-    #1. prepare bins
-    bin_edges = np.linspace(-np.pi, np.pi, num_sectors + 1)
-    angles = np.arctan2(coords[:,1], coords[:,0])
+    # --- 2. Calculate Polar Coordinates ---
+    # r_sq is the squared distance from the Seed (0,0)
+    r_sq = np.sum(coords**2, axis=1)
+    
+    # Calculate angles [-pi, pi]
+    angles = np.arctan2(coords[:, 1], coords[:, 0])
 
-    #2. sort data spatially
-    sort_idx = np.argsort(angles)
-    angles_sorted = angles[sort_idx]
-    coords_sorted = coords[sort_idx]
+    # --- 3. Center Bins on Axes (Shift-Bin Strategy) ---
+    # We want Bin 0 to be centered exactly on 0 degrees (the Lattice Axis).
+    # Bin 0 limits: [-0.5 deg, +0.5 deg]
+    # To use fast binning, we shift all angles by +0.5 deg (half a bin).
+    
+    d_theta = 2 * np.pi / num_sectors
+    
+    # Modulo 2pi ensures everything is in range [0, 2pi]
+    angles_shifted = (angles + (d_theta / 2)) % (2 * np.pi)
+    
+    # Define edges 0..2pi. 
+    # Because we shifted the data, 'digitize' will put particles 
+    # centered at 0 deg into Bin 0.
+    bin_edges = np.linspace(0, 2 * np.pi, num_sectors + 1)
+    
+    # Get sector indices (0 to num_sectors-1)
+    sector_indices = np.digitize(angles_shifted, bin_edges) - 1
+    
+    # Handle rare edge case where a value equals exactly 2pi
+    sector_indices[sector_indices == num_sectors] = 0
+
+    # --- 4. Sort by Time ---
+    # Critical for cumulative calculation.
+    # We sort once globally to avoid sorting inside the loop.
+    sort_idx = np.argsort(t)
     t_sorted = t[sort_idx]
+    r_sq_sorted = r_sq[sort_idx]
+    sector_indices_sorted = sector_indices[sort_idx]
 
-    bin_indices = np.searchsorted(angles_sorted, bin_edges)
-
+    # Initialize Output: [Sectors x Time_Checkpoints]
     rg_history = np.zeros((num_sectors, len(checkpoints)))
-    rg_history[:] = np.nan
+    rg_history[:] = np.nan 
 
-    # 3. loop through sectors
-    for i in range(num_sectors):
-        start_idx = bin_indices[i]
-        end_idx = bin_indices[i+1]
-
-        t_wedge = t_sorted[start_idx:end_idx]
-        coords_wedge = coords_sorted[start_idx:end_idx]
-
-        if len(t_wedge) < 10: continue
-
-        # sort by time
-        t_sort_wedge = np.argsort(t_wedge)
-        t_wedge = t_wedge[t_sort_wedge]
-        coords_wedge = coords_wedge[t_sort_wedge]
-
-        r_sq = np.sum(coords_wedge**2, axis=1)
-        cum_r_sq = np.cumsum(r_sq)
-        counts = np.arange(1, len(t_wedge) + 1)
-
-        #lookup checkpoints
-        indices = np.searchsorted(t_wedge, checkpoints, side='right') - 1
-        valid = (indices >= 0) 
-
-        if np.any(valid):
-            Rg_values = np.sqrt(cum_r_sq[indices[valid]] / counts[indices[valid]])
-            rg_history[i, valid] = Rg_values
-    return bin_edges[:-1], checkpoints, rg_history
-
-def downsample_centered(sector_grid, input_sectors=360, target_sectors=90):
-    """
-    Groups high-res sector data into centered coarse bins.
-    Default is it combines four 1 degree bins together to turn 360 sectors into 90. 
-    
-    """
-    if sector_grid.shape[0] != input_sectors:
-        return sector_grid # Return as-is if already downsampled
+    # --- 5. Process Each Sector ---
+    for s in range(num_sectors):
+        # Extract particles for this sector
+        in_sector = (sector_indices_sorted == s)
         
-    window = input_sectors // target_sectors
-    shift = window // 2 
+        # If sector is empty, leave as NaNs and continue
+        if not np.any(in_sector):
+            continue
+
+        t_sec = t_sorted[in_sector]
+        r_sq_sec = r_sq_sorted[in_sector]
+        
+        # Calculate Cumulative RMS Distance (Rg)
+        # Rg(t) = sqrt( Sum(r^2) / Count(t) )
+        cum_r_sq = np.cumsum(r_sq_sec)
+        counts = np.arange(1, len(t_sec) + 1)
+        rg_evolution = np.sqrt(cum_r_sq / counts)
+        
+        # --- 6. Map to Checkpoints (The "Freezing" Logic) ---
+        # Find the index of the particle that exists at or before each checkpoint.
+        # side='right' ensures we grab the latest possible value.
+        idx_map = np.searchsorted(t_sec, checkpoints, side='right') - 1
+        
+        # If idx_map is -1, the checkpoint is before the first particle arrived (keep NaN).
+        # If idx_map is max_index, the checkpoint is after the last particle (keep max value).
+        valid_mask = (idx_map >= 0)
+        
+        if np.any(valid_mask):
+            valid_indices = idx_map[valid_mask]
+            rg_history[s, valid_mask] = rg_evolution[valid_indices]
+
+    # --- 7. Prepare Return Values ---
+    bin_centers = np.linspace(0, 2*np.pi, num_sectors, endpoint=False)
     
-    # Roll array to bring the "left" neighbors of 0 to the start
-    grid_rolled = np.roll(sector_grid, shift=shift, axis=0)
+    return bin_centers, checkpoints, rg_history
+
+def downsample_centered(grid, input_sectors=360, target_sectors=90):
+    """
+    Correctly aggregates 1-degree bins into 4-degree bins while 
+    maintaining the center-alignment on the lattice axes.
+    """
+    if grid.shape[0] != input_sectors:
+        return grid
+        
+    factor = input_sectors // target_sectors # factor = 4
+    shift = factor // 2                      # shift = 2
     
-    # Reshape and Average
-    # shape becomes (90, 4, Time) -> mean over axis 1 -> (90, Time)
-    grid_reshaped = grid_rolled.reshape(target_sectors, window, -1)
+    # 1. Roll the array so that the axis (0°) is in the middle of a group
+    grid_rolled = np.roll(grid, shift=shift, axis=0)
     
-    # Use nanmean to ignore empty sub-sectors
-    grid_coarse = np.nanmean(grid_reshaped, axis=1)
+    # 2. Reshape to (90, 4, Time) and take the mean of those 4 bins
+    coarse_grid = grid_rolled.reshape(target_sectors, factor, -1).mean(axis=1)
     
-    return grid_coarse
+    return coarse_grid
 
 def calculate_beta_profile(time_points, sector_grid, fit_start_N=1000, min_points=3):
     """
@@ -251,63 +314,4 @@ def anisotropy_ratio(time_points, sector_grid, fit_start_N=1000, input_sectors=3
         
     except Exception:
         return np.nan, np.nan, np.nan
-    
-def calculate_anisotropy_old(coords,t,num_bins=360):
-    """
-    Calculate Anisotropy Score (A4/A0) using Fourier decomp of angular growth rates
-    """
-    bin_edges = np.linspace(-np.pi, np.pi, num_bins + 1)
-    angles = np.arctan2(coords[:,1], coords[:,0])
-
-    beta_thetas = []
-
-    #loop over wedges
-    for i in range(num_bins):
-        in_bin = (angles >= bin_edges[i]) & (angles < bin_edges[i+1])
-        
-        coords_bin = coords[in_bin]
-        t_wedge = t[in_bin]
-        n_wedge = len(t_wedge)
-
-        if n_wedge < 50:
-            beta_thetas.append(np.nan)
-            continue
-
-        #local Rg calculation
-        coords_wedge = coords[in_bin]
-        r_sq_wedge = np.sum(coords_wedge**2, axis=1)
-        cumsum_wedge = np.cumsum(r_sq_wedge)
-        wedge_count = np.arange(1, n_wedge + 1)
-        Rg_wedge = np.sqrt(cumsum_wedge / wedge_count)
-
-        #regression: local size vs global time (early fit start)
-        fit_start = 20
-        if n_wedge > fit_start + 10:
-            log_t_wedge = np.log(t_wedge[fit_start:])
-            log_Rg_wedge = np.log(Rg_wedge[fit_start:])
-            slope, intercept, r_value, p_value, std_err = linregress(log_t_wedge, log_Rg_wedge)
-            beta_thetas.append(slope)
-        else:
-            beta_thetas.append(np.nan)
-        
-    #clean NaNs
-    beta_arrray = np.array(beta_thetas)
-    valid = ~np.isnan(beta_arrray)
-    if np.sum(valid) < num_bins / 2:
-        return {'A0': np.nan, 'A4': np.nan, 'A4_A0': np.nan}
-    
-    beta_cleaned = np.interp(
-        np.arange(num_bins),
-        np.arange(num_bins)[valid],
-        beta_arrray[valid]
-    )
-
-    #Fourier Decomposition
-    #A0 is the average growth rate, A4 is the 4th harmonic amplitude (corresponding to grid anisotropy)
-    coeffs = rfft(beta_cleaned)
-    magnitudes = np.abs(coeffs) / num_bins
-
-    A0 = magnitudes[0]
-    A4 = magnitudes[4]
-    score = A4 / A0 if A0 != 0 else np.nan
-    return {'A0': A0, 'A4': A4, 'A4_A0': score}
+   

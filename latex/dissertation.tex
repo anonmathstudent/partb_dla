@@ -14,6 +14,7 @@
 \usepackage{graphicx} % Remove [demo] when you have real images
 \usepackage{amsmath, amssymb, amsthm}
 \usepackage{setspace}
+\usepackage{booktabs}
 \usepackage[linesnumbered,ruled,vlined]{algorithm2e}
 \usepackage{subcaption}
 \usepackage[font=small, labelfont=bf]{caption} % Nicer captions
@@ -1248,78 +1249,227 @@ Simple trigonometry shows that for any impact angle $\phi$ closer to $N$ than an
 For $|\phi| < \pi/4$, this distance is at most $2\sqrt{2 - \sqrt{2}} \approx 1.53$, which is well inside the collision radius of 2.
 This implies that if $N$ were occupied, the walker would have intersected $N$'s collision shell before reaching $P$'s surface. Since the algorithm halts at the first contact, the target slot $N$ must be empty.
 
+
 % =========================================
-% CHAPTER 4: Results + Analysis (Part 1)
+% CHAPTER 4: Results
 % =========================================
-\chapter{Results and Analysis: Dimension and Anisotropy}
-\label{ch:anal1}
-
-\section{Overview and Visual Characterization}
-\label{sec:anal1_overview}
-
-% 4.1.1 The Trio
-In this chapter, we analyse the three variant of DLA explained in \cref{ch:algorithms}, in particular looking to understand the dimension of DLA and the cause of anisotropy in on-lattice models. For each of the models we have generated 1000 clusters of size $10^6$, as well as 100 clusters of size $10^7$.
+\chapter{Simulation Results}
+\label{ch:results}
 
 
-% 4.1.2 Morphological Comparison
-\subsection{Visual Comparison}
+% =========================================
+% CHAPTER 5: Dimensional Analysis
+% =========================================
+\chapter{Fractal Dimension of DLA}
+\label{ch:dim}
 
-% TODO: Insert Figure - 3-Panel comparison at N=10^7.
-% Comparison: Lattice/Hybrid (Cross) vs Off-Lattice (Round).
+% 5.1 Theory
+\section{Introduction to Dimension}
+\label{sec:dim_overview}
+To understand the fractal dimension of a Diffusion-Limited Aggregation (DLA) cluster, we must first establish a mathematically rigorous definition of ``dimension.'' Intuitively, dimension describes how an object fills space as it scales. For standard Euclidean geometries, this scaling relationship resolves to an integer. If we scale a 2D solid square by a factor of 2, its area (or ``mass'') increases by $2^2 = 4$. For fractal objects, this scaling relationship does not resolve to an integer, leading to a fractional dimension $D$ where the mass scales by $2^D$. To formally quantify this, we rely on the framework established by Felix Hausdorff and later refined for practical application by Minkowski and Bouligand.
 
+\subsection{Hausdorff Dimension}
+The formal mathematical foundation for fractal dimension is the Hausdorff dimension, which relies on the concept of optimal covers. Following Falconer \cite{Falconer1990}, we first define the Hausdorff measure.
 
-\subsection{Density and Structure}
-% TODO: Insert Figure - Density Heatmaps.
-% Comparison: "Arms" of Lattice vs Uniform Cloud of Off-Lattice.
+\begin{definition}[Hausdorff Measure]
+Let $F \subset \mathbb{R}^n$ and $s \geq 0$. A countable collection of sets $\{U_i\}$ is a $\delta$-cover of $F$ if $F \subset \bigcup_{i=1}^\infty U_i$ and the diameter $|U_i| \leq \delta$ for all $i$. The $s$-dimensional Hausdorff measure is defined as:
+\begin{equation}
+    \mathcal{H}^s(F) = \lim_{\delta \to 0} \inf \left\{ \sum_{i=1}^\infty |U_i|^s : \{U_i\} \text{ is a } \delta\text{-cover of } F \right\}
+\end{equation}
+\end{definition}
 
-\section{Fractal Dimension and Growth Rate}
-\label{sec:anal1_dim}
+This definition asks us to cover the fractal with sets (like tiny circles or blobs) of maximum size $\delta$, summing the $s$-th powers of their diameters. The infimum ensures we are finding the absolute most efficient possible cover. 
 
-% 4.2.1 Theory
-\subsection{Theoretical Framework}
-We distinguish between two dimension metrics:
+Falconer demonstrates that as $s$ varies, $\mathcal{H}^s(F)$ exhibits a critical ``jump'' behavior, which fundamentally defines the dimension of the set.
+
+\begin{proposition}[Hausdorff Dimension]
+There exists a unique critical value, called the Hausdorff dimension $\dim_H(F)$, such that for any set $F$:
+\begin{align*}
+    \mathcal{H}^s(F) &= \infty \quad \text{if } s < \dim_H(F) \\
+    \mathcal{H}^s(F) &= 0 \quad \text{if } s > \dim_H(F)
+\end{align*}
+Formally, $\dim_H(F) = \inf \{ s \geq 0 : \mathcal{H}^s(F) = 0 \}$.
+\end{proposition}
+
+While mathematically beautiful and rigorously applicable to any set, calculating $\dim_H(F)$ requires finding the optimal variable-sized cover as $\delta \to 0$. This optimization is computationally intractable for complex physical systems like discrete DLA simulations.
+
+\subsection{Box-Counting Dimension ($D_{box}$)}
+To extract a measurable metric from these abstract concepts, we turn to the Box-Counting (or Minkowski-Bouligand) dimension. Rather than starting with a formal limit, it is more intuitive to begin with the fundamental power law of scaling.
+
+Consider covering a standard Euclidean object with a uniform grid of boxes of side length $\epsilon$. If the object is a 1D line of length $L$, the number of boxes required is $N(\epsilon) \propto L/\epsilon \sim \epsilon^{-1}$. If the object is a 2D square of area $A$, the number of boxes is $N(\epsilon) \propto A/\epsilon^2 \sim \epsilon^{-2}$. We can generalize this scaling relationship for an object of arbitrary dimension $D_{box}$ as:
+\begin{equation}
+    N_{\epsilon}(F) \sim \epsilon^{-D_{box}}
+\end{equation}
+
+To isolate the dimension $D_{box}$, we take the logarithm of both sides, yielding $\log N_{\epsilon}(F) \approx -D_{box} \log \epsilon + c$, where $c$ is a constant. Rearranging for $D_{box}$ gives:
+\begin{equation}
+    D_{box} \approx \frac{\log N_{\epsilon}(F) - c}{-\log \epsilon}
+\end{equation}
+As the box size becomes infinitesimally small ($\epsilon \to 0$), the constant $c$ becomes negligible compared to the logarithm of $\epsilon$. This intuitive derivation directly motivates the formal mathematical definition outlined by Falconer \cite{Falconer1990}:
+
+\begin{definition}[Box-Counting Dimension]
+Let $N_{\epsilon}(F)$ be the smallest number of $\epsilon$-mesh cubes (boxes of side length $\epsilon$) that intersect a set $F$. The Box-Counting dimension $D_{box}$ is defined as:
+\begin{equation}
+    D_{box} = \lim_{\epsilon \to 0} \frac{\log N_{\epsilon}(F)}{-\log \epsilon}
+\end{equation}
+assuming this limit exists.
+\end{definition}
+
+Practically, by measuring the number of occupied boxes $N_{\epsilon}(F)$ for various box sizes $\epsilon$ and plotting them on a log-log graph, $D_{box}$ is extracted directly from the negative slope of the regression line.
+
+\subsection{Growth Rate Dimension ($D_\beta$)}
+While Box-Counting analyzes the ``frozen'' final geometry of a cluster by varying the measurement resolution, most modern literature on DLA utilizes a kinetic proxy for dimension based on the cluster's \textit{growth rate} over time.
+
+To quantify this dynamic expansion, we must first define a robust metric for the spatial extent of the cluster. While the maximal radius (the absolute distance to the furthest particle) is highly susceptible to stochastic outliers and noisy tip-growth, the radius of gyration provides a stable, averaged measure of the mass distribution.
+
+\begin{definition}[Radius of Gyration]
+For a discrete aggregate of $N$ identical particles located at positions $\mathbf{r}_i$, let $\mathbf{r}_{cm} = \frac{1}{N}\sum_{i=1}^N \mathbf{r}_i$ be the center of mass. The radius of gyration, $R_g$, is the root-mean-square distance of the particles from the center of mass, defined as:
+\begin{equation}
+    R_g = \sqrt{\frac{1}{N} \sum_{i=1}^N |\mathbf{r}_i - \mathbf{r}_{cm}|^2}
+\end{equation}
+\end{definition}
+
+As a cluster aggregates, we can continuously characterize its overall spatial extent using this radius of gyration, $R_g$, and measure its expansion as a function of the total number of aggregated particles, $N$. This dynamic expansion is described by the scaling relation:
+\begin{equation}
+    R_g \sim N^\beta
+\end{equation}
+where $\beta$ is defined as the growth rate exponent.
+
+To connect this kinetic growth rate back to the geometric power law established in the previous section, consider the mass-radius relationship of a fractal. In the Box-Counting framework, the mass (number of particles $N$) contained within a characteristic radius $R$ scales as $N \sim R^{D_{box}}$. Rearranging this spatial scaling to solve for the radius gives:
+\begin{equation}
+    R \sim N^{1/D_{box}}
+\end{equation}
+By equating our dynamic radial expansion ($R_g$) with the geometric spatial radius ($R$), we observe that the kinetic growth exponent relates to the dimension via $\beta = 1/D_{box}$. This powerful mathematical link justifies the definition of a distinct Growth Rate Dimension, $D_\beta$, defined simply as the inverse of the growth rate:
+\begin{equation}
+    D_\beta = \frac{1}{\beta}
+\end{equation}
+
+\subsection{The Link Between $D_{box}$ and $D_\beta$}
+Because of the algebraic link established above ($1/\beta = D_{box}$), it is a common assumption in the DLA literature that the geometric box-counting dimension and the kinetic growth dimension represent identical concepts and yield equivalent values ($D_{box} = D_\beta$). For an ideal, perfectly isotropic fractal, these two metrics do indeed converge to the known off-lattice DLA dimension of $D \approx 1.71$.
+
+However, similar underlying definitions do not guarantee identical physical concepts. As highlighted by Grebenkov and Beliaev \cite{Grebenkov2017}, the two metrics view the cluster through fundamentally different lenses: $D_{box}$ measures the bulk space-filling capacity of the interior, while $D_\beta$ measures the maximal radial expansion at the kinetic frontier.
+
+They provide a simple but illuminating counter-example to prove that these dimensions can entirely decouple for anisotropic structures. Consider an aggregate composed of $2t$ particles. Half of these particles ($t$) form a dense 2D disk of radius $R_{disk} \propto \sqrt{t}$. The other half ($t$) form a 1D interval (a line) of length $L \propto t$.
 \begin{itemize}
-    \item \textbf{Minkowski-Bouligand (Box-Counting) Dimension ($D_{box}$):} A geometric measure of space-filling.
-    \item \textbf{Growth Dimension ($D_\beta$):} Derived from the scaling relation $R_g \sim N^\beta$, representing the dynamic expansion rate.
+    \item \textbf{Box-Counting ($D_{box}$):} The overall fractal dimension is determined by the densest, most space-filling component. Because the aggregate contains a solid 2D disk, its Box-Counting dimension is $D_{box} = 2$.
+    \item \textbf{Growth Rate ($D_\beta$):} The growth rate is determined by the maximal spatial extent. The 1D interval length ($L \propto t$) grows radially much faster than the disk ($R_{disk} \propto \sqrt{t}$). Therefore, the overall radius scales as $R \propto t$. Since the total mass is $N = 2t \propto t$, the radius scales linearly with the mass ($R \propto N^1$). Thus, the growth rate is $\beta = 1$, yielding a Growth Rate Dimension of $D_\beta = 1/\beta = 1$.
 \end{itemize}
 
-% 4.2.2 Results (Growth Rate Focus)
-\subsection{Growth Rate Benchmarks and Robustness}
-% TODO: Insert Table - Comparison of D_beta for all 3 models vs Theory (1.71).
-% TODO: Insert Figure - Growth Robustness (L2 vs Theil-Sen).
+In this aggregate, $D_\beta = 1$ whilst $D_{box} = 2$. As Grebenkov and Beliaev note, a naive rescaling of this object by its maximal diameter ($\propto t$) results in a trivial limit (the unit interval) because ``the part with the higher dimension but smaller growth rate (the disk) is shrunk and thus fully eliminated in the limit $t \to \infty$'' \cite{Grebenkov2017}.
 
-We find that Off-Lattice growth is stable ($D \approx 1.71$). However, Lattice and Hybrid models exhibit significant "drift," where the growth dimension systematically decreases as the cluster size increases ($N \to 10^7$).
+While DLA clusters are vastly more complex than a simple line-and-disk shape, this exact phenomenon---long, fast-growing arms dictating the radial expansion rate ($\beta$) while a denser interior structure dictates the bulk mass scaling ($D_{box}$)---provides the theoretical foundation for why a significant discrepancy between these global metrics might emerge as clusters evolve anisotropically.
 
-% 4.2.3 Metric Divergence
-\subsection{Divergence of Geometric vs. Dynamic Dimension}
-% TODO: Insert Figure - Histogram Overlay (Box Dim vs Growth Dim).
-% TODO: Insert Figure - Temporal Evolution (Snapshot Analysis: D vs N).
+% 5.2 Methodology
+\section{Methodology}
+\label{sec:dim_method}
+To compute both $D_{box}$ and $D_\beta$, we rely on extracting slopes from log-log relationships. However, raw data from discrete DLA simulations contains inherent structural artifacts that can heavily bias standard regression models. To accurately capture the true scale-invariant fractal dimension, stringent methodological constraints and robust statistical techniques must be applied.
 
-A key finding is the decoupling of geometry and kinetics in anisotropic models. While $D_{box}$ slowly increases due to interior filling, $D_\beta$ decreases due to axial acceleration. This divergence is absent in the isotropic Off-Lattice control.
+\subsection{Calculating Box Dimension: The Box Size Problem}
+The Box-Counting dimension is calculated by generating grids of varying box sizes ($\epsilon$), counting the occupied boxes $N(\epsilon)$, and plotting $\log N(\epsilon)$ against $\log \epsilon$. A primary point of contention in the literature is exactly which box sizes to include in this regression. 
 
-\section{Quantifying Anisotropy}
-\label{sec:anal1_anisotropy}
+One cannot naively use all mathematically possible box sizes. As noted by Grebenkov and Beliaev \cite{Grebenkov2017}, DLA clusters are bounded by finite-size effects at the macroscopic scale and by lattice discretization at the microscopic scale. If $\epsilon$ is too large (approaching the size of the cluster), $N(\epsilon) \to 1$, which trivially yields a slope of 0. Conversely, if $\epsilon$ is too small (approaching the size of a single particle or lattice site), the grid merely counts individual discrete pixels, resolving to the Euclidean dimension of the particles themselves rather than the fractal dimension of the aggregate. 
 
-% 4.3.1 Geometric Analysis
-\subsection{Geometric Analysis: Angular Radius of Gyration}
-To quantify the "lobes" observed visually, we calculate the Angular Radius of Gyration $R_g(\theta)$.
+To systematically identify the valid scaling regime, we compare two different regression techniques: standard Ordinary Least Squares (L2) regression and the robust Theil-Sen estimator. While L2 minimizes the sum of squared residuals, making it highly sensitive to outliers, the Theil-Sen estimator calculates the median of all pairwise slopes between data points, rendering it exceptionally robust to boundary artifacts.
 
-% TODO: Insert Figure - Polar Plot (R_g vs Angle).
-% TODO: Insert Figure - Log-Log Scaling (R_g(Axis) vs R_g(Diagonal) vs N).
+When performing regressions that include small box sizes ($\epsilon < 16$ pixels), a consistent and significant deviation emerges between the two techniques. The L2 regression slope is consistently pulled down (yielding an artificially inflated dimension) by the dense, space-filling nature of individual discrete particles at the smallest scales. The Theil-Sen regression resists this localized pull. This systematic discrepancy provides empirical proof that microscopic lattice effects dominate at $\epsilon < 16$. Consequently, our methodology strictly imposes a lower bound of $\epsilon \ge 16$ pixels for all $D_{box}$ calculations, ensuring the extracted slope reflects the true bulk fractal geometry rather than microscopic ``pixel noise.''
 
-The polar plots confirm a 4-fold symmetry for Lattice and Hybrid models. Crucially, the scaling exponent along the axes ($\nu_{0}$) is strictly larger than along the diagonals ($\nu_{45}$), confirming that the anisotropy is scale-invariant.
+\begin{figure}[htbp]
+  \centering
+  \framebox{\parbox{0.8\textwidth}{\centering
+    \vspace{3cm}
+    \textbf{Figure Placeholder: Box-Counting Regression Comparison} \\
+    \small\textit{Insert Notebook Plot: Log-Log scatter of $N(\epsilon)$ vs $\epsilon$ for a single cluster, showing L2 vs Theil-Sen fits. Highlight the deviation at $\epsilon < 16$.}
+    \vspace{3cm}
+  }}
+  \caption{Comparison of L2 and Theil-Sen regressions for Box-Counting dimension on a single cluster. The divergence at small box sizes ($\epsilon < 16$) illustrates the susceptibility of L2 to microscopic lattice artifacts, justifying the choice of a robust estimator and lower bound cutoffs.}
+  \label{fig:box_regression_robustness}
+\end{figure}
 
-% 4.3.2 Dynamic Analysis
-\subsection{Dynamic Analysis: Angular Growth Rate}
-We further analyze the velocity of the growing interface using Fourier decomposition.
+\subsection{Calculating Growth Rate Dimension: Sampling and Uncertainty}
+For the kinetic evaluation ($D_\beta$), the radius of gyration $R_g$ is tracked as a function of the aggregate mass $N$. Because simulating up to $N = 10^7$ generates an immense amount of discrete data points, the series is logarithmically sampled to maintain a computationally efficient and structurally representative dataset. By extracting 50 samples per logarithmic decade of $N$, a cluster growing to $10^7$ particles yields a manageable set of approximately 350 data points upon which to perform the regression.
 
-% TODO: Insert Figure - Harmonic Analysis (Amplitude of A4 mode).
-% TODO: Insert Figure - Axis/Diagonal Growth Ratio.
+Even with this sampling, the stochastic nature of tip-growth causes random fluctuations in $R_g$ that can influence standard L2 fitting. By calculating both the Theil-Sen and L2 regressions on this sampled data, we not only extract a robust median slope via Theil-Sen, but we also gain a powerful diagnostic tool. The absolute difference between the Theil-Sen and L2 slopes, $\Delta D = |D_{Theil-Sen} - D_{L2}|$, serves as a non-parametric measure of structural uncertainty. A large discrepancy indicates that the object lacks perfect scale-invariance and possesses a high degree of internal structural variation or noise. This difference allows us to rigorously define the error bounds of our dimension metrics before analyzing the global results in the subsequent section.
 
-The dominance of the 4th harmonic ($A_4$) in the Lattice and Hybrid models quantifies the strength of the cross shape. The Off-Lattice model shows no statistically significant harmonic modes above the noise floor.
+% 5.3 Results
+\section{Results and Statistical Errors}
+\label{sec:dim_results}
 
-\section{Discussion: The Origin of Lattice Artifacts}
-\label{sec:anal1_discussion}
+\begin{table}[htbp]
+    \centering
+    \caption{Summary of final dimensional metrics for $10^6$ (1M) and $10^7$ (10M) particle clusters across different simulation environments. Values are presented as the ensemble mean $\pm$ one standard deviation.}
+    \label{tab:dim_results}
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Model (Size)} & \textbf{Growth Rate ($\beta$)} & \textbf{Growth Dim ($D_\beta$)} & \textbf{Box Dim ($D_{box}$)} \\
+        \midrule
+        Off-Lattice (1M) & $0.582 \pm 0.008$ & $1.717 \pm 0.025$ & $1.656 \pm 0.010$ \\
+        Off-Lattice (10M)& $0.583 \pm 0.007$ & $1.717 \pm 0.022$ & $1.666 \pm 0.013$ \\
+        \midrule
+        Lattice (1M)     & $0.587 \pm 0.009$ & $1.703 \pm 0.027$ & $1.661 \pm 0.011$ \\
+        Lattice (10M)    & $0.590 \pm 0.008$ & $1.696 \pm 0.024$ & $1.670 \pm 0.013$ \\
+        \midrule
+        Hybrid (1M)      & $0.589 \pm 0.009$ & $1.698 \pm 0.027$ & $1.661 \pm 0.011$ \\
+        Hybrid (10M)     & $0.592 \pm 0.008$ & $1.689 \pm 0.023$ & $1.670 \pm 0.013$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The results demonstrate that the Off-Lattice control model remains highly stable and isotropic, yielding $D_\beta = 1.717 \pm 0.022$ at $N=10^7$, matching theoretical expectations. In stark contrast, both the Lattice and Hybrid models exhibit significant ``drift,'' where the dimension systematically decreases as the cluster grows. 
+
+\begin{figure}[htbp]
+  \centering
+  % width=\textwidth is used here so the 2x2 grid fills the page width nicely
+  \includegraphics[width=\textwidth]{images/combined_dimension_histograms.pdf}
+  \caption{Probability density distribution of the Growth Dimension ($D_\beta$) and Box-Counting Dimension ($D_{box}$) for $10^6$ (1M) and $10^7$ (10M) clusters. The Hybrid model closely mirrors the Lattice model, diverging significantly from the Off-Lattice control in both metrics and across both sizes.}
+  \label{fig:dim_histograms_combined}
+\end{figure}
+
+The histogram distributions (Figure \ref{fig:dim_histograms_combined}) visually confirm a critical physical mechanism: the Hybrid model's distribution almost perfectly overlays the Lattice model's distribution. This empirically proves that the underlying random walk continuous nature is largely irrelevant to the final fractal dimension; the rigid geometry of the sticking rules alone dictates the dimensional drift.
+% 5.4 Evolution of Dimension and comparing different metrics
+\section{Comparing the Evolution of Dimension and Growth Rate}
+\label{sec:dim_evolution}
+
+By analysing the dimension at logarithmically spaced snapshots during the clusters' growth, we can observe the temporal dynamics of the spatial structure. A key finding of this study is the apparent ``lag'' between the kinetic dimension ($D_\beta$) and the bulk geometric dimension ($D_{box}$) in anisotropic models.
+
+\begin{figure}[htbp]
+  \centering
+  \framebox{\parbox{0.8\textwidth}{\centering
+    \vspace{3cm}
+    \textbf{Figure Placeholder: Dimension Evolution Over Time} \\
+    \small\textit{Insert Notebook Plot: plot\_batch\_dimension\_evolution() showing the temporal lag.}
+    \vspace{3cm}
+  }}
+  \caption{Statistical evolution of $D_{box}$ and $D_\beta$ against cluster size $N$ for the Lattice model. Shaded regions represent $\pm 1 \sigma$.}
+  \label{fig:dim_evolution}
+\end{figure}
+
+As shown in Figure \ref{fig:dim_evolution}, while the two metrics track closely during early growth ($N < 10^5$), they exhibit distinct behaviors at late stages. The growth rate dimension, $D_\beta$, drops sharply. Because $D_\beta$ is governed by the expanding radius of gyration, it is immediately sensitive to the accelerated growth of the distinct lattice ``arms'' piercing outward. Consequently, $D_\beta$ also exhibits a higher variance, as it is driven by the highly stochastic, noisy nature of tip-growth.
+
+Conversely, $D_{box}$ relies on the summation of the entire frozen structure. While the tips are accelerating outward, the deep interior fjords of the cluster continue to slowly fill with particles that bypass the outer screening. Therefore, the geometric box dimension lags behind the kinetic measurement, updating much slower to the structural changes and exhibiting significantly lower variance across the ensemble. This discrepancy highlights that global dimension metrics ultimately fail to capture the localized axial acceleration occurring at the lattice boundaries—a phenomenon that necessitates a direct quantification of angular anisotropy, which is explored in the following chapter.
+
+
+% =========================================
+% CHAPTER 6: Anisotropy Analysis
+% =========================================
+\chapter{Anisotropy in DLA}
+\label{ch:anisotropy}
+
+% 6.1 Explanation of Anisotropy
+\section{What is Anisotropy?}
+\label{sec:anisotropy_overview}
+
+% 6.2 Angular R_g
+\section{Angular Radius of Gyration}
+\label{sec:anisotropy_rg}
+
+% 6.3 Grwoth Rate
+\section{Angular Growth Rate Analysis}  
+\label{sec:anisotropy_growth}
+
+% 6.4 Conclusions
+\section{Conclusions}
+\label{sec:anisotropy_conclusion}
+
 
 % =========================================
 % Bibliography

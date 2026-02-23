@@ -1,4 +1,4 @@
-\begin{thebibliography}{20}
+\begin{thebibliography}{21}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -100,6 +100,11 @@ Paul Meakin.
 Harry Kesten.
 \newblock Hitting probabilities of random walks on $\mathbb{Z}^d$.
 \newblock \emph{Stochastic Processes and their Applications}, 25:\penalty0 165--184, 1987{\natexlab{b}}.
+
+\bibitem[Falconer(1990)]{Falconer1990}
+Kenneth Falconer.
+\newblock \emph{Fractal Geometry: Mathematical Foundations and Applications}.
+\newblock John Wiley \& Sons, Chichester, England, 1990.
 
 \bibitem[Abramowitz and Stegun(1965)]{Abramowitz1965}
 Milton Abramowitz and Irene~A. Stegun, editors.

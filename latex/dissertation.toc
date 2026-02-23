@@ -1,73 +1,78 @@
-\contentsline {chapter}{\numberline {1}Introduction}{4}{chapter.1}%
-\contentsline {section}{\numberline {1.1}Overview}{4}{section.1.1}%
-\contentsline {section}{\numberline {1.2}Theoretical Context}{4}{section.1.2}%
-\contentsline {section}{\numberline {1.3}Fractal Dimension}{5}{section.1.3}%
-\contentsline {section}{\numberline {1.4}Anisotropy and Thesis Goals}{5}{section.1.4}%
-\contentsline {chapter}{\numberline {2}Potential Theory}{6}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Preliminaries}{6}{section.2.1}%
-\contentsline {subsection}{\numberline {2.1.1}Martingales and the Optional Stopping Theorem}{6}{subsection.2.1.1}%
-\contentsline {subsection}{\numberline {2.1.2}Measure Theory Concepts}{7}{subsection.2.1.2}%
-\contentsline {subsection}{\numberline {2.1.3}Conformal Maps}{8}{subsection.2.1.3}%
-\contentsline {section}{\numberline {2.2}Discrete Potential Theory}{8}{section.2.2}%
-\contentsline {subsection}{\numberline {2.2.1}Simple Random Walks and the Generator}{8}{subsection.2.2.1}%
-\contentsline {subsection}{\numberline {2.2.2}The Discrete Dirichlet Problem}{9}{subsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.2.3}Recurrence and the Potential Kernel}{11}{subsection.2.2.3}%
-\contentsline {subsection}{\numberline {2.2.4}Discrete Harmonic Measure}{12}{subsection.2.2.4}%
-\contentsline {section}{\numberline {2.3}Continuous Potential Theory}{14}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Brownian Motion and the Laplacian}{14}{subsection.2.3.1}%
-\contentsline {subsection}{\numberline {2.3.2}Harmonic Measure}{15}{subsection.2.3.2}%
-\contentsline {subsection}{\numberline {2.3.3}Conformal Invariance}{16}{subsection.2.3.3}%
-\contentsline {subsection}{\numberline {2.3.4}Solvable Geometries}{17}{subsection.2.3.4}%
-\contentsline {chapter}{\numberline {3}Algorithms}{20}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Introduction}{20}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Initialisation}{20}{section.3.2}%
-\contentsline {subsection}{\numberline {3.2.1}Off-Lattice: The Launching Circle}{20}{subsection.3.2.1}%
-\contentsline {subsection}{\numberline {3.2.2}On-Lattice: The Fuzzy Annulus}{21}{subsection.3.2.2}%
-\contentsline {section}{\numberline {3.3}Far-Field Diffusion}{21}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}Off-Lattice: Re-injection from Infinity}{21}{subsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.3.2}On-Lattice: Walk-to-Line}{22}{subsection.3.3.2}%
-\contentsline {subsubsection}{\numberline {3.3.2.1}Discrete Method of Images}{22}{subsubsection.3.3.2.1}%
-\contentsline {subsubsection}{\numberline {3.3.2.2}The Killing Circle}{23}{subsubsection.3.3.2.2}%
-\contentsline {section}{\numberline {3.4}Near-Field Diffusion}{23}{section.3.4}%
-\contentsline {subsection}{\numberline {3.4.1}Off-Lattice: Walk-to-Circle}{23}{subsection.3.4.1}%
-\contentsline {subsection}{\numberline {3.4.2}On-Lattice: Walk-to-Square}{24}{subsection.3.4.2}%
-\contentsline {section}{\numberline {3.5}Aggregation}{24}{section.3.5}%
-\contentsline {subsection}{\numberline {3.5.1}On-Lattice: Sticky Boundary}{24}{subsection.3.5.1}%
-\contentsline {subsection}{\numberline {3.5.2}Off-Lattice: Exact Adhering}{24}{subsection.3.5.2}%
-\contentsline {section}{\numberline {3.6}The Hybrid Model}{26}{section.3.6}%
-\contentsline {subsection}{\numberline {3.6.1}Motivation and Design}{26}{subsection.3.6.1}%
-\contentsline {subsection}{\numberline {3.6.2}Implementation}{27}{subsection.3.6.2}%
-\contentsline {chapter}{\numberline {4}Results and Analysis: Dimension and Anisotropy}{29}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Overview and Visual Characterization}{29}{section.4.1}%
-\contentsline {subsection}{\numberline {4.1.1}Visual Comparison}{29}{subsection.4.1.1}%
-\contentsline {subsection}{\numberline {4.1.2}Density and Structure}{29}{subsection.4.1.2}%
-\contentsline {section}{\numberline {4.2}Fractal Dimension and Growth Rate}{29}{section.4.2}%
-\contentsline {subsection}{\numberline {4.2.1}Theoretical Framework}{29}{subsection.4.2.1}%
-\contentsline {subsection}{\numberline {4.2.2}Growth Rate Benchmarks and Robustness}{29}{subsection.4.2.2}%
-\contentsline {subsection}{\numberline {4.2.3}Divergence of Geometric vs. Dynamic Dimension}{29}{subsection.4.2.3}%
-\contentsline {section}{\numberline {4.3}Quantifying Anisotropy}{30}{section.4.3}%
-\contentsline {subsection}{\numberline {4.3.1}Geometric Analysis: Angular Radius of Gyration}{30}{subsection.4.3.1}%
-\contentsline {subsection}{\numberline {4.3.2}Dynamic Analysis: Angular Growth Rate}{30}{subsection.4.3.2}%
-\contentsline {section}{\numberline {4.4}Discussion: The Origin of Lattice Artifacts}{30}{section.4.4}%
-\contentsline {chapter}{\numberline {A}Implementation Details and Optimisations}{33}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Computational Framework}{33}{section.A.1}%
-\contentsline {subsection}{\numberline {A.1.1}The Numba JIT Compiler}{33}{subsection.A.1.1}%
-\contentsline {subsection}{\numberline {A.1.2}Rounding Semantics}{33}{subsection.A.1.2}%
-\contentsline {section}{\numberline {A.2}Spatial Indexing and Hierarchical Skipping}{34}{section.A.2}%
-\contentsline {subsection}{\numberline {A.2.1}Lattice: Flattened Bit-Map}{34}{subsection.A.2.1}%
-\contentsline {subsection}{\numberline {A.2.2}Off-Lattice: Dual-Structure Strategy}{35}{subsection.A.2.2}%
-\contentsline {subsubsection}{\numberline {A.2.2.1}1. The Coarse Hierarchy (Skipping)}{35}{subsubsection.A.2.2.1}%
-\contentsline {subsection}{\numberline {A.2.3}2. The Spatial Hash (Hitting)}{35}{subsection.A.2.3}%
-\contentsline {section}{\numberline {A.3}Rejection Sampling}{35}{section.A.3}%
-\contentsline {subsection}{\numberline {A.3.1}Concept and Motivation}{35}{subsection.A.3.1}%
-\contentsline {subsection}{\numberline {A.3.2}The Algorithm}{36}{subsection.A.3.2}%
-\contentsline {subsection}{\numberline {A.3.3}Application 1: The Fuzzy Annulus}{36}{subsection.A.3.3}%
-\contentsline {subsection}{\numberline {A.3.4}Application 2: Walk-to-Line}{36}{subsection.A.3.4}%
-\contentsline {section}{\numberline {A.4}Walker's Alias Method}{37}{section.A.4}%
-\contentsline {subsection}{\numberline {A.4.1}Motivation}{37}{subsection.A.4.1}%
-\contentsline {subsection}{\numberline {A.4.2}Implementation}{37}{subsection.A.4.2}%
-\contentsline {section}{\numberline {A.5}Numerical Approximations}{38}{section.A.5}%
-\contentsline {subsection}{\numberline {A.5.1}Custom Bessel Functions}{38}{subsection.A.5.1}%
-\contentsline {section}{\numberline {A.6}Usability and Data Management}{38}{section.A.6}%
-\contentsline {subsection}{\numberline {A.6.1}Heuristic Grid Sizing}{38}{subsection.A.6.1}%
-\contentsline {subsection}{\numberline {A.6.2}Standardised Coordinate Output}{38}{subsection.A.6.2}%
+\contentsline {chapter}{\numberline {1}Introduction}{5}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Overview}{5}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Theoretical Context}{5}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Fractal Dimension}{6}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Anisotropy and Thesis Goals}{6}{section.1.4}%
+\contentsline {chapter}{\numberline {2}Potential Theory}{7}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Preliminaries}{7}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Martingales and the Optional Stopping Theorem}{7}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}Measure Theory Concepts}{8}{subsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.1.3}Conformal Maps}{9}{subsection.2.1.3}%
+\contentsline {section}{\numberline {2.2}Discrete Potential Theory}{9}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Simple Random Walks and the Generator}{9}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}The Discrete Dirichlet Problem}{10}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Recurrence and the Potential Kernel}{12}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Discrete Harmonic Measure}{13}{subsection.2.2.4}%
+\contentsline {section}{\numberline {2.3}Continuous Potential Theory}{15}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Brownian Motion and the Laplacian}{15}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Harmonic Measure}{16}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Conformal Invariance}{17}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.4}Solvable Geometries}{18}{subsection.2.3.4}%
+\contentsline {chapter}{\numberline {3}Algorithms}{21}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Introduction}{21}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Initialisation}{21}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Off-Lattice: The Launching Circle}{21}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}On-Lattice: The Fuzzy Annulus}{22}{subsection.3.2.2}%
+\contentsline {section}{\numberline {3.3}Far-Field Diffusion}{22}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Off-Lattice: Re-injection from Infinity}{22}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}On-Lattice: Walk-to-Line}{23}{subsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.2.1}Discrete Method of Images}{23}{subsubsection.3.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.3.2.2}The Killing Circle}{24}{subsubsection.3.3.2.2}%
+\contentsline {section}{\numberline {3.4}Near-Field Diffusion}{24}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Off-Lattice: Walk-to-Circle}{24}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}On-Lattice: Walk-to-Square}{25}{subsection.3.4.2}%
+\contentsline {section}{\numberline {3.5}Aggregation}{25}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}On-Lattice: Sticky Boundary}{25}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}Off-Lattice: Exact Adhering}{25}{subsection.3.5.2}%
+\contentsline {section}{\numberline {3.6}The Hybrid Model}{27}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Motivation and Design}{27}{subsection.3.6.1}%
+\contentsline {subsection}{\numberline {3.6.2}Implementation}{28}{subsection.3.6.2}%
+\contentsline {chapter}{\numberline {4}Simulation Results}{30}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Fractal Dimension of DLA}{31}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Introduction to Dimension}{31}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Hausdorff Dimension}{31}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}Box-Counting Dimension ($D_{box}$)}{32}{subsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.1.3}Growth Rate Dimension ($D_\beta $)}{32}{subsection.5.1.3}%
+\contentsline {subsection}{\numberline {5.1.4}The Link Between $D_{box}$ and $D_\beta $}{33}{subsection.5.1.4}%
+\contentsline {section}{\numberline {5.2}Methodology}{34}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Calculating Box Dimension: The Box Size Problem}{34}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Calculating Growth Rate Dimension: Sampling and Uncertainty}{35}{subsection.5.2.2}%
+\contentsline {section}{\numberline {5.3}Results and Statistical Errors}{36}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Comparing the Evolution of Dimension and Growth Rate}{36}{section.5.4}%
+\contentsline {chapter}{\numberline {6}Anisotropy in DLA}{39}{chapter.6}%
+\contentsline {section}{\numberline {6.1}What is Anisotropy?}{39}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Angular Radius of Gyration}{39}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Angular Growth Rate Analysis}{39}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Conclusions}{39}{section.6.4}%
+\contentsline {chapter}{\numberline {A}Implementation Details and Optimisations}{42}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Computational Framework}{42}{section.A.1}%
+\contentsline {subsection}{\numberline {A.1.1}The Numba JIT Compiler}{42}{subsection.A.1.1}%
+\contentsline {subsection}{\numberline {A.1.2}Rounding Semantics}{42}{subsection.A.1.2}%
+\contentsline {section}{\numberline {A.2}Spatial Indexing and Hierarchical Skipping}{43}{section.A.2}%
+\contentsline {subsection}{\numberline {A.2.1}Lattice: Flattened Bit-Map}{43}{subsection.A.2.1}%
+\contentsline {subsection}{\numberline {A.2.2}Off-Lattice: Dual-Structure Strategy}{44}{subsection.A.2.2}%
+\contentsline {subsubsection}{\numberline {A.2.2.1}1. The Coarse Hierarchy (Skipping)}{44}{subsubsection.A.2.2.1}%
+\contentsline {subsection}{\numberline {A.2.3}2. The Spatial Hash (Hitting)}{44}{subsection.A.2.3}%
+\contentsline {section}{\numberline {A.3}Rejection Sampling}{44}{section.A.3}%
+\contentsline {subsection}{\numberline {A.3.1}Concept and Motivation}{44}{subsection.A.3.1}%
+\contentsline {subsection}{\numberline {A.3.2}The Algorithm}{45}{subsection.A.3.2}%
+\contentsline {subsection}{\numberline {A.3.3}Application 1: The Fuzzy Annulus}{45}{subsection.A.3.3}%
+\contentsline {subsection}{\numberline {A.3.4}Application 2: Walk-to-Line}{45}{subsection.A.3.4}%
+\contentsline {section}{\numberline {A.4}Walker's Alias Method}{46}{section.A.4}%
+\contentsline {subsection}{\numberline {A.4.1}Motivation}{46}{subsection.A.4.1}%
+\contentsline {subsection}{\numberline {A.4.2}Implementation}{46}{subsection.A.4.2}%
+\contentsline {section}{\numberline {A.5}Numerical Approximations}{47}{section.A.5}%
+\contentsline {subsection}{\numberline {A.5.1}Custom Bessel Functions}{47}{subsection.A.5.1}%
+\contentsline {section}{\numberline {A.6}Usability and Data Management}{47}{section.A.6}%
+\contentsline {subsection}{\numberline {A.6.1}Heuristic Grid Sizing}{47}{subsection.A.6.1}%
+\contentsline {subsection}{\numberline {A.6.2}Standardised Coordinate Output}{47}{subsection.A.6.2}%

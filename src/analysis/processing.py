@@ -4,6 +4,7 @@ import glob
 from multiprocessing import Pool
 from functools import partial
 from tqdm import tqdm
+import gc
 from . import metrics
 
 def load_cluster(filepath):
@@ -81,7 +82,7 @@ def batch_analysis(file_pattern, snapshots, num_workers=4, limit=None):
     df_results = pd.DataFrame(all_results)
     return df_results
 
-def process_sector_single(filepath, num_sectors=360):
+def process_sector_single(filepath, checkpoints, num_sectors=360):
     """
     load one cluster, and calculate its sector-wise evolution
     returns the grid (sectors x time) or None if failed
@@ -91,18 +92,16 @@ def process_sector_single(filepath, num_sectors=360):
         return None
     
     t = np.arange(1, len(coords) + 1)
-    max_p = int(np.log2(len(t)))
-
-    standard_checkpoints = np.logspace(10,24, num=15, base=2, dtype=int)
-    checkpoints = standard_checkpoints[standard_checkpoints <= len(t)]
-
-    if len(checkpoints) == 0:
-        return None
     
-    _, _, grid = metrics.calculate_sector_evolution(coords, t, num_sectors=num_sectors, checkpoints=checkpoints)
+    # We deleted all the local math. Just pass the checkpoints straight through!
+    _, _, grid = metrics.calculate_sector_evolution(
+        coords, t, 
+        num_sectors=num_sectors, 
+        checkpoints=checkpoints
+    )
     return grid
 
-def batch_sector_analysis(file_pattern, num_sectors=360, num_workers=4, limit=None):
+def batch_sector_analysis(file_pattern, max_time, num_sectors=360, num_workers=4, limit=None):
     """
     Runs sector evolution analysis on multiple files.
     returns time points (checkpoints used)and agg_data (3D array containing Rg vales)
@@ -113,9 +112,16 @@ def batch_sector_analysis(file_pattern, num_sectors=360, num_workers=4, limit=No
         print(f'Limiting to first {limit} files for sector analysis.')
     print(f'Found {len(files)} files to process for sector analysis on {num_workers} cores...')
     
+    # generate universal checkpoints
+    start_log = 3.0  # Start at 1000
+    end_log = np.log10(max_time)
+    num_points = int(20 * (end_log - start_log))
+    
+    universal_checkpoints = np.unique(np.logspace(start_log, end_log, num=num_points).astype(int))
+    universal_checkpoints = universal_checkpoints[universal_checkpoints <= max_time]
     results = []
     with Pool(processes=num_workers) as pool:
-        func = partial(process_sector_single, num_sectors=num_sectors)
+        func = partial(process_sector_single, checkpoints=universal_checkpoints, num_sectors=num_sectors)
         for grid in tqdm(pool.imap_unordered(func, files), total=len(files)):
             if grid is not None:
                 results.append(grid)
@@ -124,15 +130,11 @@ def batch_sector_analysis(file_pattern, num_sectors=360, num_workers=4, limit=No
         print("No valid sector data computed.")
         return None, None
 
-    # Aggregate grids
-    min_time_cols = min(grid.shape[1] for grid in results)
-    trunc_results = [grid[:, :min_time_cols] for grid in results]
-    agg_data = np.array(trunc_results)  # shape: (num_files, num_sectors, time_points)
-    standard_checkpoints = np.logspace(10,24, num=15, base=2, dtype=int)
-    checkpoints = standard_checkpoints[:min_time_cols]
+    agg_data = np.stack(results)  # shape: (num_files, num_sectors, time_points)
 
     print(f'Aggregated shape: {agg_data.shape} (files, sectors, time_steps)')
-    return checkpoints, agg_data
+    
+    return universal_checkpoints, agg_data
 
 def compute_anisotropy_metrics(time_points, agg_data):
     """
@@ -234,8 +236,28 @@ def generate_density_grid(file_pattern, snapshot_N, grid_size=1000, limit_files=
             sum_r_sq_per_sector[i] += np.sum(r_sector**2)
             count_sector[i] += len(r_sector)
         
+        del sub_coords 
+        del coords 
+        gc.collect()
+        
     with np.errstate(divide='ignore', invalid='ignore'):
         rg_per_sector = np.sqrt(sum_r_sq_per_sector / count_sector)
         rg_per_sector[np.isnan(rg_per_sector)] = 0
 
     return grid, bins, max_radius_per_sector, rg_per_sector
+
+def get_log_checkpoints(max_n, pts_per_decade=50):
+    """
+    Returns log-spaced time points.
+    Used for extracting Rg history consistently across all files.
+    """
+    if max_n < 1000: return np.array([max_n])
+    
+    start_log = 3.0 # Start at 10^3 = 1000
+    end_log = np.log10(max_n)
+    
+    num_points = int(pts_per_decade * (end_log - start_log))
+    
+    # Unique integer checkpoints
+    checkpoints = np.unique(np.logspace(start_log, end_log, num=num_points).astype(int))
+    return checkpoints[checkpoints <= max_n]
