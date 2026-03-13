@@ -1,4 +1,4 @@
-\begin{thebibliography}{21}
+\begin{thebibliography}{25}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -40,6 +40,11 @@ Harry Kesten.
 \newblock How long are the arms in {DLA}?
 \newblock \emph{J. Phys. A: Math. Gen.}, 20:\penalty0 L29--L33, 1987{\natexlab{a}}.
 
+\bibitem[Losev and Smirnov(2025)]{losev2025}
+Ilya Losev and Stanislav Smirnov.
+\newblock How long are the arms in dbm?, 2025.
+\newblock URL \url{https://arxiv.org/abs/2307.14931}.
+
 \bibitem[Grebenkov and Beliaev(2017)]{Grebenkov2017}
 D.~S. Grebenkov and D.~Beliaev.
 \newblock How anisotropy beats fractality in two-dimensional on-lattice diffusion-limited-aggregation growth.
@@ -55,17 +60,12 @@ Anton~Yu Menshutin and Lev~N. Shchur.
 \newblock Morphological diagram of diffusion driven aggregate growth in plane.
 \newblock \emph{Comp. Phys. Comm.}, 182:\penalty0 1819--1821, 2011.
 
-\bibitem[Williams(1991)]{Williams1991}
-David Williams.
-\newblock \emph{Probability with Martingales}.
-\newblock Cambridge University Press, Cambridge, 1991.
+\bibitem[Oberhauser(2025)]{oberhauser2025}
+Harald Oberhauser.
+\newblock {B8.1: Probability, Measure and Martingales}.
+\newblock Lecture notes, University of Oxford, December 2025.
 
-\bibitem[Ahlfors(1979)]{Ahlfors1979}
-Lars~V. Ahlfors.
-\newblock \emph{Complex Analysis: An Introduction to the Theory of Analytic Functions of One Complex Variable}.
-\newblock McGraw-Hill, New York, 3rd edition, 1979.
-
-\bibitem[Mörters and Peres(2010)]{MortersPeres2010}
+\bibitem[Mörters and Peres(2010)]{Morters2010}
 Peter Mörters and Yuval Peres.
 \newblock \emph{Brownian Motion}.
 \newblock Cambridge University Press, Cambridge, 2010.
@@ -105,6 +105,28 @@ Harry Kesten.
 Kenneth Falconer.
 \newblock \emph{Fractal Geometry: Mathematical Foundations and Applications}.
 \newblock John Wiley \& Sons, Chichester, England, 1990.
+
+\bibitem[Hanan and Heffernan(2001)]{Hanan2001}
+William~G. Hanan and Daniel~M. Heffernan.
+\newblock Geometrical multifractality of the perimeter of {DLA} clusters.
+\newblock \emph{Chaos, Solitons \& Fractals}, 12\penalty0 (1):\penalty0 193--195, 2001.
+\newblock \doi{10.1016/S0960-0779(99)00201-5}.
+
+\bibitem[Hanan and Heffernan(2012)]{Hanan2012}
+W.~G. Hanan and D.~M. Heffernan.
+\newblock Multifractal analysis of the branch structure of diffusion-limited aggregates.
+\newblock \emph{Physical Review E}, 85\penalty0 (2):\penalty0 021407, 2012.
+\newblock \doi{10.1103/PhysRevE.85.021407}.
+
+\bibitem[Williams(1991)]{Williams1991}
+David Williams.
+\newblock \emph{Probability with Martingales}.
+\newblock Cambridge University Press, Cambridge, 1991.
+
+\bibitem[Ahlfors(1979)]{Ahlfors1979}
+Lars~V. Ahlfors.
+\newblock \emph{Complex Analysis: An Introduction to the Theory of Analytic Functions of One Complex Variable}.
+\newblock McGraw-Hill, New York, 3rd edition, 1979.
 
 \bibitem[Abramowitz and Stegun(1965)]{Abramowitz1965}
 Milton Abramowitz and Irene~A. Stegun, editors.

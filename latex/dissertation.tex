@@ -1,4 +1,4 @@
-\documentclass[11pt, a4paper, oneside]{report} 
+\documentclass[12pt, a4paper, oneside]{report} 
 \setcounter{secnumdepth}{3} % Numbers subsubsections (1.1.1)
 \setcounter{tocdepth}{2}    % Shows down to subsections in TOC
 
@@ -8,7 +8,7 @@
 \usepackage{geometry}
 \geometry{
     a4paper,
-    margin=2.5cm, % Equal 2.5cm margins everywhere (standard for drafts)
+    margin=2.0cm, 
     % bindingoffset=0cm % Use this if you print later
 }
 \usepackage{graphicx} % Remove [demo] when you have real images
@@ -41,23 +41,22 @@
 
 % --- Aesthetic Setup ---
 \setlength{\parskip}{0em} % Small space between paragraphs
-\setstretch{1.2} % Requires \usepackage{setspace}
 
 % Header/Footer Style
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[LE,RO]{\thepage} % Page number on outer corners
-\fancyhead[RE]{\leftmark}   % Chapter title on inner (even pages)
-\fancyhead[LO]{\rightmark}  % Section title on inner (odd pages)
+\fancyhead[R]{\thepage}     % Page number on the right
+\fancyhead[L]{\leftmark}    % Chapter title on the left
 \renewcommand{\headrulewidth}{0.4pt}
 
 % Theorem Environments
 \newtheorem{theorem}{Theorem}[chapter]
-\newtheorem{definition}{Definition}[chapter]
-\newtheorem{lemma}{Lemma}[chapter]
-\newtheorem{proposition}{Proposition}[chapter]
-\newtheorem{remark}{Remark}[chapter]
-\newtheorem{corollary}{Corollary}[chapter]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
 
 \begin{document}
 
@@ -87,15 +86,15 @@
 \end{titlepage}
 
 % --- Abstract ---
-\thispagestyle{plain}
-\begin{center}
-    {\Large \bfseries Abstract}
-\end{center}
-\vspace{0.5cm}
-\begin{quote}
-add abstract here (or delete)
-\end{quote}
-\newpage
+%\thispagestyle{plain}
+%\begin{center}
+%    {\Large \bfseries Abstract}
+%\end{center}
+%\vspace{0.5cm}
+%\begin{quote}
+%add abstract here (or delete)
+%\end{quote}
+%\newpage
 
 % --- TOC ---
 \tableofcontents
@@ -148,655 +147,421 @@ The model was first proposed in 1981 by Witten and Sander to model the colloidal
     \label{fig:three_panel_comparison}
 \end{figure}
 
-\section{Theoretical Context}
-While DLA is defined by a stochastic algorithm (random walkers), its theoretical significance lies in its connection to potential theory, the study of harmonic functions. As will be detailed in the following chapters, the probability density $\phi(u)$ of a diffusing particle at position $u$ satisfies the Laplace equation $\nabla^2 \phi = 0$. This is because both random walks and harmonic functions are defined by the property that the value at any point is the average of its neighbours. Each additional walker to aggregate onto the cluster distorts this probability field, creating a Laplacian instability that amplifies irregularities into the observed complicated structure \cite{Lawler2010}.
+\section{Link to Potential Theory}
+While DLA is defined by a stochastic algorithm (random walkers), it can be reframed as a problem within potential theory.
+A simple symmetric random walk is a process where the probability of a walker being at any given site is the average of the probabilities of being at any of its neighbouring sites. We will show that this results in the steady-state probability density $\phi(u)$ of a diffusing particle at position $u$ satisfying the Laplace equation $\nabla^2 \phi = 0$. 
+
+In particular, each additional particle that aggregates onto the cluster distorts the cluster's probability field. This compounds over time to cause the field to concentrate at the protruding tips, resulting in the observed complicated structure of DLA clusters \cite{Lawler2010}.
+Crucially for this project, this reframing allows us to exploit several potential theoretic results in order to optimise the algorithms we use to generate large clusters.
+
 
 \section{Fractal Dimension}
-Visually, DLA clusters exhibit self-similarity, where small branches look statistically identical to large branches. Mathematically this can be understood via fractal dimension $D$. This will be formally defined later, but can be thought of as the relationship between the mass of a cluster (number of particles $N$) and its linear size $R$, where:
-\begin{equation}
-    N \propto R^D.
-\end{equation}
+DLA is widely recognised as a fractal due to the statistical self-similarity exhibited by its branch-like structure, and is therefore often characterised by its fractal dimension $D$. This can be thought of as the relationship between the mass of a cluster (number of particles $N$) and its linear size $R$, where $N \propto R^D$.
+
 For instance, doubling the size of a line would double its mass, so it has dimension 1, while doubling the size of a solid disc would quadruple its mass, so this has dimension 2. Simulations of off-lattice DLA have consistently yielded a fractal dimension $D \approx 1.71$, but this has not been proven \cite{Meakin1983}.
 
-In fact, the only mathematical theorem on 2D DLA is due to Kesten, who proved a bound on the growth rate of on-lattice DLA in 1987, with a key consequence being that the fractal dimension of a DLA cluster is bounded below by $1.5$ \cite{Kesten1987}.
+In fact, the only notable mathematical theorem on 2D DLA is due to Kesten, who proved a bound on the growth rate of on-lattice DLA in 1987, with a key consequence being that the fractal dimension of a DLA cluster is bounded below by $1.5$ \cite{Kesten1987}. This was generalised by Losev and Smirnov \cite{losev2025} to a wider class of models using a different approach.
 
 \section{Anisotropy and Thesis Goals}
-It is likely that the dimension of on-lattice DLA is actually lower than off-lattice due to the effect of the grid on the cluster shape, a phenomenon known as anisotropy. Grebenkov and Beliaev discussed how anisotropy is likely to reduce the dimension of large enough clusters \cite{Grebenkov2017}, but understanding why and to what extent is still not fully understood.
+It is likely that the dimension of on-lattice DLA is actually lower than off-lattice due to the effect of the grid on the cluster shape, a phenomenon known as anisotropy. Grebenkov and Belyaev \cite{Grebenkov2017} discuss how anisotropy is likely to reduce the dimension of large enough clusters, but the reasons why, and to what extent this occurs, are still not fully understood.
 
 To answer these questions, simulations of DLA must be done both on and off-lattice. Additionally, to understand the effect of the lattice we create a 'hybrid' algorithm with continuous diffusion but a discrete aggregation method. Other hybrid models of DLA have previously been studied \cite{Shmyrov2019}, including a similar semi-lattice approach \cite{Menshutin2011}, but to our knowledge have not been utilised to decouple the effects of transport from aggregation in on-lattice DLA.
 
 The purpose of this dissertation is to compare these three different models of DLA, in order to decouple the diffusion process of DLA from the geometry of the aggregation. By analysing various features of the resulting clusters, we hope to better understand the relationship between the continuous and discrete variations of the probability distribution governing DLA growth.
 
-We begin with a brief outline of the mathematical necessary to understand the underlying mechanisms behind DLA in \cref{ch:theory}, before following on by explaining how to utilise this theory to create efficient algorithms, as well as discussing our hybrid approach, which forms \cref{ch:algorithms}. In ?? we begin analysis, focusing on ??? 
+We begin with a brief outline of the mathematical theory necessary to understand the underlying mechanisms behind DLA in \cref{ch:theory}, before explaining how to utilise this theory to create efficient algorithms, including our hybrid approach, in \cref{ch:algorithms}. We briefly outline our simulation results in \cref{ch:results}, then conduct an extended analysis of both the fractal dimension and anisotropy in \cref{ch:dim} and \cref{ch:anisotropy}.
 % =========================================
 % CHAPTER 2: POTENTIAL THEORY
 % =========================================
 \chapter{Potential Theory}
 \label{ch:theory}
 
-\section{Preliminaries} % may end up in appendix
-\label{sec:preliminaries}
+In this chapter we establish the theoretical framework governing DLA. We assume a foundational understanding of the relevant topics equivalent to all standard Part A courses, as well as the Part B course \textit{Probability, Measure and Martingales} \cite{oberhauser2025}. A brief summary of the prerequisites can be found in \cref{app:preliminaries}.
 
-\subsection{Martingales and the Optional Stopping Theorem}
-In this section, we review the necessary tools in probability for linking random walks to potential theory. We assume standard measure-theoretic knowledge (equivalent to the Part A Integration course). We begin by defining a probability space.
+We will establish the link between a simple symmetric random walk (SSRW) (and its continuous analogue, Brownian motion) and the Laplace equation. We will therefore be able to view DLA as a form of moving boundary problem. At each stage, the probability distribution of the first hitting point of the walker on the cluster boundary can be viewed as the solution to a Dirichlet problem.
 
-\begin{definition}[Probability Space]
-A probability space $(\Omega, \mathcal{F}, \mathbb{P})$ is a triple where $\Omega$ is a sample set, $\mathcal{F}$ is a $\sigma$-algebra on $\Omega$ representing the set of events, and $\mathbb{P} \colon \mathcal{F}\to[0,1]$ is a countably additive set function such that $\mathbb{P}(\Omega)=1$.
-\end{definition}
+For large-scale simulations, explicitly solving this Dirichlet problem at each stage is computationally intractable. Therefore, we also present exact solutions to simpler, static boundary problems, which we will exploit in \cref{ch:algorithms}.
 
-\noindent We now introduce filtrations, which formalise the idea of accumulating information over time. 
-\begin{definition}[Filtration]
-A filtration on a probability space $(\Omega, \mathcal{F}, \mathbb{P})$ is a sequence of sub-$\sigma$-algebras $(\mathcal{F}_n)_{n \geq 0}$ such that:
-\begin{equation*}
-    \mathcal{F}_0 \subseteq \mathcal{F}_1 \subseteq \mathcal{F}_2 \subseteq \dots \subseteq \mathcal{F}.
-\end{equation*}
-The tuple $(\Omega, \mathcal{F}, (\mathcal{F}_n)_{n \geq 0}, \mathbb{P})$ is called a filtered probability space.
-\end{definition}
+\section[Discrete Potential Theory]{Discrete Potential Theory\footnote{The theoretical framework in this section is largely adapted from Lawler and Limic \cite{Lawler2010}, applied here to the specific case of 2D DLA.}}\label{sec:discrete_theory}
+We begin with potential theory in a discrete setting, which forms the foundation of our on-lattice simulation models. 
 
-\noindent We now consider how decisions can be made at a given time based on the information available up to that time.
-\begin{definition}[Stopping Time]
-A random variable $\tau \colon \Omega \to \{0, 1, \dots, \infty\}$ is called a stopping time with respect to the filtration $(\mathcal{F}_n)_{n \geq 0}$ if for every $n \geq 0$:
-\begin{equation*}
-    \{ \omega \in \Omega : \tau(\omega) \leq n \} \in \mathcal{F}_n.
-\end{equation*}
-\end{definition}
-
-\noindent For example, ``stop when the walker hits the cluster" is a valid stopping time but ``stop at the step before the walker hits the cluster" is not.
-
-\noindent With this in place, we model an unbiased process via the concept of a martingale.
-\begin{definition}[Martingale]
-A discrete-time stochastic process $(X_n)_{n \geq 0}$ is a martingale with respect to a filtration $(\mathcal{F}_n)_{n \geq 0}$ if:
-\begin{enumerate}
-    \item $X_n$ is adapted to the filtration (i.e., $X_n$ is $\mathcal{F}_n$-measurable for all $n$),
-    \item $\mathbb{E}[|X_n|] < \infty$ for all $n$,
-    \item $\mathbb{E}[X_{n+1} \mid \mathcal{F}_n] = X_n$ almost surely.
-\end{enumerate}
-\end{definition}
-
-\noindent  A martingale essentially encapsulates the idea of a ``fair game". The condition $\mathbb{E}[X_{n+1} \mid \mathcal{F}_n] = X_n$ implies that the best prediction for the next value is the current value, even with the entire history of the process. 
-
-\noindent A key result regarding martingales is the Optional Stopping Theorem. There are multiple versions, and we only state one here sufficient for our purposes.
-\begin{theorem}[Doob's Optional Stopping Theorem]
-\label{thm:ost}
-    Let $X$ be a martingale on a filtered probability space. If $\tau$ is a stopping time such that $\mathbb{P}(\tau < \infty) = 1$, and $X$ is uniformly bounded (i.e., there exists $K$ such that $|X_n(\omega)| \leq K$ for all $n, \omega$), then:
-\begin{equation}
-    \mathbb{E}[X_\tau] = \mathbb{E}[X_0].
-\end{equation}
-\end{theorem}
-
-\begin{proof}
-See \citet[Section 10.10]{Williams1991}.
-\end{proof}
-
-\noindent This means that no stopping strategy $\tau$ can change the expected payout of a fair game. This will allow us to relate the value of a harmonic function at a starting point $x$ (start of the walk) to its expected value at the boundary $\partial D$ (end of the walk).
-
-\subsection{Measure Theory Concepts}
-
-In the study of potential theory, we will want to understand the relationship between the geometric length of a boundary (Lebesgue measure) and the probability that a random walker hits that boundary (harmonic measure). To rigorously define a probability density function linking these two concepts we require the notion of the Radon-Nikodym derivative.
-
-
-We begin by defining absolute continuity between two measures, which is a necessary pre-requisite.
-\noindent \textit{Remark:} throughout this work, we assume our measurable spaces are equipped with the Borel $\sigma$-algebra.
-\begin{definition}[Absolute Continuity]
-Let $(\Omega, \mathcal{F})$ be a measurable space equipped with two measures $\mu$ and $\nu$. We say that $\nu$ is absolutely continuous with respect to $\mu$, denoted $\nu \ll \mu$, if for every $A \in \mathcal{F}$:
-\begin{equation}
-    \mu(A) = 0 \implies \nu(A) = 0.
-\end{equation}
-\end{definition}
-
-\begin{theorem}[The Radon-Nikodym Theorem]
-Let $(\Omega, \mathcal{F})$ be a measurable space, and let $\mu$ and $\nu$ be two finite measures such that $\nu \ll \mu$. Then, there exists a non-negative measurable function $f \colon \Omega \to [0, \infty)$, unique $\mu$-almost everywhere, such that for any $A \in \mathcal{F}$:
-\begin{equation}
-    \nu(A) = \int_A f \, d\mu.
-\end{equation}
-The function $f$ is called the Radon-Nikodym derivative of $\nu$ with respect to $\mu$ and is denoted by:
-\begin{equation}
-    f = \frac{d\nu}{d\mu}.
-\end{equation}
-\end{theorem}
-
-\begin{proof}
-See \citet[Section 14.13]{Williams1991}.
-\end{proof}
-
-%add LCLT and also Ito's Lemma?
-
-\subsection{Conformal Maps}
-
-Here we state the definition of a conformal map, and the Riemann mapping theorem, both from \citet{Ahlfors1979}. Conformal maps will be very important for two reasons: theoretically, the Riemann Mapping Theorem guarantees that the Dirichlet problem we consider later in this chapter is well-posed even on the potentially fractal boundary of a DLA cluster. Algorithmically, these maps allow us to exploit the 'conformal invariance' of Brownian motion, which we discuss in the latter parts of this chapter and into the next.
-%remove conformal map defintion?
-\begin{definition}[Conformal Map]
-Let $U, V \subseteq \mathbb{C}$ be open sets. A function $f \colon U \to V$ is called \textbf{conformal} at a point $z_0 \in U$ if it preserves angles and orientation locally. 
-
-Analytically, a holomorphic function $f$ is conformal at every point where its derivative is non-zero, i.e., $f'(z) \neq 0$. If $f$ is a holomorphic bijection between $U$ and $V$ (a biholomorphism), it is essentially a global conformal map, and we say $U$ and $V$ are conformally equivalent.
-\end{definition}
-
-\begin{theorem}[Riemann Mapping Theorem]
-Let $U \subsetneq \mathbb{C}$ be a non-empty, simply connected open subset of the complex plane. Then, there exists a unique bijective conformal map $f$ from $U$ onto the open unit disk $\mathbb{D} = \{z \in \mathbb{C} : |z| < 1\}$ such that:
-\begin{equation}
-    f(z_0) = 0 \quad \text{and} \quad f'(z_0) > 0,
-\end{equation}
-for any prescribed point $z_0 \in U$.
-\end{theorem}
-
-\begin{proof}
-See \citet[Chapter 6.1]{Ahlfors1979}.
-\end{proof}
-
-\section[Discrete Potential Theory]{Discrete Potential Theory\footnote{The theoretical framework in this section is largely adapted from \citet{Lawler2010}, applied here to the specific case of 2D DLA.}}\label{sec:discrete_theory}
-We now introduce potential theory in a discrete setting, focusing on its applications to DLA. We start by considering the definitions of a random walk and a discrete harmonic function.
-%remark about focusing on intuition and links to DLA, and therefore omitting proofs, which can be found in Lawler and Limic.
 \subsection{Simple Random Walks and the Generator}
 \label{sec:rw_generator}
-\begin{definition}[Random Walk]
-A random walk on $\mathbb{Z}^2$ is a stochastic process $(S_n)_{n \geq 0}$ defined by $S_n = S_0 + \sum_{i=1}^n X_i$, where $X_1, X_2, \dots$ are independent and identically distributed random variables taking values in $\mathbb{Z}^2$. 
 
-The common distribution of the steps is denoted by $p(x) = \mathbb{P}(X_i = x)$ and is called the \textbf{increment distribution}.
-\end{definition}
+Let $(S_n)_{n \geq 0}$ be a stochastic process on $\mathbb{Z}^2$ defined by $S_n = S_0 + \sum_{i=1}^n X_i$, where $X_1, X_2, \dots$ are independent, identically distributed random variables. We are primarily interested in the Simple Symmetric Random Walk (SSRW), where the walker moves to one of its four nearest neighbours with equal probability. We denote this increment distribution as $p(x) = \mathbb{P}(X_i = x)$, where $p(x) = 1/4$ if $|x| = 1$, and $0$ otherwise.
 
-\noindent For the purposes of DLA, we are primarily interested in the symmetric case:
+The evolution of the expectation of functions under this random walk is governed by a linear operator known as the discrete generator, $\mathcal{L}$. For a function $f: \mathbb{Z}^2 \to \mathbb{R}$, it is defined probabilistically as the expected change in $f$ during a single step:
+\begin{equation*}
+    \mathcal{L}f(x) = \mathbb{E}[f(S_1) - f(S_0) \mid S_0 = x] = \sum_{y \in \mathbb{Z}^2} p(y-x) [f(y) - f(x)].
+\end{equation*}
+For a SSRW, it is easy to see that this generator is directly proportional to the standard (unnormalised) discrete Laplacian, $\mathcal{L} = \frac{1}{4} \Delta$, where $\Delta f(x) = \sum_{y \sim x} (f(y) - f(x))$. 
 
-\begin{definition}[Simple Symmetric Random Walk]
-A random walk is called a Simple Symmetric Random Walk (SSRW) if the increment distribution is uniform on the nearest neighbours:
-\begin{equation}
-    p(x) = \begin{cases} 
-        \frac{1}{4} & \text{if } |x| = 1, \\
-        0 & \text{otherwise}.
-    \end{cases}
-\end{equation}
-\end{definition}
+A function $f$ is said to be discrete harmonic on a subset $A \subset \mathbb{Z}^2$ if $\mathcal{L}f(x) = 0$ for all $x \in A$. Equivalently, a harmonic function's value at any site is exactly the average of its nearest neighbours. This specific property guarantees that evaluating a harmonic function along the path of an unbiased random walk yields a martingale.
 
-\noindent We now define the operator that governs the evolution of the expectation of functions under this flow.
-
-\begin{definition}[Discrete Generator]
-Let $p(\cdot)$ be the increment distribution of a random walk. The generator $\mathcal{L}$ is a linear operator acting on functions $f: \mathbb{Z}^2 \to \mathbb{R}$ defined by:
-\begin{equation}
-    \mathcal{L}f(x) = \sum_{y \in \mathbb{Z}^2} p(y-x) [f(y) - f(x)].
-\end{equation}
-Probabilistically, this represents the expected change in the function $f$ in a single step of the walk starting at $x$:
-\begin{equation}
-    \mathcal{L}f(x) = \mathbb{E}[f(S_1) - f(S_0) \mid S_0 = x].
-\end{equation}
-\end{definition}
-
-\noindent \textit{Remark:} For SSRW, the generator is proportional to the (unnormalised) discrete Laplacian, $\mathcal{L} = \frac{1}{4} \Delta$, where $\Delta f(x) = \sum_{y \sim x} (f(y) - f(x))$.
-
-\begin{definition}[Discrete Harmonic Functions]
-A function $f: A \cup \partial A \to \mathbb{R}$ is said to be harmonic in a subset $A \subset \mathbb{Z}^2$ if:
-\begin{equation}
-    \mathcal{L}f(x) = 0 \quad \text{for all } x \in A.
-\end{equation}
-\end{definition}
-
-%check this
 \begin{proposition}[Harmonic Functions are Martingales]
 \label{prop:harmonic_martingale}
 Let $S_n$ be a random walk and $f$ be a function harmonic on a set $A$. Let $\tau_A = \inf\{n \ge 0 : S_n \notin A\}$ be the first exit time from $A$. 
 Then the stopped process $M_n = f(S_{n \wedge \tau_A})$ is a martingale (with respect to the natural filtration of $S_n$).
 \end{proposition}
 \begin{proof}
-See \citet[Proposition 6.1.1]{Lawler2010}.
+See Lawler and Limic \cite[Proposition 6.1.1]{Lawler2010}.
 \end{proof}
 
 \subsection{The Discrete Dirichlet Problem}
 \label{sec:dirichlet}
 
-\begin{definition}[Boundary]
-Before proceeding, we distinguish between the occupied cluster and the available growth sites. Let $K \subset \mathbb{Z}^2$ denote the set of occupied sites (the cluster). We define the boundary $\partial K$ as the outer boundary consisting of all empty sites adjacent to the cluster:
-\begin{equation}
-    \partial K = \{y \in \mathbb{Z}^2 \setminus K : \exists x \in K \text{ such that } |y-x|=1\}.
-\end{equation}
-Subsequently we refer to the outer boundary as the \textbf{boundary} of the cluster $\partial K$.
-\end{definition}
+To model DLA, we must distinguish between the occupied cluster sites, denoted $K \subset \mathbb{Z}^2$, and the available growth sites. We define the boundary $\partial K$ as the set of all empty sites adjacent to the cluster. The active domain for the random walker is therefore the free space excluding this boundary, $\mathbb{Z}^2 \setminus (K \cup \partial K)$.
 
-We now attempt to model DLA as a discrete Dirichlet problem, where the unknown function $u_R(x)$ is defined as the probability of a random walker starting at x escaping to some outer boundary $\partial R$ of radius $R$ before hitting the cluster boundary $\partial K$.
-\begin{equation} u_R(x) = \mathbb{P}^x(\text{hit outer boundary } \partial R \text{ before } \partial K). \end{equation} 
-As the diffusion process is a simple random walk, the probability of escaping from $x$ is simply the average of the excape probabilities of its neighbours:
-\begin{equation}
-u_R(x) = \frac{1}{4} \sum_{z \sim x} u_R(z).
-\end{equation}
-By definition this makes $u(\cdot)$ harmonic, hence satisfies the discrete Laplace equation $\mathcal{L}u(x) = 0$.
+Consider the probability $u_R(x)$ that a random walker starting at $x \notin K \cup \partial K$ escapes to some large outer bounding box $\partial R$ before hitting the cluster boundary $\partial K$. Because the diffusion process is a SSRW, the probability of escaping from $x$ must be the average of the escape probabilities of its four neighbours. 
+This immediately implies that $u_R(x)$ is a harmonic function, satisfying the discrete Laplace equation $\mathcal{L}u_R(x) = 0$. 
 
-\noindent Thus, each stage of DLA is equivalent to solving the Dirichlet problem:
-\begin{equation}
+Each stage of the DLA process is therefore equivalent to solving the following boundary value problem:
+\begin{equation*}
     \begin{cases}
-      \Delta f(x) = 0 & \text{if } x \notin K \text{ (Harmonic in free space)}, \\
-      f(x) = 0 & \text{if } x \in \partial K \text{ (Hit the cluster)}, \\
-      f(x) = 1 & \text{if } x \in \partial R \text{ (Escaped to infinity)}.
+      \mathcal{L} u_R(x) = 0 & \text{if } x \notin K \cup \partial K \text{ (Harmonic in free space)}, \\
+      u_R(x) = 0 & \text{if } x \in \partial K \text{ (Hit the cluster boundary)}, \\
+      u_R(x) = 1 & \text{if } x \in \partial R \text{ (Escaped to bounding box)}.
     \end{cases}
-\end{equation}
+\end{equation*}
 
-\begin{remark}
-We could have solved for the probability of hitting the cluster before escaping, reversing the boundary conditions. However, we do it this way to preserve consistency with the later sections and the electrostatic interpretation (see Appendix).
-\end{remark}
+This is a specific instance of the general discrete Dirichlet problem in 2D. 
 
-\noindent We now look at the general discrete Dirichlet problem in 2D:
 \begin{theorem}[Solution to the 2D Discrete Dirichlet Problem]
 \label{thm:dirichlet_sol}
-Let $A \subset \mathbb{Z}^2$ be a subset (potentially infinite) and let $\tau = \inf \{n \ge 0 : S_n \notin A\}$ be the first exit time. 
-Assume that:
-\begin{enumerate}
-    \item The random walk stops almost surely: $\mathbb{P}_x(\tau < \infty) = 1$ for all $x \in A$.
-    \item The boundary function $g: \partial A \to \mathbb{R}$ is bounded.
-\end{enumerate}
-Then, the function $f: A \cup \partial A \to \mathbb{R}$ defined by the expectation:
+Let $A \subset \mathbb{Z}^2$ be a subset and let $\tau = \inf \{n \ge 0 : S_n \notin A\}$ be the first exit time. 
+Assume that the walk stops almost surely ($\mathbb{P}_x(\tau < \infty) = 1$ for all $x \in A$) and that the boundary function $g: \partial A \to \mathbb{R}$ is bounded. Then, the hitting probability function defined by the expectation
 \begin{equation}
     f(x) = \mathbb{E}_x [g(S_{\tau})]
     \label{eq:prob_solution}
 \end{equation}
-is the unique bounded solution to the Dirichlet system:
-\begin{subequations}
-\label{eq:dirichlet_system}
-\begin{align}
-    \mathcal{L} f(x) &= 0, & \text{for all } x \in A, \label{eq:harmonic_cond} \\
-    f(x) &= g(x), & \text{for all } x \in \partial A. \label{eq:boundary_cond}
-\end{align}
-\end{subequations}
+is the unique bounded solution to the Dirichlet system $\mathcal{L} f(x) = 0$ for all $x \in A$, subject to $f(x) = g(x)$ for all $x \in \partial A$.
 \end{theorem}
 
 \begin{proof}
 \textbf{Existence:} 
-We first check that \eqref{eq:prob_solution} satisfies the system \eqref{eq:dirichlet_system}.
-If $x \in \partial A$, then $\tau = 0$, so $S_\tau = x$ and $f(x) = \mathbb{E}_x[g(x)] = g(x)$. Thus the boundary condition \eqref{eq:boundary_cond} holds.
-If $x \in A$, we use the Markov property at the first step:
-\begin{equation}
+If $x \in \partial A$, then $\tau = 0$, so $S_\tau = x$ and $f(x) = \mathbb{E}_x[g(x)] = g(x)$, satisfying the boundary condition. If $x \in A$, we use the Markov property at the first step:
+\begin{equation*}
     f(x) = \mathbb{E}_x[g(S_\tau)] = \sum_{y \sim x} p(y-x) \mathbb{E}_y[g(S_\tau)] = \sum_{y \sim x} p(y-x) f(y).
-\end{equation}
-Thus $\mathcal{L}f(x) = 0$, satisfying \eqref{eq:harmonic_cond}.
+\end{equation*}
+Thus $\mathcal{L}f(x) = 0$.
 
 \textbf{Uniqueness:} 
-Suppose $h$ is another bounded solution to the system \eqref{eq:dirichlet_system}. Since $h$ satisfies \eqref{eq:harmonic_cond}, it is harmonic, and by \cref{prop:harmonic_martingale}, the process $M_n = h(S_{n \land \tau})$ constitutes a martingale. Since $h$ is bounded, $M_n$ is a bounded martingale.
-
-\noindent Given that $\tau < \infty$ almost surely, we can apply the Optional Stopping Theorem (\cref{thm:ost}):
-\begin{equation}
+Suppose $h$ is another bounded solution to the system. Since $h$ is harmonic, \cref{prop:harmonic_martingale} states that the process $M_n = h(S_{n \land \tau})$ constitutes a bounded martingale. Given that $\tau < \infty$ almost surely, we can apply the Optional Stopping Theorem (\cref{thm:ost}):
+\begin{equation*}
     h(x) = \mathbb{E}_x[M_0] = \mathbb{E}_x[M_\tau] = \mathbb{E}_x[h(S_\tau)].
-\end{equation}
-From condition \eqref{eq:boundary_cond}, we know $h(S_\tau) = g(S_\tau)$ on the boundary. Therefore:
-\begin{equation}
-    h(x) = \mathbb{E}_x[g(S_\tau)],
-\end{equation}
-which is exactly $f(x)$. Thus $h \equiv f$, proving uniqueness.
+\end{equation*}
+From the boundary condition, $h(S_\tau) = g(S_\tau)$. Therefore $h(x) = \mathbb{E}_x[g(S_\tau)] = f(x)$, proving uniqueness.
 \end{proof}
+
 
 \subsection{Recurrence and the Potential Kernel}
 \label{sec:potential_kernel}
 
-To apply this solution to DLA, we require taking the limit $R \to \infty$, which is equivalent to solving the Dirichlet problem with a boundary condition at infinity.
+To define the global aggregation rule for DLA, we must take the limit of the bounding box to infinity ($R \to \infty$). However, Lawler and Limic \cite[Proposition 6.2.2]{Lawler2010} show that for a 2D random walk, which is recurrent, the probability of escaping to infinity is exactly zero. Consequently, solving the Dirichlet problem with $0$ on the cluster boundary and $1$ at infinity yields only the trivial potential $f \equiv 0$. 
 
-This is done formally by \citet[Proposition 6.2.2]{Lawler2010}, who prove that a solution to the Dirichlet problem in $d$ dimensions is uniquely determined by values on the finite boundary $\partial A$ and the value at infinity, taking the form:
-\begin{equation}
-    f(x) = \mathbb{E}_x [g(S_{\tau})\mathbf{1}_{\tau < \infty}] + g(\infty)\mathbb{P}_x(\tau = \infty).
-\end{equation}
-However, due to the recurrence of a random walk in 2D space, the escape probability $\mathbb{P}_x(\tau = \infty)$ is zero for any random walk in $\mathbb{Z}^2$. Consequently, the second term vanishes. The solution is now entirely determined by the inner boundary $\partial K$. For our boundary conditions given in \cref{eq:dirichlet_system}, the only solution is the trivial potential $f \equiv 0$.
+To address this, we turn to Green's functions. In the context of differential equations, the Green's function $G(x,y)$ is familiar as the fundamental solution to the Poisson equation $\mathcal{L} G(x,y) = -\delta_y(x)$, representing the potential field at $x$ induced by a point source at $y$. In the discrete probabilistic setting, this concept translates directly into the expected number of times a random walk starting at $x$ visits the site $y$:
+\begin{equation*}
+    G(x,y) = \sum_{n=0}^\infty p_n(y-x).
+\end{equation*}
+For transient walks ($d \ge 3$), this expected number of visits is finite, and the sum converges. However, the recurrence of 2D walks causes a walker to return to the origin infinitely often, meaning $G(x,y) = \infty$ for all $x,y$.
 
-To address this we now turn to the concept of Green's functions. The Green's function $G(x,y)$ represents the potential field at $x$ induced by a point source at $y$. Put another way, it is the solution to the Poisson equation:
-\begin{equation}
-    \Delta G(x,y) = -\delta_y(x).
-\end{equation}
-In the probabilistic setting, the Green's function has a precise interpretation: it is the expected number of times a random walk starting at $x$ visits the site $y$:
-\begin{equation}
-    G(x,y) = \mathbb{E}_x \left[ \sum_{n=0}^\infty \mathbf{1}_{\{S_n = y\}} \right] = \sum_{n=0}^\infty p_n(y-x).
-\end{equation}
-For transient random walks (such as in dimensions $d \ge 3$), this sum converges, and $G(x,y)$ decays to zero as $|x-y| \to \infty$. 
+We resolve this divergence by regularising the Green's function via potential differences, arriving at the potential kernel.
 
-However, in two dimensions the random walk is recurrent, meaning a walker returns to the origin infinitely often, causing the sum in the definition of $G(x,y)$ to diverge:
-\begin{equation}
-    G(x,y) = \infty \quad \text{for all } x, y.
-\end{equation}
-Instead we regularise the divergent Green's function by working with potential differences, motivating the definition of the potential kernel.
 \begin{definition}[Potential Kernel]
-The potential kernel $a(x)$ for simple random walk in $\mathbb{Z}^2$ is defined as:
-\begin{equation}
+The potential kernel $a(x)$ for a simple random walk in $\mathbb{Z}^2$ is defined as:
+\begin{equation*}
     a(x) = \sum_{n=0}^\infty [p_n(0) - p_n(x)],
-\end{equation}
-where $p_n(x) = \mathbb{P}(S_n = x)$.
+\end{equation*}
+where $p_n(x) = \mathbb{P}_0(S_n = x)$.
 \end{definition}
-%add local CLT to prelims/appendix?
-It is not immediately clear that this will be finite. However, using estimates from the Local Central Limit Theorem \citep[Section 4.4.1]{Lawler2010}, it can be shown that for any fixed $x$, the difference decays as:
-\begin{equation}
-    |p_n(0) - p_n(x)| \leq C|x|n^{-3/2}.
-\end{equation}
-Since the series $\sum_{n=1}^\infty n^{-3/2}$ converges absolutely, the potential kernel $a(x)$ is well-defined and finite for all $x$.
 
-By transitioning from the Dirichlet problem to the potential kernel, we stop solving directly for the probability and instead solve for a renormalised potential $a(x)$. Intuitively, $a(x)$ quantifies the relative accessibility of a given lattice site from infinity. Importantly, the growth probability is recovered through the discrete differences of this potential: The proportion of walkers hitting a boundary point depends on the 'steepness' of the potential at the boundary.
+It is not immediately obvious that this sum is finite. However, Lawler and Limic \cite[Section 4.4.1]{Lawler2010} show that the difference in these transition probabilities can be bounded such that the series converges absolutely. Thus, the potential kernel $a(x)$ is well-defined and finite for all $x$. 
 
-\noindent The potential kernel therefore acts as the fundamental solution to the Laplacian on the lattice. It satisfies the Poisson equation:
-\begin{equation}
-    \mathcal{L}a(x) = \delta_0(x) = \begin{cases} 1 & x = 0, \\ 0 & x \neq 0. \end{cases}
-\end{equation}
-It replaces the `boundary at infinity' with an asymptotic growth condition.
+The potential kernel acts as the fundamental solution to the discrete Laplacian. It satisfies the discrete Poisson equation $\mathcal{L}a(x) = \delta_0(x)$ and replaces the 'boundary at infinity' with an asymptotic logarithmic growth condition.
 
 \begin{theorem}[Asymptotics of the Potential Kernel]
 As $|x| \to \infty$, the potential kernel satisfies:
-\begin{equation}
+\begin{equation*}
     a(x) = \frac{2}{\pi} \ln |x| + k + O(|x|^{-2}),
-\end{equation}
+\end{equation*}
 where $k$ is a constant involving Euler's constant $\gamma$.
 \end{theorem}
 \begin{proof}
-See \citet[Theorem 4.4.4]{Lawler2010}.
+See Lawler and Limic \cite[Theorem 4.4.4]{Lawler2010}.
 \end{proof}
 
 \begin{remark}
-\label{rem:log_growth}
-The logarithmic growth may seem arbitrary, but can in fact be justified with some geometric intuition:
-Consider a circle of radius $R$ centred on the cluster (large enough so that it contains the entire cluster). For a steady flow of random walkers coming from infinity to reach the cluster, the total flux (rate of flow) across this circle must be independent of $R$. Else walkers would have to spontaneously appear or disappear which does not fit the model. The total flux is the product of the circumference ($2\pi R$) and the radial gradient of the potential ($\nabla f(R)$). This implies that the gradient must decay as $\nabla f(R) \propto 1/R$. Integrating this gradient yields:
-\begin{equation}
+The logarithmic growth may seem arbitrary, but it can be justified with geometric intuition. Consider a circle of radius $R$ centred on the cluster (large enough so that it contains the entire aggregate). For a steady flow of random walkers coming from infinity to reach the cluster, the total flux (rate of flow) across this circle must be independent of $R$ to satisfy the conservation of mass. This total flux is the product of the circumference ($2\pi R$) and the radial gradient of the potential ($\nabla f(R)$). This implies that the gradient must decay as $\nabla f(R) \propto 1/R$. Integrating this gradient yields:
+\begin{equation*}
     f(R) \propto \int \frac{1}{R} \, dR = \ln R.
-\end{equation}
+\end{equation*}
 \end{remark}
+
+By transitioning from the trivial probability solution to the regularised potential kernel $a(x)$, we gain a tool that quantifies the relative accessibility of a lattice site from infinity. Because $a(x)$ is finite and strictly well-behaved, it allows us to exactly evaluate the potential field along complex unbounded geometries, such as an infinite line.
 
 \subsection{Discrete Harmonic Measure}
 \label{sec:harmonic_measure}
 
-We now formally define the discrete harmonic measure:
+We now possess the tools to formally define the probability distributions governing both the local transport and global aggregation of DLA. 
+
+\begin{definition}[Local Harmonic Measure]
+Let $A \subset \mathbb{Z}^2$ be a discrete domain and $x \in A$. The discrete harmonic measure from $x$, denoted $H_A(x, \cdot)$, is the probability distribution of the first exit point from $A$. For a boundary point $y \in \partial A$:
+\begin{equation*}
+    H_A(x, y) = \mathbb{P}_x(S_\tau = y),
+\end{equation*}
+where $\tau = \inf\{n \ge 0 : S_n \notin A\}$ is the first exit time.
+\end{definition}
+
+This local measure is exactly the hitting probability solved by the discrete Dirichlet problem (\cref{thm:dirichlet_sol}), and it is the mechanism we will exploit for local random walk teleportation. However, for the global DLA growth rule, particles originate from a distant source. We model this by taking the limit of the local harmonic measure as the starting point moves to infinity.
 
 \begin{definition}[Harmonic Measure from Infinity]
-Let $K \subset \mathbb{Z}^2$ be a finite cluster. The harmonic measure $H_{\partial K}(y)$ is the probability that a simple random walk starting from infinity first hits the cluster $K$ at the point $y \in \partial K$. Formally, it is defined as the limit:
-\begin{equation}
-    H_{\partial K}(y) = \lim_{|x| \to \infty} \mathbb{P}_x(S_{\tau_K} = y),
-\end{equation}
-where $\tau_K = \inf\{n \ge 0 : S_n \in K\}$ is the first hitting time.
+Let $K \subset \mathbb{Z}^2$ be a finite cluster and $\partial K$ its adjacent empty boundary. The harmonic measure $H_{\partial K}(y)$ is the probability that a simple random walk starting from infinity first hits the boundary at the point $y \in \partial K$. It is defined as the limit:
+\begin{equation*}
+    H_{\partial K}(y) = \lim_{|x| \to \infty} H_{\mathbb{Z}^2 \setminus (K \cup \partial K)}(x, y) = \lim_{|x| \to \infty} \mathbb{P}_x(S_{\tau} = y),
+\end{equation*}
+where $\tau = \inf\{n \ge 0 : S_n \in \partial K\}$ is the first hitting time of the boundary.
 \end{definition}
 
-\noindent \citet[Proposition 6.6.1]{Lawler2010} prove that this limit exists and defines a unique probability measure on the boundary $\partial K$. While the definition may seem abstract, we can in fact calculate these probabilities directly from the potential field derived in the previous section.
-
-We begin by formally defining the concept of discrete flux which was invoked in \cref{rem:log_growth}. On the lattice, the concept of a normal derivative $\nabla u \cdot \mathbf{n}$ is replaced by a difference operator across the boundary.
+While the definition relies on an abstract limit from infinity, Lawler and Limic \cite[Proposition 6.6.1]{Lawler2010} prove this limit strictly exists and defines a unique probability measure on $\partial K$. In a computational setting, we can calculate these probabilities locally using the concept of discrete flux. On the lattice, the continuous normal derivative $\nabla u \cdot \mathbf{n}$ is replaced by a difference operator across the boundary.
 
 \begin{definition}[Discrete Flux]
-For a function $u: \mathbb{Z}^2 \to \mathbb{R}$ that vanishes on $K$, the discrete flux at a boundary point $y \in \partial K$ is the sum of the potential differences from its neighbours in the complement:
-\begin{equation}
-    \Phi(y) = \sum_{z \sim y, z \notin K} (u(z) - u(y)).
-\end{equation}
-Since $u(y)=0$ on the boundary, this simplifies to the sum of the external neighbours: $\Phi(y) = \sum_{z \sim y, z \notin K} u(z)$.
+For a potential field $u: \mathbb{Z}^2 \to \mathbb{R}$ that vanishes on the boundary $\partial K$, the discrete flux into a boundary point $y \in \partial K$ is the sum of the potential differences from its free-space neighbours:
+\begin{equation*}
+    \Phi(y) = \sum_{z \sim y, z \notin K \cup \partial K} (u(z) - u(y)) = \sum_{z \sim y, z \notin K \cup \partial K} u(z).
+\end{equation*}
 \end{definition}
 
-\noindent A fundamental result that we require from discrete potential theory is the equivalence of flux and the harmonic measure.
-
 \begin{proposition}[Harmonic Measure as Flux]
-The harmonic measure at $y \in \partial K$ is proportional to the discrete flux at $y$:
-\begin{equation}
+The harmonic measure at $y \in \partial K$ is exactly proportional to the discrete flux into $y$:
+\begin{equation*}
     H_{\partial K}(y) = \frac{\Phi(y)}{\sum_{w \in \partial K} \Phi(w)}.
-\end{equation}
+\end{equation*}
 \end{proposition}
-
 \begin{proof}
-For a formal rigorous proof connecting hitting probabilities to the Laplacian of the Green's function, see \citet[Proposition 1.6.3]{Lawler2010}.
+For a formal rigorous proof connecting hitting probabilities to the Laplacian of the Green's function, see Lawler and Limic \cite[Proposition 1.6.3]{Lawler2010}.
 \end{proof}
 
-\noindent To understand this link conceptually, we interpret the potential $u(x)$ as the density of a stream of random walkers originating from infinity and disappearing upon hitting the cluster $K$.
-In the exterior free space, the condition $\mathcal{L}u(x) = 0$ implies a sort of conservation law: the expected number of walkers entering any site $x$ equals the number leaving it.
-However, at a boundary site $y \in \partial K$, walkers arrive from neighbours but do not continue; they form the cluster. The operator $\mathcal{L}u(y)$ represents this absorption rate:
-\begin{equation}
-    \text{Rate into } y \propto \sum_{z \sim y} (\text{Density at } z) = \sum_{z \sim y} u(z) = \Phi(y).
-\end{equation}
-Since the harmonic measure $H(y)$ is the proportion of all walkers that terminate at $y$, it is directly proportional to this local absorption rate, i.e., the flux $\Phi(y)$.
+To understand this link conceptually, we interpret the potential $u(x)$ as the density of a stream of random walkers originating from infinity. In the free space, $\mathcal{L}u(x) = 0$ dictates a conservation law: walkers entering a site equal those leaving. However, at a boundary site $y \in \partial K$, walkers arrive from neighbours but are absorbed, forming the cluster. The operator $\mathcal{L}u(y)$ represents this absorption rate, which is directly proportional to $\Phi(y)$.
 
-
-This concludes the discrete formulation of the DLA process. The growth mechanism can be summarised as follows:
+This concludes the discrete formulation of the DLA process. The growth mechanism can be summarised in three rules:
 \begin{enumerate}
-    \item The system is governed by a harmonic potential $u(x)$, which is determined by the geometry of the cluster $K$.
-    \item This potential is the solution to the discrete Laplace equation $\mathcal{L}u=0$ with $u|_K = 0$ and $u(x) \sim \ln|x|$ as $|x| \to \infty$.
-    \item The growth probability at a boundary site $y$ is determined by the local flux $\Phi(y) = \sum_{z \sim y} u(z)$, where a new particle is added with probability $H(y) \propto \Phi(y)$.
+    \item The system is governed by a potential field $u(x)$ satisfying the discrete Laplace equation $\mathcal{L}u=0$ in the exterior free space, with $u|_{\partial K} = 0$ and $u(x) \sim \ln|x|$ as $|x| \to \infty$.
+    \item The hitting probability at a boundary site $y$ is dictated by the local flux $\Phi(y) = \sum_{z \sim y} u(z)$.
+    \item A new particle is added to $\partial K$ strictly according to this harmonic measure $H_{\partial K}(y) \propto \Phi(y)$.
 \end{enumerate}
-%\subsection{Link to Electrostatics} - needed/ appendix?
 
-\section{Continuous Potential Theory} \footnote{Again, this is all existing theory, we merely synthesise results regarding Brownian motion and potential theory given in \citet{MortersPeres2010} for the context of DLA.}
+\section[Continuous Potential Theory]{Continuous Potential Theory\footnote{This section synthesises standard results regarding Brownian motion and potential theory, derived largely from M{\"o}rters and Peres \cite{Morters2010}, for the context of DLA.}}
 \label{sec:continuous_theory}
 
-We now provide an introduction to potential theory in the continuous setting. Much of this section is formally derived by extending \cref{sec:discrete_theory} to the continuous case using stochastic calculus. However, for our purposes, an understanding of the main results is sufficient to build a robust intuition for DLA, so we focus only on the useful results. The fundamental change is replacing the discrete random walker with its scaling limit: Brownian motion.
+We now provide an introduction to potential theory in the continuous setting. The fundamental shift is replacing the discrete random walk on a lattice with its continuous analogue: Brownian motion. Intuitively, at macroscopic scales, the discrete steps of a random walk blur into a continuous trajectory, meaning Brownian motion can be viewed as the continuous scaling limit of a random walk. Therefore, large clusters formed by random walks should exhibit the same macroscopic properties as those formed by Brownian particles.
 
 \subsection{Brownian Motion and the Laplacian}
-We start by defining Brownian motion in both $\mathbb{R}^d$ and $\mathbb{C}$.
+
+Since Brownian motion is the continuous engine of off-lattice DLA, we begin with its formal definition.
 
 \begin{definition}[Standard Brownian Motion]
 A standard Brownian motion in $\mathbb{R}^d$ is a stochastic process $B = (B_t)_{t \ge 0}$ defined on a probability space $(\Omega, \mathcal{F}, \mathbb{P})$ taking values in $\mathbb{R}^d$, such that:
 \begin{enumerate}
     \item $B_0 = 0$ almost surely.
-    \item The process has independent increments: for any $0 \le s < t$, $B_t - B_s$ is independent of $\mathcal{F}_s = \sigma(B_u : u \le s)$.
+    \item The process has independent increments: for any $0 \le s < t$, the increment $B_t - B_s$ is independent of the past history up to time $s$.
     \item The increments are Gaussian: $B_t - B_s \sim \mathcal{N}(0, (t-s)I_d)$.
     \item The paths $t \mapsto B_t$ are continuous almost surely.
 \end{enumerate}
 \end{definition}
 
-In the study of 2D DLA, we will utilise results from complex analysis. Thus, it is natural to identify the plane $\mathbb{R}^2$ with $\mathbb{C}$.
+In the study of 2D DLA, we will extensively utilise results from complex analysis. It is therefore natural to identify the plane $\mathbb{R}^2$ with the complex plane $\mathbb{C}$.
 
 \begin{definition}[Complex Brownian Motion]
-A canonical complex Brownian motion $Z_t$ is a process taking values in $\mathbb{C}$, defined as:
-\begin{equation}
-    Z_t = X_t + iY_t,
-\end{equation}
-where $X_t$ and $Y_t$ are two independent, standard one-dimensional Brownian motions.
+A canonical complex Brownian motion $Z_t$ is a process taking values in $\mathbb{C}$, defined as $Z_t = X_t + iY_t$, where $X_t$ and $Y_t$ are two independent, standard one-dimensional Brownian motions.
 \end{definition}
 
-\noindent The utility of this complex formulation will be apparent in \cref{sec:conformal_invariance}. 
-%\noindent The utility of this complex formulation becomes clear when we consider what is known as the quadratic variation of the process. In stochastic calculus, standard Brownian motions satisfy the formal rules $(dX_t)^2 = dt$ and $(dY_t)^2 = dt$. Applying this yields:
-%\begin{equation}
-    %(dZ_t)^2 = (dX_t + i dY_t)^2 = (dX_t)^2 - (dY_t)^2 + 2i dX_t dY_t.
-%\end{equation}
-%Since $X$ and $Y$ are independent identical copies, their variances match ($dt - dt = 0$), and the cross-term is negligible for variation. Thus, we effectively have $(dZ_t)^2 = 0$.
-%This property identifies $Z_t$ as a conformal martingale, which is the stochastic equivalent of an analytic function (where derivative depends only on $z$, not $\bar{z}$, as given by Wirtinger derivatives), and will be why we get the conformal invariance result later.
+In the discrete setting, we saw that harmonic functions ($\mathcal{L}f = 0$) evaluated along a random walk form a martingale. The continuous analogue relies on the continuous Laplace operator, $\Delta = \sum_{i=1}^d \frac{\partial^2}{\partial x_i^2}$. A twice continuously differentiable function $u: D \to \mathbb{R}$ defined on a domain $D \subset \mathbb{R}^d$ is called \textbf{harmonic} if $\Delta u(x) = 0$ for all $x \in D$.
 
-\begin{remark}
-We gloss over much of the detail in this section, as for our purposes a complete rigourous introduction to stochastic calculus is unnecessary. Intuitively, Brownian motion can be understood as the continuous limit of a random walk. In fact, this has been rigorously proven as Donsker's Invariance Principle (see \citet[Theorem 5.22]{MortersPeres2010}). For DLA, this implies that large clusters formed by random walks should exhibit the same macroscopic properties as those formed by Brownian particles. For a full treatment of stochastic calculus and Brownian motion, see Course B8.2 or \citet{MortersPeres2010}.
-\end{remark}
+\begin{proposition}[Continuous Harmonic Functions are Martingales]
+\label{prop:continuous_martingale}
+Let $B_t$ be a standard $d$-dimensional Brownian motion and $D \subset \mathbb{R}^d$ be a domain. If $u: D \to \mathbb{R}$ is a harmonic function ($\Delta u = 0$), and $\tau_D$ is the first exit time from a bounded subdomain strictly contained in $D$, then the stopped process $M_t = u(B_{t \wedge \tau_D})$ is a martingale.
+\end{proposition}
 
-The connection between the physical process (Brownian motion) and the geometric potential (Laplace's equation) is provided by the infinitesimal generator.
+\begin{proof}[Proof Sketch]
+While a fully rigorous proof requires advanced stochastic integration beyond our assumed scope, the mechanism can be understood intuitively via a powerful result known as It\^o's Lemma. Conceptually, It\^o's formula acts as the stochastic analogue of the chain rule. It states that the infinitesimal change in $u$ along the Brownian path is:
+\begin{equation*}
+    du(B_t) = \nabla u(B_t) \cdot dB_t + \frac{1}{2} \Delta u(B_t) \, dt.
+\end{equation*}
+The first term ($\nabla u \cdot dB_t$) represents zero-mean random noise, while the second term ($\frac{1}{2} \Delta u \, dt$) represents the expected deterministic drift. Because $u$ is harmonic, the Laplacian vanishes ($\Delta u = 0$), completely eliminating the drift. With only the zero-mean noise remaining, the expected value is perfectly conserved along the path, satisfying the fundamental property of a martingale.
+\end{proof}
 
-\begin{definition}[Continuous Generator and Laplacian]
-    \label{def:laplacian}
-The Laplace operator (or Laplacian) $\Delta$ in $\mathbb{R}^d$ is the sum of the second partial derivatives:
-\begin{equation}
-\Delta = \sum_{i=1}^d \frac{\partial^2}{\partial x_i^2}.
-\end{equation}
-The infinitesimal generator of standard Brownian motion is the operator $\mathcal{A} = \frac{1}{2}\Delta$. It characterises the process via the martingale property: for any compactly supported $C^2$ (twice continuously differentiable) function $f$, the quantity
-\begin{equation}
-M_t = f(B_t) - f(B_0) - \int_0^t \frac{1}{2}\Delta f(B_s) \, ds
-\end{equation}
-is a martingale with respect to the filtration of $B_t$.
-\end{definition}
-
-\noindent The integral term in \cref{def:laplacian} represents the expected drift of the function along the path. By subtracting this drift, we isolate the centred random noise, which is a martingale. 
-
-\begin{remark}[Scaling Factors and Independence]
-We point out here that the scaling factor here differs from that in \cref{sec:rw_generator}. This discrepancy stems from the second-order term of the Taylor expansion used to derive the Brownian limit. However, since the potential distribution for DLA is determined by the condition $\mathcal{L}u = 0$ $($or $\Delta u = 0)$, this constant factor cancels out. The resulting harmonic measure is invariant. For a full derivation of this limit, see \citet[Section 2.1]{Lawler2010}.
-\end{remark}
-
-\begin{definition}[Harmonic Functions]
-A twice continuously differentiable function $u: D \to \mathbb{R}$ defined on a domain $D \subset \mathbb{R}^d$ is called harmonic if it lies in the kernel of the Laplace operator:
-\begin{equation}
-    \Delta u(x) = 0 \quad \text{for all } x \in D.
-\end{equation}
-\end{definition}
-
-\noindent By comparing this with the generator definition above, we see immediately that if $u$ is harmonic, the drift term vanishes. This yields the critical result that $u(B_t)$ is a martingale, implying that the "average value" of a harmonic function is conserved along Brownian paths. We formalise this as the mean value property.
+This martingale property yields a critical geometric result: the continuous equivalent to the `average of its neighbours' property found in the discrete setting.
 
 \begin{theorem}[Mean Value Property]
 \label{the:mean_value}
 A locally integrable function $u: D \to \mathbb{R}$ is harmonic ($\Delta u = 0$) if and only if for every ball $B(x,r)$ strictly contained in the domain $D$:
-\begin{equation}
+\begin{equation*}
     u(x) = \frac{1}{|\partial B(x,r)|} \int_{\partial B(x,r)} u(y) \, d\sigma(y),
-\end{equation}
+\end{equation*}
 where $\sigma$ denotes the surface measure on the boundary sphere.
 \end{theorem}
 
-\noindent This is the continuous equivalent to the `average of its neighbours' property of in the discrete setting.
+\begin{proof}
+See M{\"o}rters and Peres \cite[Theorem 3.5]{Morters2010}.
+\end{proof}
 
-\subsection{Harmonic Measure}
+\subsection{The Continuous Dirichlet Problem}
 
-Before we present the continuous analogue to \cref{thm:dirichlet_sol}, we define the continuous version of the harmonic measure.
-\begin{definition}[Harmonic Measure]
-Let $D \subset \mathbb{R}^d$ be a domain. The harmonic measure $\omega_x = \omega_x(D, \cdot)$ is the probability measure on the boundary $\partial D$ defined by:
-\begin{equation}
-    \omega_x(E) = \mathbb{P}^x(B_{\tau_D} \in E),
-\end{equation}
+Just as in the discrete case, DLA requires solving for the probability that a particle hits a specific part of a boundary. The continuous Dirichlet problem seeks a function $u(x)$ that is harmonic within a domain $D$ and matches a specified continuous boundary condition $g(x)$ on $\partial D$. 
+
+Just as we defined the discrete harmonic measure to quantify boundary hitting probabilities on a lattice, we now define its continuous counterpart.
+
+\begin{definition}[Continuous Harmonic Measure]
+Let $D \subset \mathbb{R}^d$ be a bounded domain. The continuous harmonic measure $\omega_x = \omega_x(D, \cdot)$ is the probability measure on the boundary $\partial D$ defined by:
+\begin{equation*}
+    \omega_x(E) = \mathbb{P}_x(B_{\tau_D} \in E),
+\end{equation*}
 for Borel sets $E \subset \partial D$, where $\tau_D = \inf\{t > 0 : B_t \notin D\}$ is the first exit time.
 \end{definition}
 
-The solution to the continuous Dirichlet problem is given by Kakutani's Theorem.
+The probabilistic solution to the continuous Dirichlet problem is given by Kakutani's Theorem, which mirrors the discrete Optional Stopping Theorem proof seen in \cref{thm:dirichlet_sol}.
 
 \begin{theorem}[Kakutani's Theorem]
     \label{the:kakutani}
-If $D$ is a bounded domain and $g$ is a continuous function on $\partial D$, then the function defined by:
-\begin{equation}
-    u(x) = \mathbb{E}^x[g(B_{\tau_D})] = \int_{\partial D} g(y) \, d\omega_x(y)
-\end{equation}
+If $D$ is a bounded domain and $g$ is a continuous function on $\partial D$, then the function defined by the expected value at the boundary:
+\begin{equation*}
+    u(x) = \mathbb{E}_x[g(B_{\tau_D})] = \int_{\partial D} g(y) \, d\omega_x(y)
+\end{equation*}
 is harmonic in $D$ and satisfies $\lim_{x \to y} u(x) = g(y)$ for regular boundary points $y \in \partial D$.
-Here, $\omega_x$ denotes the harmonic measure relative to $x$, representing the distribution of the first hitting point of Brownian motion on $\partial D$.
-\begin{proof}
-For a rigorous proof relying on the martingale property of harmonic functions, see \citet[Theorem 3.12]{MortersPeres2010}.
-\end{proof}
 \end{theorem}
 
-As in the discrete case, we are concerned with extending this to infinity. As a consequence of the following lemma, 2D Brownian motion is neighbourhood recurrent, meaning it will revisit any neighbourhood infinitely often. This prevents us from simply imposing a boundary condition at infinity, just as recurrence did in the discrete case.
+\begin{proof}
+See M{\"o}rters and Peres \cite[Theorem 3.12]{Morters2010}.
+\end{proof}
+
+\begin{remark}[Continuous Harmonic Measure from Infinity]
+Similar to the discrete model, the global aggregation of DLA relies on particles arriving from a distant source. We formalise this by taking the limit of the local harmonic measure as the starting point approaches infinity. Due to the perfect rotational symmetry of the plane, the harmonic measure from infinity for the unit disk $\mathbb{D}$ maps exactly to the uniform distribution $1/(2\pi)$. This provides the rigorous justification for uniformly sampling angles on a bounding circle during continuous off-lattice simulations.
+\end{remark}
+
+As in the discrete case, we must consider the behaviour of the random process over infinite domains. As a consequence of the following lemma, 2D Brownian motion is neighbourhood recurrent, meaning it will revisit any local neighbourhood infinitely often.
 
 \begin{lemma}[Exit Probabilities from an Annulus]
 Let $B_t$ be a complex Brownian motion starting at $z_0$ within the annulus $A = \{z \in \mathbb{C} : r < |z| < R\}$. Let $T_A = \inf\{t > 0 : B_t \notin A\}$ be the first exit time. The probability that the process exits through the inner boundary $|z|=r$ is given by:
-\begin{equation}
-    \mathbb{P}^{z_0}(|B_{T_A}| = r) = \frac{\ln R - \ln |z_0|}{\ln R - \ln r}.
-\end{equation}
+\begin{equation*}
+    \mathbb{P}_{z_0}(|B_{T_A}| = r) = \frac{\ln R - \ln |z_0|}{\ln R - \ln r}.
+\end{equation*}
+Taking the limit $R \to \infty$ yields $\mathbb{P}(|B_{T_A}| = r) \to 1$, proving planar Brownian motion is neighbourhood recurrent.
 \end{lemma}
-\begin{proof}
-See \citet[Theorem 3.18]{MortersPeres2010}. The proof uses It\^o's formula (stochastic chain rule) on the function $\ln|Z_t|$.
-\end{proof}
 
-\begin{corollary}[Recurrence]
-Planar Brownian motion is neighbourhood recurrent. For any starting point $z_0$ and any $\epsilon > 0$, the process will enter the disk $\{z : |z-z_0| < \epsilon\}$ almost surely:
-\begin{equation}
-    \mathbb{P}(\exists t > 0 : |B_t - z_0| < \epsilon) = 1.
-\end{equation}
-\end{corollary}
 \begin{proof}
-Taking the limit $R \to \infty$ in the annulus exit probability yields $\mathbb{P}(|B_{T_A}| = r) \to 1$.
+See M{\"o}rters and Peres \cite[Theorem 3.18]{Morters2010}.
 \end{proof}
 
 \subsection{Conformal Invariance}
 \label{sec:conformal_invariance}
-While in the discrete case we resolved this recurrence issue by turning to (regularised) Green's functions, we will instead utilise a fundamental property of Brownian motion: conformal invariance.
+
+In the discrete setting, the recurrence of the 2D walk forced us to abandon the standard Green's function and construct a regularised potential kernel to solve for hitting probabilities on unbounded domains. In the continuous setting, we can bypass this difficulty entirely by exploiting a profound geometric property of complex Brownian motion: conformal invariance.
 
 \begin{theorem}[L\'evy's Conformal Invariance Theorem]
-Let $U \subset \mathbb{C}$ be a domain and $f: U \to V$ be a non-constant analytic function. If $Z_t$ is a complex Brownian motion in $U$, then the image process $W_t = f(Z_t)$ is, up to a random time change, a complex Brownian motion in $V$.
-Specifically, if $\tau_t = \int_0^t |f'(Z_s)|^2 ds$, then $f(Z_{\tau^{-1}(t)})$ is a standard Brownian motion in $V$.
+Let $U \subset \mathbb{C}$ be a domain and $f: U \to V$ be a non-constant analytic function. If $Z_t$ is a complex Brownian motion in $U$, then the image process $W_t = f(Z_t)$ is, up to a random time change, a complex Brownian motion in $V$. Specifically, if $\tau_t = \int_0^t |f'(Z_s)|^2 \, ds$, then $f(Z_{\tau^{-1}(t)})$ is a standard Brownian motion in $V$.
 \end{theorem}
+
 \begin{proof}
-See \citet[Theorem 7.20]{MortersPeres2010}.
+See M{\"o}rters and Peres \cite[Theorem 7.20]{Morters2010}.
 \end{proof}
 
+This theorem states that conformal maps (which preserve local angles) map Brownian paths to other Brownian paths. A direct and incredibly powerful consequence of this is the invariance of the hitting probabilities.
 
 \begin{corollary}[Conformal Invariance of Harmonic Measure]
 Let $f: D \to D'$ be a conformal map. The harmonic measure is invariant under $f$:
-\begin{equation}
+\begin{equation*}
     \omega_z(D, E) = \omega_{f(z)}(D', f(E))
-\end{equation}
+\end{equation*}
 for any Borel set $E \subset \partial D$.
 \end{corollary}
 
-\noindent This result guarantees that utilising conformal maps in the sampling process will not distort the underlying harmonic measure, preserving the integrity of our off-lattice algorithm in the subsequent section.
+\begin{proof}
+See M{\"o}rters and Peres \cite[Corollary 7.18]{Morters2010}.
+\end{proof}
 
 \subsection{Solvable Geometries}
 \label{sec:solvable_geometries}
-We conclude by introducing the probability density function for the hitting probabilities, and finding it explicitly for two fundamental domains used in DLA algorithms: the Upper Half-Plane ($\mathbb{H}$) and the Unit Disk ($\mathbb{D}$).
+
+To utilise conformal invariance, we need to know the explicit probability density function for the hitting probabilities on our reference domains.
 
 \begin{definition}[Poisson Kernel]
-Let $\sigma$ be the surface measure on $\partial D$. If the harmonic measure is absolutely continuous with respect to $\sigma$, the Poisson kernel $P(x,y)$ is defined as the Radon-Nikodym derivative:
-\begin{equation}
-    P(x,y) = \frac{d\omega_x}{d\sigma}(y).
-\end{equation}
-It represents the probability density of the Brownian motion exiting $D$ at $y$ given it started at $x$.
+Let $\sigma$ be the surface measure on $\partial D$. If the harmonic measure is absolutely continuous with respect to $\sigma$, the Poisson kernel $P_D(z, \zeta)$ is defined as the Radon-Nikodym derivative:
+\begin{equation*}
+    P_D(z, \zeta) = \frac{d\omega_z}{d\sigma}(\zeta).
+\end{equation*}
+It represents the probability density of the Brownian motion exiting $D$ at $\zeta \in \partial D$ given it started at $z \in D$.
 \end{definition}
 
-\noindent We can now express the conformal invariance of the harmonic measure in terms of the Poisson kernel. By definition, the harmonic measure of a set $E \subset \partial D$ is the integral of the Poisson kernel with respect to the surface measure $d\sigma$:
-\begin{equation}
-\omega_z(D, E) = \int_E P_D(z, \zeta) d\sigma(\zeta).
-\end{equation}
-Applying the conformal invariance corollary to a map $f: D \to \mathbb{D}$ such that $f(z)=0$, and noting that the Poisson kernel on the disk from the origin is uniform ($P_{\mathbb{D}}(0, w) = \frac{1}{2\pi}$), we have:
-\begin{equation}
-\int_E P_D(z, \zeta)  d\sigma(\zeta) = \omega_0(\mathbb{D}, f(E)) = \int_{f(E)} \frac{1}{2\pi}  d\sigma(w).
-\end{equation}
-By the change of variables $w = f(\zeta)$, the arc length element transforms as $d\sigma(w) = |f'(\zeta)| d\sigma(\zeta)$, resulting in: 
-\begin{equation}
-\int_E P_D(z, \zeta)  d\sigma(\zeta) = \int_E \frac{1}{2\pi} |f'(\zeta)| d\sigma(\zeta).
-\end{equation}
-This equality holds for any Borel set $E$, hence:
-\begin{equation}
-P_D(z, \zeta) = \frac{1}{2\pi} |f'(\zeta)|.
-\end{equation}
+We can now express the conformal invariance of the harmonic measure in terms of the Poisson kernel. By definition, the harmonic measure of a Borel set $E \subset \partial D$ is the integral of the Poisson kernel over $E$. 
 
-We now apply this relation to our domains of interest:
+Applying the conformal invariance corollary to a map $f: D \to \mathbb{D}$ to the unit disk such that $f(z)=0$, and noting that the Poisson kernel on the disk from the origin is uniform ($P_{\mathbb{D}}(0, w) = \frac{1}{2\pi}$), we have:
+\begin{equation*}
+    \int_E P_D(z, \zeta) \, d\sigma(\zeta) = \omega_0(\mathbb{D}, f(E)) = \int_{f(E)} \frac{1}{2\pi} \, d\sigma(w).
+\end{equation*}
+Under the change of variables $w = f(\zeta)$, the boundary arc length element transforms as $d\sigma(w) = |f'(\zeta)| \, d\sigma(\zeta)$. Substituting this into the right-hand integral yields:
+\begin{equation*}
+    \int_E P_D(z, \zeta) \, d\sigma(\zeta) = \int_E \frac{1}{2\pi} |f'(\zeta)| \, d\sigma(\zeta).
+\end{equation*}
+Since this equality holds for any Borel set $E$, the integrands must be strictly equal, yielding the fundamental relationship:
+\begin{equation*}
+    P_D(z, \zeta) = \frac{1}{2\pi} |f'(\zeta)|.
+\end{equation*}
+
+We now apply this relation to derive the exact solutions for two fundamental domains: the upper half-plane ($\mathbb{H}$) and the unit disk ($\mathbb{D}$).
 
 \begin{theorem}[Poisson Kernel for $\mathbb{H}$]
     \label{the:line_kernel}
 Consider the upper half-plane $\mathbb{H} = \{z \in \mathbb{C} : \text{Im}(z) > 0\}$. The probability density of a Brownian particle starting at $z = x+iy$ hitting the real line at $u \in \mathbb{R}$ is given by the Cauchy distribution:
-\begin{equation}
+\begin{equation*}
     P_{\mathbb{H}}(z, u) = \frac{1}{\pi} \frac{y}{(u-x)^2 + y^2}.
-\end{equation}
+\end{equation*}
 \end{theorem}
 
 \begin{proof}
-We construct a conformal map $\phi: \mathbb{H} \to \mathbb{D}$ that sends the starting point $z$ to the origin $0$, and the real line $\mathbb{R}$ to the unit disk. The standard choice is the Cayley transform variation:
-\begin{equation}
-    \phi(w) = \frac{w - z}{w - \bar{z}}.
-\end{equation}
-Observe that $\phi(z) = 0$, and for any real boundary point $u \in \mathbb{R}$, $|\phi(u)| = 1$.
-Using the pullback proposition, the kernel is given by $\frac{1}{2\pi}|\phi'(w)|$. We compute the derivative with respect to the $w$:
-\begin{equation}
+We construct a conformal map $\phi: \mathbb{H} \to \mathbb{D}$ that sends the starting point $z$ to the origin $0$, and the real line $\mathbb{R}$ to the unit disk, utilising the Cayley transform variation: $\phi(w) = \frac{w - z}{w - \bar{z}}$.
+We compute the derivative with respect to $w$:
+\begin{equation*}
     \phi'(w) = \frac{z - \bar{z}}{(w - \bar{z})^2}.
-\end{equation}
-Now evaluated at a boundary point $w=u$:
-\begin{equation}
+\end{equation*}
+Evaluated at a boundary point $w=u \in \mathbb{R}$:
+\begin{equation*}
     |\phi'(u)| = \frac{|2iy|}{|u - \bar{z}|^2} = \frac{2y}{(u-x)^2 + y^2}.
-\end{equation}
-Thus, the Poisson kernel is:
-\begin{equation}
-    P_{\mathbb{H}}(z, u) = \frac{1}{2\pi} \left( \frac{2y}{(u-x)^2 + y^2} \right) = \frac{1}{\pi} \frac{y}{(u-x)^2 + y^2}.
-\end{equation}
+\end{equation*}
+Thus, the Poisson kernel is $\frac{1}{2\pi}|\phi'(u)| = \frac{1}{\pi} \frac{y}{(u-x)^2 + y^2}$.
 \end{proof}
-
-We now follow the same procedure for the unit disk.
 
 \begin{theorem}[Poisson Kernel for $\mathbb{D}$]
 \label{the:disk_kernel}
 The Poisson kernel for the unit disk $\mathbb{D}$, representing the exit density at angle $\theta$ for a particle starting at $z \in \mathbb{D}$, is given by:
-\begin{equation}
-    P_{\mathbb{D}}(z, \theta) = \frac{1}{2\pi} \frac{1-|z|^2}{|e^{i\theta} - z|^2}.
-\end{equation}
+\begin{equation*}
+    P_{\mathbb{D}}(z, e^{i\theta}) = \frac{1}{2\pi} \frac{1-|z|^2}{|e^{i\theta} - z|^2}.
+\end{equation*}
 \end{theorem}
 
 \begin{proof}
-We seek an automorphism of the disk $\psi: \mathbb{D} \to \mathbb{D}$ that maps the starting point $z$ to the origin $0$. This is given by the Möbius transformation:
-\begin{equation}
-    \psi(w) = \frac{w - z}{1 - \bar{z}w}.
-\end{equation}
-The derivative at the boundary point $w$ is:
-\begin{equation}
-    \psi'(w) =  \frac{1 - |z|^2}{(1 - \bar{z}w)^2}.
-\end{equation}
-To find the magnitude $|\psi'(w)|$, we observe that for $w = e^{i\theta}$, the denominator satisfies:
-\begin{equation}
-    |1 - \bar{z}e^{i\theta}| = |e^{-i\theta} - \bar{z}| = |\overline{e^{-i\theta} - \bar{z}}| = |e^{i\theta} - z|.
-\end{equation}
-Therefore, the Poisson kernel is:
-\begin{equation}
-    \frac{1}{2\pi}|\psi'(e^{i\theta})| = \frac{1}{2\pi} \frac{1 - |z|^2}{|e^{i\theta} - z|^2}.
-\end{equation}
+We seek an automorphism of the disk $\psi: \mathbb{D} \to \mathbb{D}$ that maps the starting point $z$ to the origin $0$. This is given by the M\"obius transformation: $\psi(w) = \frac{w - z}{1 - \bar{z}w}$. The derivative at the boundary point $w = e^{i\theta}$ is:
+\begin{equation*}
+    \psi'(e^{i\theta}) =  \frac{1 - |z|^2}{(1 - \bar{z}e^{i\theta})^2}.
+\end{equation*}
+Since $|1 - \bar{z}e^{i\theta}| = |e^{-i\theta} - \bar{z}| = |\overline{e^{-i\theta} - \bar{z}}| = |e^{i\theta} - z|$, the magnitude of the derivative gives the result.
 \end{proof}
 
 \begin{corollary}[Poisson Kernel for the Exterior of $\mathbb{D}$]
 \label{cor:exterior_kernel}
 Let $D_{ext} = \{z \in \mathbb{C} : |z| > 1\}$. The harmonic measure of the unit circle relative to a point $z \in D_{ext}$ is given by the density:
-\begin{equation}
-P_{\text{ext}}(z, \theta) = \frac{1}{2\pi} \frac{|z|^2 - 1}{|z - e^{i\theta}|^2}.
-\end{equation}
+\begin{equation*}
+P_{\text{ext}}(z, e^{i\theta}) = \frac{1}{2\pi} \frac{|z|^2 - 1}{|z - e^{i\theta}|^2}.
+\end{equation*}
 \end{corollary}
 \begin{proof}
 Consider the geometric inversion $a = 1/\bar{z}$, which maps $D_{ext} \to \mathbb{D}$. By the conformal invariance of harmonic measure, the exit distribution for $z$ is identical to that of $a$. Substituting $a$ into the interior kernel (\cref{the:disk_kernel}) and simplifying yields the result.
 \end{proof}
 
-This concludes the continuous formulation of the DLA process. The theoretical framework parallels the discrete setting but utilises slightly different machinery:
+This concludes the continuous formulation of the potential theory underlying DLA. The framework parallels the discrete setting, but replaces lattice regularisation with conformal geometry:
 \begin{enumerate}
-    \item The system is governed by a continuous potential field $u(x)$ determined by the geometry of the cluster, representing the probability density of the underlying Brownian motion.
-    \item The field $u(x)$ satisfies the continuous Laplace equation $\Delta u = 0$, but solving this explicitly is difficult. Instead we utilise the property of conformal invariance, allowing us to encode the potential field geometrically.
-    \item The growth probability at a boundary point is given by the Poisson Kernel, which serves as the continuous analogue to the discrete flux.
+    \item The system is governed by a continuous potential field $u(x)$ satisfying the continuous Laplace equation $\Delta u = 0$.
+    \item Hitting probabilities are framed as continuous Dirichlet problems and solved via Kakutani's Theorem.
+    \item Rather than solving these problems over complex boundaries, conformal invariance allows us to map difficult domains to simple, solvable geometries like $\mathbb{H}$ and $\mathbb{D}$. The exact exit distributions are given by their respective Poisson kernels, which serve as the continuous analogue to the discrete flux.
 \end{enumerate}
 
 
@@ -1019,7 +784,7 @@ The aggregation condition on $\mathbb{Z}^2$ is straightforward. We define the bo
    %% --- STAGE 2: Centered (f1) ---
     \node (stage2) [stage box, right=of stage1] {
         \begin{tikzpicture}[scale=0.8]
-            % Standardized Box for 1 & 2
+            % Standardised Box for 1 & 2
             \path[use as bounding box] (-3, -3.5) rectangle (3, 3);
             
             \draw[axes] (-2.8,0) -- (2.8,0);
@@ -1251,10 +1016,34 @@ This implies that if $N$ were occupied, the walker would have intersected $N$'s 
 
 
 % =========================================
-% CHAPTER 4: Results
+% CHAPTER 4: Simulation Results
 % =========================================
 \chapter{Simulation Results}
 \label{ch:results}
+
+The complete implementation of the algorithms described in \cref{ch:algorithms}, along with the rest of the codebase for this project, is available at: \url{https://github.com/RamsayDavis/dla}.
+
+Using this code, we were generated $1,000$ clusters of size $N=10^6$ particles and $100$ clusters of size $N=10^7$ particles for each of the three models (Off-Lattice, Lattice, Hybrid). We then stored the results as standardised 2D coordinate arrays in compressed Numpy files (\texttt{.npz} format).
+
+In the subsequent chapter, we will perform a more rigourous analysis, designed to expand the results of \cite{Grebenkov2017} and compare across the three models. Before that, we first visualise the clusters to gain an intuitive understanding of the structural similarites and differences.
+
+\Cref{fig:heatmap_comparison} and \Cref{fig:density_comparison} present a visual comparison of the clusters generated by the three models, with the former providing a visualisation of some randomly chosen clusters of size $N=10^7$, and the latter showing the spatial density maps of the entire ensemble of clusters at both $N=10^6$ and $N=10^7$ scales.
+
+\begin{figure}[htbp]
+  \centering
+    \includegraphics[width=\textwidth]{images/heatmaps_combined.pdf}
+\caption{Coarse-grained spatial density maps for representative $10^7$-particle clusters across the three simulation models. To visualise the localised mass concentration, the spatial bounding box of each cluster is discretised into a high-resolution 2D grid ($2^{11} \times 2^{11}$ pixels). A spatial histogram is computed by counting the exact number of particles occupying each discrete pixel bin, with empty bins masked for clarity. A linear color scale is applied to the resulting particle counts, where darker regions indicate an proportiately higher local mass density. }
+  \label{fig:heatmap_comparison}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+    \includegraphics[width=\textwidth]{images/density_maps_combined.pdf}
+  \caption{Spatial density maps of the simulated models at $10^6$ and $10^7$ scales. Unlike the single-cluster heatmaps, these visualisations aggregate the entire ensemble of simulated clusters into a unified 2D spatial histogram. The logarithmic color intensity represents the cumulative frequency of particles occupying each spatial bin. Overlay contours denote the maximum absolute radial extent (dashed cyan) and the average radial mass distribution (solid white), also known as the radius of gyration $R_g$. }
+  \label{fig:density_comparison}
+\end{figure}
+
+There are some immediate observations that can be made from these visualisations, with the key one being the apparent similar cross-like structure between the Lattice and Hybrid models, while the Off-Lattice model appears much more uniform, resulting in near circular density maps in \Cref{fig:density_comparison}. The remainder of this thesis will focus largely expanding upon this observation.
 
 
 % =========================================
@@ -1266,46 +1055,25 @@ This implies that if $N$ were occupied, the walker would have intersected $N$'s 
 % 5.1 Theory
 \section{Introduction to Dimension}
 \label{sec:dim_overview}
-To understand the fractal dimension of a Diffusion-Limited Aggregation (DLA) cluster, we must first establish a mathematically rigorous definition of ``dimension.'' Intuitively, dimension describes how an object fills space as it scales. For standard Euclidean geometries, this scaling relationship resolves to an integer. If we scale a 2D solid square by a factor of 2, its area (or ``mass'') increases by $2^2 = 4$. For fractal objects, this scaling relationship does not resolve to an integer, leading to a fractional dimension $D$ where the mass scales by $2^D$. To formally quantify this, we rely on the framework established by Felix Hausdorff and later refined for practical application by Minkowski and Bouligand.
+We now turn to analysing the fractal dimension of DLA clusters, and look to compare the different models. However, first we must formally establish what is meant by ``dimension''. 
+Dimension is a property that describes how an object fills space as it scales. For standard geometries, this scaling relationship is an integer. For instance, scaling a solid 2D shape by a factor of 2 increases its area by $2^2 = 4$. However, for fractal objects this scaling relationship does not resolve to an integer, so scaling the fractal up by a factor of 2 increases its mass by $2^D$ where $D$ is a non-integer, known as the fractal dimension. 
+For an in depth explanation of how we formalise this notion, see \citet{Falconer1990}. Here we provide a brief motivation and definition of the two relevant metrics for our purposes: box-counting dimension and growth rate.
 
-\subsection{Hausdorff Dimension}
-The formal mathematical foundation for fractal dimension is the Hausdorff dimension, which relies on the concept of optimal covers. Following Falconer \cite{Falconer1990}, we first define the Hausdorff measure.
 
-\begin{definition}[Hausdorff Measure]
-Let $F \subset \mathbb{R}^n$ and $s \geq 0$. A countable collection of sets $\{U_i\}$ is a $\delta$-cover of $F$ if $F \subset \bigcup_{i=1}^\infty U_i$ and the diameter $|U_i| \leq \delta$ for all $i$. The $s$-dimensional Hausdorff measure is defined as:
-\begin{equation}
-    \mathcal{H}^s(F) = \lim_{\delta \to 0} \inf \left\{ \sum_{i=1}^\infty |U_i|^s : \{U_i\} \text{ is a } \delta\text{-cover of } F \right\}
-\end{equation}
-\end{definition}
 
-This definition asks us to cover the fractal with sets (like tiny circles or blobs) of maximum size $\delta$, summing the $s$-th powers of their diameters. The infimum ensures we are finding the absolute most efficient possible cover. 
+\subsection{Box-Counting Dimension (\texorpdfstring{$D_{box}$}{D\_box})}
+We first define the Box-Counting (or Minkowski) dimension. We motivate the definition by considering the power law of scaling. 
 
-Falconer demonstrates that as $s$ varies, $\mathcal{H}^s(F)$ exhibits a critical ``jump'' behavior, which fundamentally defines the dimension of the set.
-
-\begin{proposition}[Hausdorff Dimension]
-There exists a unique critical value, called the Hausdorff dimension $\dim_H(F)$, such that for any set $F$:
-\begin{align*}
-    \mathcal{H}^s(F) &= \infty \quad \text{if } s < \dim_H(F) \\
-    \mathcal{H}^s(F) &= 0 \quad \text{if } s > \dim_H(F)
-\end{align*}
-Formally, $\dim_H(F) = \inf \{ s \geq 0 : \mathcal{H}^s(F) = 0 \}$.
-\end{proposition}
-
-While mathematically beautiful and rigorously applicable to any set, calculating $\dim_H(F)$ requires finding the optimal variable-sized cover as $\delta \to 0$. This optimization is computationally intractable for complex physical systems like discrete DLA simulations.
-
-\subsection{Box-Counting Dimension ($D_{box}$)}
-To extract a measurable metric from these abstract concepts, we turn to the Box-Counting (or Minkowski-Bouligand) dimension. Rather than starting with a formal limit, it is more intuitive to begin with the fundamental power law of scaling.
-
-Consider covering a standard Euclidean object with a uniform grid of boxes of side length $\epsilon$. If the object is a 1D line of length $L$, the number of boxes required is $N(\epsilon) \propto L/\epsilon \sim \epsilon^{-1}$. If the object is a 2D square of area $A$, the number of boxes is $N(\epsilon) \propto A/\epsilon^2 \sim \epsilon^{-2}$. We can generalize this scaling relationship for an object of arbitrary dimension $D_{box}$ as:
-\begin{equation}
+Consider covering a standard Euclidean object with a uniform grid of boxes of side length $\epsilon$. If the object is a 1D line of length $L$, the number of boxes required is $N(\epsilon) \propto L/\epsilon \sim \epsilon^{-1}$. If the object is a 2D square of area $A$, the number of boxes is $N(\epsilon) \propto A/\epsilon^2 \sim \epsilon^{-2}$. We generalise this scaling relationship for an object of arbitrary dimension $D_{box}$ as:
+\begin{equation*}
     N_{\epsilon}(F) \sim \epsilon^{-D_{box}}
-\end{equation}
+\end{equation*}
 
-To isolate the dimension $D_{box}$, we take the logarithm of both sides, yielding $\log N_{\epsilon}(F) \approx -D_{box} \log \epsilon + c$, where $c$ is a constant. Rearranging for $D_{box}$ gives:
-\begin{equation}
+To isolate the dimension $D_{box}$, we take the logarithm of both sides and rearrange for $D_{box}$, giving:
+\begin{equation*}
     D_{box} \approx \frac{\log N_{\epsilon}(F) - c}{-\log \epsilon}
-\end{equation}
-As the box size becomes infinitesimally small ($\epsilon \to 0$), the constant $c$ becomes negligible compared to the logarithm of $\epsilon$. This intuitive derivation directly motivates the formal mathematical definition outlined by Falconer \cite{Falconer1990}:
+\end{equation*}
+As ($\epsilon \to 0$), the constant $c$ becomes negligible, resulting in the following definition:
 
 \begin{definition}[Box-Counting Dimension]
 Let $N_{\epsilon}(F)$ be the smallest number of $\epsilon$-mesh cubes (boxes of side length $\epsilon$) that intersect a set $F$. The Box-Counting dimension $D_{box}$ is defined as:
@@ -1317,78 +1085,59 @@ assuming this limit exists.
 
 Practically, by measuring the number of occupied boxes $N_{\epsilon}(F)$ for various box sizes $\epsilon$ and plotting them on a log-log graph, $D_{box}$ is extracted directly from the negative slope of the regression line.
 
-\subsection{Growth Rate Dimension ($D_\beta$)}
-While Box-Counting analyzes the ``frozen'' final geometry of a cluster by varying the measurement resolution, most modern literature on DLA utilizes a kinetic proxy for dimension based on the cluster's \textit{growth rate} over time.
+\subsection{Growth Rate}
 
-To quantify this dynamic expansion, we must first define a robust metric for the spatial extent of the cluster. While the maximal radius (the absolute distance to the furthest particle) is highly susceptible to stochastic outliers and noisy tip-growth, the radius of gyration provides a stable, averaged measure of the mass distribution.
+Much of the literature on DLA uses a different metric for dimension, related to the growth rate of the cluster. We introduce this alternative definition and explore its relationship to the Box-Counting dimension.
+
+We first follow \cite{Grebenkov2017} in considering a more robust metric than the maximal radius to represent the spatial extent of a cluster: the radius of gyration, $R_g$. 
 
 \begin{definition}[Radius of Gyration]
-For a discrete aggregate of $N$ identical particles located at positions $\mathbf{r}_i$, let $\mathbf{r}_{cm} = \frac{1}{N}\sum_{i=1}^N \mathbf{r}_i$ be the center of mass. The radius of gyration, $R_g$, is the root-mean-square distance of the particles from the center of mass, defined as:
-\begin{equation}
-    R_g = \sqrt{\frac{1}{N} \sum_{i=1}^N |\mathbf{r}_i - \mathbf{r}_{cm}|^2}
-\end{equation}
+For a discrete aggregate of $N$ identical particles located at positions $\mathbf{r}_i$, the radius of gyration, $R_g$, is the root-mean-square distance of the particles from the origin (seed particle), defined as:
+\begin{equation*}
+    R_g = \sqrt{\frac{1}{N} \sum_{i=1}^N |\mathbf{r}_i |^2}
+\end{equation*}
 \end{definition}
 
-As a cluster aggregates, we can continuously characterize its overall spatial extent using this radius of gyration, $R_g$, and measure its expansion as a function of the total number of aggregated particles, $N$. This dynamic expansion is described by the scaling relation:
-\begin{equation}
+Similar to the Box-Counting dimension, there is a power law relationship between the radius of gyration and the number of particles in the cluster:
+\begin{equation*}
     R_g \sim N^\beta
-\end{equation}
+\end{equation*}
 where $\beta$ is defined as the growth rate exponent.
 
-To connect this kinetic growth rate back to the geometric power law established in the previous section, consider the mass-radius relationship of a fractal. In the Box-Counting framework, the mass (number of particles $N$) contained within a characteristic radius $R$ scales as $N \sim R^{D_{box}}$. Rearranging this spatial scaling to solve for the radius gives:
-\begin{equation}
-    R \sim N^{1/D_{box}}
-\end{equation}
-By equating our dynamic radial expansion ($R_g$) with the geometric spatial radius ($R$), we observe that the kinetic growth exponent relates to the dimension via $\beta = 1/D_{box}$. This powerful mathematical link justifies the definition of a distinct Growth Rate Dimension, $D_\beta$, defined simply as the inverse of the growth rate:
-\begin{equation}
-    D_\beta = \frac{1}{\beta}
-\end{equation}
+Compare this now to the power law satisified by the box counting dimension for a cluster of $N$ particles $R \sim N^{1/D_{box}}$. Equating them suggest another definition of dimension based on the growth rate, given by $D_\beta = \frac{1}{\beta}$.
 
-\subsection{The Link Between $D_{box}$ and $D_\beta$}
-Because of the algebraic link established above ($1/\beta = D_{box}$), it is a common assumption in the DLA literature that the geometric box-counting dimension and the kinetic growth dimension represent identical concepts and yield equivalent values ($D_{box} = D_\beta$). For an ideal, perfectly isotropic fractal, these two metrics do indeed converge to the known off-lattice DLA dimension of $D \approx 1.71$.
+This is the metric that is commonly used in the DLA literature to represent the fractal dimension of the cluster, and is often assumed to be equivalent to the Box-Counting dimension. However, this is not always the case, as the following simple example from \cite{Grebenkov2017} illustrates:
 
-However, similar underlying definitions do not guarantee identical physical concepts. As highlighted by Grebenkov and Beliaev \cite{Grebenkov2017}, the two metrics view the cluster through fundamentally different lenses: $D_{box}$ measures the bulk space-filling capacity of the interior, while $D_\beta$ measures the maximal radial expansion at the kinetic frontier.
+Consider an aggregate composed of $2t$ particles. Half of these particles ($t$) form a dense 2D disk of radius $R_{disk} \propto \sqrt{t}$. The other half ($t$) form a 1D interval (a line) of length $L \propto t$.
+The box dimension $D_{box}$ is determined by the solid 2D disk, as it is the densest componenet, hence $D_{box} = 2$. However, the radius scales as $R \propto t$, and since the total mass is $N = 2t \propto t$, the radius scales linearly with the mass ($R \propto N^1$). This means that the growth rate is $\beta = 1$, yielding a Growth Rate Dimension of $D_\beta = 1$.
 
-They provide a simple but illuminating counter-example to prove that these dimensions can entirely decouple for anisotropic structures. Consider an aggregate composed of $2t$ particles. Half of these particles ($t$) form a dense 2D disk of radius $R_{disk} \propto \sqrt{t}$. The other half ($t$) form a 1D interval (a line) of length $L \propto t$.
-\begin{itemize}
-    \item \textbf{Box-Counting ($D_{box}$):} The overall fractal dimension is determined by the densest, most space-filling component. Because the aggregate contains a solid 2D disk, its Box-Counting dimension is $D_{box} = 2$.
-    \item \textbf{Growth Rate ($D_\beta$):} The growth rate is determined by the maximal spatial extent. The 1D interval length ($L \propto t$) grows radially much faster than the disk ($R_{disk} \propto \sqrt{t}$). Therefore, the overall radius scales as $R \propto t$. Since the total mass is $N = 2t \propto t$, the radius scales linearly with the mass ($R \propto N^1$). Thus, the growth rate is $\beta = 1$, yielding a Growth Rate Dimension of $D_\beta = 1/\beta = 1$.
-\end{itemize}
-
-In this aggregate, $D_\beta = 1$ whilst $D_{box} = 2$. As Grebenkov and Beliaev note, a naive rescaling of this object by its maximal diameter ($\propto t$) results in a trivial limit (the unit interval) because ``the part with the higher dimension but smaller growth rate (the disk) is shrunk and thus fully eliminated in the limit $t \to \infty$'' \cite{Grebenkov2017}.
-
-While DLA clusters are vastly more complex than a simple line-and-disk shape, this exact phenomenon---long, fast-growing arms dictating the radial expansion rate ($\beta$) while a denser interior structure dictates the bulk mass scaling ($D_{box}$)---provides the theoretical foundation for why a significant discrepancy between these global metrics might emerge as clusters evolve anisotropically.
+Therefore we may need to be more careful in interchanging between these two metrics, and we will analyse how they vary and evolve across the different models, expanding on the results from \cite{Grebenkov2017} specifically for the lattice case.
 
 % 5.2 Methodology
 \section{Methodology}
 \label{sec:dim_method}
-To compute both $D_{box}$ and $D_\beta$, we rely on extracting slopes from log-log relationships. However, raw data from discrete DLA simulations contains inherent structural artifacts that can heavily bias standard regression models. To accurately capture the true scale-invariant fractal dimension, stringent methodological constraints and robust statistical techniques must be applied.
+To compute both $D_{box}$ and $D_\beta$, we rely on performing linear regression on log-log relationships. How this line is fit, and the potential error here, is not widely covered in the literature, which largely uses standard Ordinary Least Squares (L2) regression.
 
-\subsection{Calculating Box Dimension: The Box Size Problem}
-The Box-Counting dimension is calculated by generating grids of varying box sizes ($\epsilon$), counting the occupied boxes $N(\epsilon)$, and plotting $\log N(\epsilon)$ against $\log \epsilon$. A primary point of contention in the literature is exactly which box sizes to include in this regression. 
+We compare the standard L2 regression to a more robust alternative, the Theil-Sen estimator. The Theil-Sen estimator calculates the median of all pairwise slopes between data points, making it resistant to outliers and boundary effects that can skew L2 regression. As well as providing insight into the effect of the choice of regression method on the resulting dimension (for both dimension metrics), it also served to identify the valid scaling regime for $D_{box}$.
 
-One cannot naively use all mathematically possible box sizes. As noted by Grebenkov and Beliaev \cite{Grebenkov2017}, DLA clusters are bounded by finite-size effects at the macroscopic scale and by lattice discretization at the microscopic scale. If $\epsilon$ is too large (approaching the size of the cluster), $N(\epsilon) \to 1$, which trivially yields a slope of 0. Conversely, if $\epsilon$ is too small (approaching the size of a single particle or lattice site), the grid merely counts individual discrete pixels, resolving to the Euclidean dimension of the particles themselves rather than the fractal dimension of the aggregate. 
-
-To systematically identify the valid scaling regime, we compare two different regression techniques: standard Ordinary Least Squares (L2) regression and the robust Theil-Sen estimator. While L2 minimizes the sum of squared residuals, making it highly sensitive to outliers, the Theil-Sen estimator calculates the median of all pairwise slopes between data points, rendering it exceptionally robust to boundary artifacts.
-
-When performing regressions that include small box sizes ($\epsilon < 16$ pixels), a consistent and significant deviation emerges between the two techniques. The L2 regression slope is consistently pulled down (yielding an artificially inflated dimension) by the dense, space-filling nature of individual discrete particles at the smallest scales. The Theil-Sen regression resists this localized pull. This systematic discrepancy provides empirical proof that microscopic lattice effects dominate at $\epsilon < 16$. Consequently, our methodology strictly imposes a lower bound of $\epsilon \ge 16$ pixels for all $D_{box}$ calculations, ensuring the extracted slope reflects the true bulk fractal geometry rather than microscopic ``pixel noise.''
+\subsection{Box Sizes for Box-Counting Dimension}
+When we fit the grids with box sizes comparable to the particle size (i.e., $\epsilon < 16$ pixels), the box-count is dominated by the local 1D topology of individual branches, and eventually saturates at the 0D limit of counting individual particles. Similarly, as the boxes get large ($\epsilon > R/16$ pixels, where R is the cluster radius), the count is dominated by finite-size effects, and eventually saturates at the 0D limit of counting the entire cluster as one box. In both cases, the slope is pulled down, which skews the calculated dimension when using L2. By comparing to the Theil-Sen estimator, which is resistant to the resulting outliers,  we were able to ascertain what appears to be a more robust scaling regime for the box dimension, which is $\epsilon \in [16, R/16]$ pixels. This is shown in \cref{fig:box_regression_robustness} for a single cluster.
 
 \begin{figure}[htbp]
   \centering
-  \framebox{\parbox{0.8\textwidth}{\centering
-    \vspace{3cm}
-    \textbf{Figure Placeholder: Box-Counting Regression Comparison} \\
-    \small\textit{Insert Notebook Plot: Log-Log scatter of $N(\epsilon)$ vs $\epsilon$ for a single cluster, showing L2 vs Theil-Sen fits. Highlight the deviation at $\epsilon < 16$.}
-    \vspace{3cm}
-  }}
-  \caption{Comparison of L2 and Theil-Sen regressions for Box-Counting dimension on a single cluster. The divergence at small box sizes ($\epsilon < 16$) illustrates the susceptibility of L2 to microscopic lattice artifacts, justifying the choice of a robust estimator and lower bound cutoffs.}
+  \includegraphics[width=0.9\textwidth]{images/box_regression_robustness.pdf}
+  \caption{Comparison of L2 and Theil-Sen regressions for Box-Counting dimension on a single cluster. Including boxes that are too small or large relative to the cluster can have significant effects on the resulting growth rate.}
   \label{fig:box_regression_robustness}
 \end{figure}
 
-\subsection{Calculating Growth Rate Dimension: Sampling and Uncertainty}
-For the kinetic evaluation ($D_\beta$), the radius of gyration $R_g$ is tracked as a function of the aggregate mass $N$. Because simulating up to $N = 10^7$ generates an immense amount of discrete data points, the series is logarithmically sampled to maintain a computationally efficient and structurally representative dataset. By extracting 50 samples per logarithmic decade of $N$, a cluster growing to $10^7$ particles yields a manageable set of approximately 350 data points upon which to perform the regression.
+\subsection{Robustness of Growth Rate Dimension}
+As seen in \cref{fig:box_regression_robustness}, upon adjusting the scaling, the two forms of regression produce near identical outputs. This was consistent across the random sample of clusters we compared, and additionally the direction of the bias was not skewed one way or another. In the case of the growth rate dimension, the discrepancy was again of the same order of magnitude (if not lower), with no directional bias. 
 
-Even with this sampling, the stochastic nature of tip-growth causes random fluctuations in $R_g$ that can influence standard L2 fitting. By calculating both the Theil-Sen and L2 regressions on this sampled data, we not only extract a robust median slope via Theil-Sen, but we also gain a powerful diagnostic tool. The absolute difference between the Theil-Sen and L2 slopes, $\Delta D = |D_{Theil-Sen} - D_{L2}|$, serves as a non-parametric measure of structural uncertainty. A large discrepancy indicates that the object lacks perfect scale-invariance and possesses a high degree of internal structural variation or noise. This difference allows us to rigorously define the error bounds of our dimension metrics before analyzing the global results in the subsequent section.
+When fitting the growth rate, we again had to adjust the start points, and the frequency of sampling, to ensure a robust fit. Again the Theil-Sen estimator was used as a point of comparison. After heuristic analysis we settled on a start point at N=1000 particles, which is large enough to avoid initial finite-size effects in the growth regime, and sampled 50 samples every power of 10, to ensure no bias from the density of points in the log-log space. 
+
+\begin{remark}
+    Interestingly, when sampling evenly on a linear scale rather than logarithmic (biasing the fit towards the later stages of growth), this causes a more dramatic change in the resulting growth rate and corresponding dimension metric in the lattice and hybrid models. This aligns with our later discussion on anisotropy. 
+\end{remark}
 
 % 5.3 Results
 \section{Results and Statistical Errors}
@@ -1402,73 +1151,198 @@ Even with this sampling, the stochastic nature of tip-growth causes random fluct
         \toprule
         \textbf{Model (Size)} & \textbf{Growth Rate ($\beta$)} & \textbf{Growth Dim ($D_\beta$)} & \textbf{Box Dim ($D_{box}$)} \\
         \midrule
-        Off-Lattice (1M) & $0.582 \pm 0.008$ & $1.717 \pm 0.025$ & $1.656 \pm 0.010$ \\
-        Off-Lattice (10M)& $0.583 \pm 0.007$ & $1.717 \pm 0.022$ & $1.666 \pm 0.013$ \\
+        Off-Lattice (1M) & $0.583 \pm 0.007$ & $1.716 \pm 0.020$ & $1.667 \pm 0.004$ \\
+        Off-Lattice (10M)& $0.583 \pm 0.004$ & $1.714 \pm 0.013$ & $1.682 \pm 0.002$ \\
         \midrule
-        Lattice (1M)     & $0.587 \pm 0.009$ & $1.703 \pm 0.027$ & $1.661 \pm 0.011$ \\
-        Lattice (10M)    & $0.590 \pm 0.008$ & $1.696 \pm 0.024$ & $1.670 \pm 0.013$ \\
+        Lattice (1M)     & $0.589 \pm 0.007$ & $1.697 \pm 0.021$ & $1.672 \pm 0.004$ \\
+        Lattice (10M)    & $0.595 \pm 0.006$ & $1.682 \pm 0.016$ & $1.685 \pm 0.002$ \\
         \midrule
-        Hybrid (1M)      & $0.589 \pm 0.009$ & $1.698 \pm 0.027$ & $1.661 \pm 0.011$ \\
-        Hybrid (10M)     & $0.592 \pm 0.008$ & $1.689 \pm 0.023$ & $1.670 \pm 0.013$ \\
+        Hybrid (1M)      & $0.592 \pm 0.007$ & $1.691 \pm 0.021$ & $1.672 \pm 0.004$ \\
+        Hybrid (10M)     & $0.597 \pm 0.005$ & $1.674 \pm 0.014$ & $1.684 \pm 0.002$ \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-The results demonstrate that the Off-Lattice control model remains highly stable and isotropic, yielding $D_\beta = 1.717 \pm 0.022$ at $N=10^7$, matching theoretical expectations. In stark contrast, both the Lattice and Hybrid models exhibit significant ``drift,'' where the dimension systematically decreases as the cluster grows. 
+The final results for both dimension metrics across the different models and cluster sizes are summarised in \cref{tab:dim_results}. We present the average values along with the standard deviation as a measure of the error. Note that the standard deviation is an order of magnitude greater than the (unbiased) discrepancy due to how we fit the regression line for a single cluster, so we feel comfortable to largely focus on the standard deviation as an uncertainty proxy for the remainder of the analysis. Also in order to reflect the size of our cluster batches in our results, we may also use the standard error (SE), which is defined as the sample standard deviation $\sigma$ divided by the square root of the sample size $n$, ie $SE = \frac{\sigma}{\sqrt{n}}$.
+
+We now provide a visualisation of some of the above statistics, by plotting the probability density distribution of the two dimension metrics across the ensemble of clusters for each model and size. This is shown in \cref{fig:dim_histograms_combined}.
 
 \begin{figure}[htbp]
   \centering
   % width=\textwidth is used here so the 2x2 grid fills the page width nicely
-  \includegraphics[width=\textwidth]{images/combined_dimension_histograms.pdf}
-  \caption{Probability density distribution of the Growth Dimension ($D_\beta$) and Box-Counting Dimension ($D_{box}$) for $10^6$ (1M) and $10^7$ (10M) clusters. The Hybrid model closely mirrors the Lattice model, diverging significantly from the Off-Lattice control in both metrics and across both sizes.}
+  \includegraphics[width=0.7\textwidth]{images/combined_dimension_histograms.pdf}
+  \caption{Probability density distribution of the Growth Dimension ($D_\beta$) and Box-Counting Dimension ($D_{box}$) for $10^6$ (1M) and $10^7$ (10M) clusters.}
   \label{fig:dim_histograms_combined}
 \end{figure}
 
-The histogram distributions (Figure \ref{fig:dim_histograms_combined}) visually confirm a critical physical mechanism: the Hybrid model's distribution almost perfectly overlays the Lattice model's distribution. This empirically proves that the underlying random walk continuous nature is largely irrelevant to the final fractal dimension; the rigid geometry of the sticking rules alone dictates the dimensional drift.
 % 5.4 Evolution of Dimension and comparing different metrics
-\section{Comparing the Evolution of Dimension and Growth Rate}
+\section{Comparing Box-Dimension and Growth Rate}
 \label{sec:dim_evolution}
 
-By analysing the dimension at logarithmically spaced snapshots during the clusters' growth, we can observe the temporal dynamics of the spatial structure. A key finding of this study is the apparent ``lag'' between the kinetic dimension ($D_\beta$) and the bulk geometric dimension ($D_{box}$) in anisotropic models.
+There is a small amount of literature that compares the box-counting dimension ($D_{box}$) of DLA to the proxy derived from the growth rate ($D_{1/\beta}$). \citet{Grebenkov2017} noted that for a sample of 100 lattice clusters of size $\approx 5 \times 10^7$ particles, the two statistics differ by under 1\%. Other literature focusing on the box dimension includes \cite{Hanan2001}, but they work with lattice clusters of size order $10^4$ particles, which are susceptible to finite-size effects. We found little evidence of full-cluster box-counting applied to massive off-lattice aggregates, though implementations of the sandbox method (a distinct but related spatial scaling technique) on $10^6$ particle clusters estimate the dimension to be heavily depressed at $D \approx 1.685$ \cite{Hanan2012}.
+
+Our asymptotic dimension measurements at $N=10^7$ particles, summarised in Table \ref{tab:dim_results}, reveal two distinct dimensional behaviors across the simulation spaces:
+
+First, across all models and scales there is a noticeable depression in the box-counting dimension ($D_{box} \approx 1.68$) relative to the classical theoretical value of $1.71$. This suppression is likely an arifact of evaluating the static bulk of the finite clusters. The growth rate dimension ($D_{1/\beta}$) is much more influenced by the active outer region of the cluster, while the box-counting dimension averages over the entire structure. This aligns with the results of \cite{Hanan2001}, where they performed box-counting on both the entirety and just the outer perimeter of the cluster, and found that the box dimension of the perimeter was much closer to the theoretical value of $1.71$. 
+
+Second, there appears to be a larger discrepancy across models when using $D_{\beta}$ than $D_{box}$. The box dimension discrepancies at size $N=10^7$ are within approximately a standard devation of each other, while the the lattice models have growth dimensions that are over 2 standard deviations below the off-lattice model. Indeed this discrepancy is in the opposite direction to that of the box dimension, although due to the small size of it in the case of $D_{box}$ we avoid drawing any conclusions here. 
+
+A limitation of both our analysis so far, and the wider literature, is comparing these quantitites at specific cluster sizes. As it is impossible to know at what scale do we truly no longer have finite size effects, a potentially more useful comparison is that of the evolution of $D_{box}$ and $D_\beta$ as the cluster grows, which is shown in \cref{fig:dim_evolution}. 
 
 \begin{figure}[htbp]
   \centering
-  \framebox{\parbox{0.8\textwidth}{\centering
-    \vspace{3cm}
-    \textbf{Figure Placeholder: Dimension Evolution Over Time} \\
-    \small\textit{Insert Notebook Plot: plot\_batch\_dimension\_evolution() showing the temporal lag.}
-    \vspace{3cm}
-  }}
-  \caption{Statistical evolution of $D_{box}$ and $D_\beta$ against cluster size $N$ for the Lattice model. Shaded regions represent $\pm 1 \sigma$.}
+  \includegraphics[width=0.9\textwidth]{images/batch_dimension_evolution.pdf}
+  \caption{Statistical evolution of $D_{box}$ and $D_\beta$ against cluster size $N$ for the Lattice model. Shaded regions represent regions of uncertainty.}
   \label{fig:dim_evolution}
 \end{figure}
 
-As shown in Figure \ref{fig:dim_evolution}, while the two metrics track closely during early growth ($N < 10^5$), they exhibit distinct behaviors at late stages. The growth rate dimension, $D_\beta$, drops sharply. Because $D_\beta$ is governed by the expanding radius of gyration, it is immediately sensitive to the accelerated growth of the distinct lattice ``arms'' piercing outward. Consequently, $D_\beta$ also exhibits a higher variance, as it is driven by the highly stochastic, noisy nature of tip-growth.
+As shown in \cref{fig:dim_evolution}, the box dimension evolves similarly across all 3 models, while the growth dimension is clearly distinct in the off-lattice model from the other two models. This suggests that the while $D_{beta}=1/\beta$ may be a valuable metric in of itself, using it as a proxy for the dimension may in fact be misleading for finite sized clusters. We additionally speculate that for large enough clusters, the two metrics may converge in the off-lattice model as the size of the outer shell will vastly outnumber the sparser, frozen inner core. On the other hand, we are more hesitant to suggest a similar theory in the case of the other two models, where there is a distinct crossover visible in both cases in \cref{fig:dim_evolution}.
 
-Conversely, $D_{box}$ relies on the summation of the entire frozen structure. While the tips are accelerating outward, the deep interior fjords of the cluster continue to slowly fill with particles that bypass the outer screening. Therefore, the geometric box dimension lags behind the kinetic measurement, updating much slower to the structural changes and exhibiting significantly lower variance across the ensemble. This discrepancy highlights that global dimension metrics ultimately fail to capture the localized axial acceleration occurring at the lattice boundaries—a phenomenon that necessitates a direct quantification of angular anisotropy, which is explored in the following chapter.
+% 5.5 Cross model comparison
+\section{Comparing the Dimension Across Models}
+\label{sec:dim_model_comparison}
+Regardless of the inconsistencies across the two metrics and their cause, a key feature prevalent in both is the similarity between the hybrid and lattice models. This is in line with the visuals in \cref{ch:results}, where the density maps appear almost identical. Looking at the specific numbers in \cref{tab:dim_results}, the dimension statistics are indeed very closely aligned.
 
+This behavioral split is evident when analysing the kinetic growth dimension ($D_{1/\beta}$) at the maximum simulated aggregate size of $N=10^7$ particles. As shown in \cref{tab:dim_results}, the Hybrid model yields a growth dimension of $1.674 \pm 0.014$, which is statistically indistinguishable from the Lattice model's $1.682 \pm 0.016$. The standard deviations of these two models heavily overlap, something which can be visually verified in \cref{fig:dim_histograms_combined}.
+
+In contrast, the Off-Lattice model maintains a significantly higher growth dimension of $1.714 \pm 0.013$. Using the standard deviations as a proxy for uncertainty, we observe a distinct, statistically significant separation between the this model and the two grid-based models. The gap between the Off-Lattice mean and the Hybrid mean ($\Delta \approx 0.04$) is nearly three times larger than their respective standard deviations, strongly confirming that the lattice constraints enforce a physically distinct, accelerated radial expansion. 
+
+Crucially, this structural divergence is not merely a boundary effect localised to specific particle counts, but a consistent pattern in their evolution. Figure \ref{fig:dim_evolution} illustrates the dynamic evolution of both $D_{box}$ and $D_{1/\beta}$ across the three models from $N=10^5$ to $10^7$ particles. 
+
+As seen in the leftmost panel, the Off-Lattice model's kinetic dimension (red line) remains remarkably stable throughout its entire growth history, sitting rigidly within the theoretical $\sim 1.71$ target zone. However, the Lattice and Hybrid evolution plots (center and right panels) exhibit very similar decay. Rather than maintaining a stable dimension, both models peel away from the theoretical baseline, their $D_{1/\beta}$ values steadily falling as the clusters grow larger.
+
+Furthermore, the continuous evolution plots reveal that the Box Dimensions ($D_{box}$) of the Lattice and Hybrid models also share an identical, synchronised upward curvature. So far in all respects the Hybrid and Lattice models are virtually indistinguisable, which is strong evidence for our hypothesis that the difference in aggregation is the primary driver of the stuctural differences between the different models, while the transport mechanism itself is not a significant factor.
 
 % =========================================
 % CHAPTER 6: Anisotropy Analysis
 % =========================================
 \chapter{Anisotropy in DLA}
 \label{ch:anisotropy}
-
+So far we have restricted our analysis to the fractal dimension and the (somewhat) related growth rate. Now we turn to a different property to directly describe the symmetry of the clusters: anisotropy.
 % 6.1 Explanation of Anisotropy
 \section{What is Anisotropy?}
 \label{sec:anisotropy_overview}
+An aggregate is isotropic if its macroscopic properties (e.g. growth rate) are invariant under rotation. Off-Lattice DLA is theoretically isotropic, as the underlying transport and aggregation rules do not favour any particular direction. 
+
+Anisotropy occurs when this rotational symmetry is broken, and the aggregate exhibits preferential growth in specific directions. Early investigations including CITE and CITE, demonstrated that simulating DLA on a discrete square lattice alters the continuous rotational symmetry. Even if the incoming particles random-walk isotropically, the localised sticking rules force the micro-branches to align orthogonally. Over millions of particle additions, microscopic grid alignments compound, funneling the Laplacian growth field toward the tips of the Cartesian axes.
+
+To quantify this phenomenon, we decompose our global radius of gyration ($R_g$) and growth rate ($\beta$) into angular components. By partitioning the cluster into discrete angular sectors $\theta$, we can track the dynamic expansion of individual branches over time.
 
 % 6.2 Angular R_g
 \section{Angular Radius of Gyration}
 \label{sec:anisotropy_rg}
 
+We follow \cite{Grebenkov2017} in our definition of the angular radius of gyration. The 2D plane is partitioned into $n_s$ equal angular sectors $S_\theta$ originating from the center of the cluster. For an aggregate of total mass $N$, the angular radius of gyration, $R_g(\theta, N)$, is given by:
+
+\begin{equation*}
+    R_g(\theta, N) = \left[ \frac{1}{n_\theta(N)} \sum_{i=1}^N |\mathbf{r}_i|^2 \cdot \mathbb{I}(\mathbf{r}_i \in S_\theta) \right]^{1/2}
+\end{equation*}
+
+where $\mathbf{r}_i$ is the position vector of the $i$-th particle, $\mathbb{I}(\mathbf{r}_i \in S_\theta)$ is the indicator function (yielding 1 if the particle lies within sector $S_\theta$ and 0 otherwise), and $n_\theta(N)$ is the total number of particles occupying that specific sector at mass $N$.
+
+We set the number of sectors to $n_s = 360$, corresponding to $1^\circ$ angular wedges. We computed $R_g(\theta, N)$ at snapshots $N = 2^{10}$ to $N = 2^{23}$ particles for each of the $10^7$-particle clusters, and display the averages in \ref{fig:polar_semilog_combined}.
+
+\begin{figure}[htbp]
+    \centering
+    % Adjust width as needed for your margins
+    \includegraphics[width=0.9\textwidth]{images/polar_semilog_combined_10M.pdf}
+    \caption{Evolution of the Angular Radius of Gyration, $R_g(\theta)$, at sequential mass snapshots ($N = 2^{10} \dots 2^{23}$) for the $10^7$-particle clusters, evaluated for $1^{\circ}$ angular wedges. \textbf{Top Row:} Polar contour projections.  \textbf{Bottom Row:} Semi-logarithmic projections unrolling $R_g(\theta)$ against the angle $\theta$. }
+    \label{fig:polar_semilog_combined}
+\end{figure}
+
+The Off-Lattice model exhibits a circular symmetry in the polar projection, with the semi-log plot showing a flat profile across all angles. In contrast, the Lattice and Hybrid models display a pronounced fourfold symmetry, with peaks at $0^\circ$, $90^\circ$, $180^\circ$, and $270^\circ$ corresponding to the Cartesian axes, and troughs at $45^\circ$, $135^\circ$, $225^\circ$, and $315^\circ$ corresponding to the diagonals. The semi-log plots also match this pattern. This is strong visual evidence of the anisotropic growth effects induced by the lattice constraints. The near identical profiles of the Lattice and Hybrid models at each snapshot is further evidence that the aggregation rule is the primary driver of this anisotropy.
 % 6.3 Grwoth Rate
 \section{Angular Growth Rate Analysis}  
 \label{sec:anisotropy_growth}
+While the angular radius of gyration effectively captures the spatial boundary at specific snapshots, it is ultimately an absolute distance metric. A likely more useful quantity for understanding the limiting behaviour is the angular growth rate, $\beta(\theta)$, which is a both dynamic and scale-invariant metric.
 
-% 6.4 Conclusions
-\section{Conclusions}
-\label{sec:anisotropy_conclusion}
+To reveal the differential growth along the orientational extremes, we aggregate the angular radii of gyration $R_g(\theta, N)$ for the four Cartesian axes ($0^\circ, 90^\circ, 180^\circ, 270^\circ$) to define $R_{axis}(N)$, and for the four diagonal directions ($45^\circ, 135^\circ, 225^\circ, 315^\circ$) to define $R_{diag}(N)$. Because the number of particles in any individual $1^\circ$ sector is significantly smaller than the total cluster mass, local tip-growth fluctuations are high. To mitigate this statistical noise, we again follow the methodology of \cite{Grebenkov2017} by choosing relatively large aggregation sectors. We utilise four $11^\circ$ wedges centered on the respective axes and diagonals, and average the aggregated radii over the ensemble of $10^7$-particle clusters. This is displayed in \cref{fig:comparing_axes}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{images/comparing_axes_10M.pdf}
+    \caption{Aggregated angular radii of gyration for the 4 axes, $R_{axis}(N)$, and for the 4 diagonals, $R_{diag}(N)$, calculated from four $11^\circ$ angular wedges centered on the respective orientational directions. Values are evaluated at logarithmically spaced mass snapshots and averaged over the $10^7$-particle clusters. Linear fits at log-log scale (solid lines) determine the regional growth rates.}    
+    \label{fig:comparing_axes}
+\end{figure}
+
+As depicted in \Cref{fig:comparing_axes}, the isotropic Off-Lattice model exhibits perfectly parallel scaling between its axial and diagonal components. However, for the Lattice and Hybrid models, the log-log scaling laws diverge. 
+Our growth rate numbers for the Lattice model are consistent with those of \cite{Grebenkov2017}, where for 100 clusters of size $N \approx 5 \times 10^7$ particles, they found $\beta_{axis} = 0.612$ and $\beta_{diag} = 0.535$. %slight difference in diagonals?
+
+To compare the different models quantitatively, we consider the ratio of the two growth rates $A_R=\beta_{axis}/\beta_{diag}$. A number near 1 indicates isotropy, while a number significantly above 1 indicates anisotropy. For the Off-Lattice model, we find $A_R = 1.001 \pm 0.069$, confirming its isotropic nature. The Lattice and Hybrid models, however, yield $A_R = 1.217 \pm 0.084$ and $A_R = 1.245 \pm 0.090$ respectively, indicating a significant anisotropic bias towards the Cartesian axes.
+
+The choice of a set of four $11^\circ$ wedges is somewhat arbitrary, so we introduce an additional statistic here. We define the Fourier Score ($C_4$) as the 4th harmonic coefficient of a discrete Fourier decomposition of the $\beta(\theta)$ profile (using $1^\circ$ bins). This should capture the  $90^\circ$ periodic symmetry indicative of a square lattice. An isotropic cluster yields $C_4 \approx 0$. Our results are displayed in \cref{tab:anisotropy_stats}, where the Off-Lattice model has a Fourier Score of $C_4 = 0.023 \pm 0.012$, while the Lattice and Hybrid models have significantly higher scores of $C_4 = 0.057 \pm 0.016$ and $C_4 = 0.062 \pm 0.016$ respectively, further confirming the presence of a strong fourfold anisotropy in these models.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Summary of angular anisotropy metrics for $10^6$ (1M) and $10^7$ (10M) particle clusters. Values are presented as the ensemble mean $\pm$ one standard deviation.}
+    \label{tab:anisotropy_stats}
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Model (Size)} & \textbf{Anisotropy Ratio ($A_R$)} & \textbf{Fourier Score ($C_4$)} \\
+        \midrule
+        Off-Lattice (1M)  & $1.010 \pm 0.095$ & $0.032 \pm 0.016$ \\
+        Off-Lattice (10M) & $1.001 \pm 0.069$ & $0.023 \pm 0.012$ \\
+        \midrule
+        Lattice (1M)      & $1.174 \pm 0.112$ & $0.055 \pm 0.021$ \\
+        Lattice (10M)     & $1.217 \pm 0.084$ & $0.057 \pm 0.016$ \\
+        \midrule
+        Hybrid (1M)       & $1.189 \pm 0.114$ & $0.058 \pm 0.021$ \\
+        Hybrid (10M)      & $1.245 \pm 0.090$ & $0.062 \pm 0.016$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+To visualise the full angular profile of this divergence, we perform a coarse-grained angular growth analysis across the entire $360^\circ$ spectrum. We group our existing $1^\circ$ sector data into larger bins of $9^\circ$ (40 sectors) as for a symmetric grouping we required an odd factor of 360.
+
+This is shown in \cref{fig:beta_coarse}, where the angular growth rate $\beta(\theta)$ is plotted against the angle $\theta$ for each model. The green dashed line indicates the global mean growth rate across all angles. There is a significant discrepancy between this mean value and the growth rates reported in \cref{tab:dim_results} in the case of the two anisotropic models. This is because here each wedge is weighted equally, while the overall growth rate uses the radius of gyration of the whole cluster, where a large proportion of the particles are in the axial wedges, which have a higher growth rate. This is another example of how the growth rate dimension can be misleading as a proxy for the dimension, as it is heavily influenced by the anisotropy of the cluster. %how about box dim?
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{images/beta_coarse_10M.pdf}
+    \caption{The angular growth rate $\beta(\theta)$ as a function of the angle $\theta$, obtained from linear fits at log-log scale of $R_g(\theta, N)$ versus $N$. Data is evaluated using $9^\circ$ angular wedges (40 sectors). The green dashed line indicates the global mean $\beta$.}
+    \label{fig:beta_coarse}
+\end{figure}
+
+As expected, the Off-Lattice angular growth rate fluctuates stochastically around the theoretical isotropic mean, with no dominant directional preference. The Lattice and Hybrid models, however, display periodic oscillations aligned with the Cartesian axes. Because the growth rate is an exponent ($R_g \sim N^\beta$), even a small fractional difference between $\beta_{axes}$ and $\beta_{diagonals}$ results in an exponential separation in physical length.
+
+
+When resolving the angular growth rate with highly granular bins, a subtle but physically profound feature emerges in the Lattice and Hybrid models. Rather than peaking smoothly at $0^\circ$ and $90^\circ$, the angular growth rate $\beta(\theta)$ exhibits more complex behaviour, which varies depending on the bin-sizing. We display this phenomenon in \cref{fig:beta_fine}, where we plot $\beta(\theta)$ for the Lattice model at three different bin sizes: $9^\circ$, $3^\circ$, and $1^\circ$ wedges.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{images/beta_fine_10M.pdf}
+    \caption{High-resolution angular growth rate $\beta(\theta)$ for the Lattice ($10^7$) model evaluated at progressively finer bin sizes ($9^\circ$, $3^\circ$, and $1^\circ$ wedges). }
+    \label{fig:beta_fine}
+\end{figure}
+
+In \cref{fig:beta_fine}, the fine $1^\circ$ binning reveals that there is a sort of 'W`-shaped pattern in the profile along each axis, with an extreme spike exactly on axis accompanied by a signficant dip in the adjacent bins.  Looking at the $3^\circ$ binning, we now lose the central spike, and just see a slight dip on axis. We speculate that this is due to the underlying harmonic measure being heavily concentrated on the tips of the four main branches, resulting in a shielding effect on the adjacent $1^\circ$ bins. When we increase the scales, the shielded bins are averaged together, first causing the slight dip in the $3^\circ$ binning, and then eventually smoothing out the entire profile in the $9^\circ$ binning. This is an interesting example of how the choice of binning can have a significant effect on the resulting profile, and how the underlying physics can be obscured by coarse-graining. 
+
+The above was observed in both the Lattice and Hybrid models on all four axes, suggesting it is not simply a product of stochastic noise, but again another property characteristic of the lattice-influenced geometry. 
+
+% =========================================
+% 7. Conclusion
+% =========================================
+\chapter{Conclusion}
+\label{ch:conclusion}
+
+The primary objective of this dissertation was to investigate the underlying physical mechanisms driving the structural divergence between continuous and discrete models of Diffusion Limited Aggregation (DLA). We adapted existing algorithms for both Lattice and Off-Lattice DLA, which utilised various results from potential theory and complex analysis to grow clusters efficiently. We were able to generate a robust statistical ensemble of massive aggregates, including a total of 300 clusters grown to a size of $10^7$ particles. We additionally developed an original Hybrid model, specifically designed to decouple the diffusion process from the final aggregation geometry. 
+
+Our findings provide strong evidence that the anisotropy observed in Lattice DLA is driven almost entirely by the aggregation geometry, with no observable influence from the diffusion mechanism. This was verified both qualitatively and quantitatively, with no discernible difference found between the Lattice and Hybrid models, while the Off-Lattice model behaved significantly differently.
+
+Additionally, we observed several features of DLA that do not seem to feature prominently in existing literature. First, we demonstrated that the inverse of the kinetic growth rate ($D_\beta$) is an imperfect proxy for the bulk fractal dimension ($D_{box}$) in anisotropic structures, despite its prevalence in the literature. Second, via high-resolution angular analysis, we identified an extreme screening effect occurring immediately off-axis in the Lattice and Hybrid models, driving microscopic tip-splitting.
+
+Naturally, there are many further directions of research extending from this work. Some of the areas we would have liked to explore include:
+\begin{itemize}
+    \item \textbf{Direct analysis of the harmonic measure:} This could be achieved by adapting our Off-Lattice algorithm into a Monte-Carlo simulation to explicitly estimate the continuous probability distribution of the first hitting position around the frozen boundaries of the clusters.
+    \item \textbf{Noise-reduction techniques:} Implementing noise-reduced DLA theoretically accelerates convergence to the asymptotic limit. Utilising this could provide further, cleaner insight into the decoupling relationship between the growth rate and box dimensions.
+    \item \textbf{Individual branch analysis:} Isolating and evaluating the fractal scaling of individual primary branches, rather than the global aggregate, could serve as an alternative framework for cross-model comparisons.
+    \item \textbf{A ``Reverse'' Hybrid model:} To complement the Hybrid model developed in this study, a reverse variant could be implemented utilising discrete lattice-based random walks for transport, but switching to a continuous aggregation method upon collision. Testing if this model successfully recovers the isotropic morphology of Off-Lattice DLA would serve as the final, definitive proof that transport mechanics have no bearing on macroscopic shape.
+
+\end{itemize}
+
+\vspace{1em}
+Ultimately, this dissertation demonstrates that while Diffusion Limited Aggregation is governed by profoundly simple rules, the compounding effects of probability fields interacting with discrete geometric constraints result in macroscopic complexities that remain a rich area of ongoing study.
+
 
 
 % =========================================
@@ -1481,6 +1355,119 @@ Conversely, $D_{box}$ relies on the summation of the entire frozen structure. Wh
 % APPENDICES
 % =========================================
 \appendix
+
+\chapter{Preliminaries to Potential Theory}
+\label{app:preliminaries}
+
+\section{Martingales and the Optional Stopping Theorem}
+In this section, we review the necessary tools in probability for linking random walks to potential theory. We begin by defining a probability space.
+
+\begin{definition}[Probability Space]
+A probability space $(\Omega, \mathcal{F}, \mathbb{P})$ is a triple where $\Omega$ is a sample set, $\mathcal{F}$ is a $\sigma$-algebra on $\Omega$ representing the set of events, and $\mathbb{P} \colon \mathcal{F}\to[0,1]$ is a countably additive set function such that $\mathbb{P}(\Omega)=1$.
+\end{definition}
+
+\noindent We now introduce filtrations, which formalise the idea of accumulating information over time. 
+\begin{definition}[Filtration]
+A filtration on a probability space $(\Omega, \mathcal{F}, \mathbb{P})$ is a sequence of sub-$\sigma$-algebras $(\mathcal{F}_n)_{n \geq 0}$ such that:
+\begin{equation*}
+    \mathcal{F}_0 \subseteq \mathcal{F}_1 \subseteq \mathcal{F}_2 \subseteq \dots \subseteq \mathcal{F}.
+\end{equation*}
+The tuple $(\Omega, \mathcal{F}, (\mathcal{F}_n)_{n \geq 0}, \mathbb{P})$ is called a filtered probability space.
+\end{definition}
+
+\noindent We now consider how decisions can be made at a given time based on the information available up to that time.
+\begin{definition}[Stopping Time]
+A random variable $\tau \colon \Omega \to \{0, 1, \dots, \infty\}$ is called a stopping time with respect to the filtration $(\mathcal{F}_n)_{n \geq 0}$ if for every $n \geq 0$:
+\begin{equation*}
+    \{ \omega \in \Omega : \tau(\omega) \leq n \} \in \mathcal{F}_n.
+\end{equation*}
+\end{definition}
+
+\noindent For example, ``stop when the walker hits the cluster" is a valid stopping time but ``stop at the step before the walker hits the cluster" is not.
+
+\noindent With this in place, we model an unbiased process via the concept of a martingale.
+\begin{definition}[Martingale]
+A discrete-time stochastic process $(X_n)_{n \geq 0}$ is a martingale with respect to a filtration $(\mathcal{F}_n)_{n \geq 0}$ if:
+\begin{enumerate}
+    \item $X_n$ is adapted to the filtration (i.e., $X_n$ is $\mathcal{F}_n$-measurable for all $n$),
+    \item $\mathbb{E}[|X_n|] < \infty$ for all $n$,
+    \item $\mathbb{E}[X_{n+1} \mid \mathcal{F}_n] = X_n$ almost surely.
+\end{enumerate}
+\end{definition}
+
+\noindent  A martingale essentially encapsulates the idea of a ``fair game". The condition $\mathbb{E}[X_{n+1} \mid \mathcal{F}_n] = X_n$ implies that the best prediction for the next value is the current value, even with the entire history of the process. 
+
+\noindent A key result regarding martingales is the Optional Stopping Theorem. There are multiple versions, and we only state one here sufficient for our purposes.
+\begin{theorem}[Doob's Optional Stopping Theorem]
+\label{thm:ost}
+    Let $X$ be a martingale on a filtered probability space. If $\tau$ is a stopping time such that $\mathbb{P}(\tau < \infty) = 1$, and $X$ is uniformly bounded (i.e., there exists $K$ such that $|X_n(\omega)| \leq K$ for all $n, \omega$), then:
+\begin{equation*}
+    \mathbb{E}[X_\tau] = \mathbb{E}[X_0].
+\end{equation*}
+\end{theorem}
+
+\begin{proof}
+See \citet[Section 10.10]{Williams1991}.
+\end{proof}
+
+\noindent This means that no stopping strategy $\tau$ can change the expected payout of a fair game. This will allow us to relate the value of a harmonic function at a starting point $x$ (start of the walk) to its expected value at the boundary $\partial D$ (end of the walk).
+
+\section{Measure Theory Concepts}
+
+In the study of potential theory, we will want to understand the relationship between the geometric length of a boundary (Lebesgue measure) and the probability that a random walker hits that boundary (harmonic measure). To rigorously define a probability density function linking these two concepts we require the notion of the Radon-Nikodym derivative.
+
+
+We begin by defining absolute continuity between two measures, which is a necessary pre-requisite.
+\noindent \textit{Remark:} throughout this work, we assume our measurable spaces are equipped with the Borel $\sigma$-algebra.
+\begin{definition}[Absolute Continuity]
+Let $(\Omega, \mathcal{F})$ be a measurable space equipped with two measures $\mu$ and $\nu$. We say that $\nu$ is absolutely continuous with respect to $\mu$, denoted $\nu \ll \mu$, if for every $A \in \mathcal{F}$:
+\begin{equation*}
+    \mu(A) = 0 \implies \nu(A) = 0.
+\end{equation*}
+\end{definition}
+
+\begin{theorem}[The Radon-Nikodym Theorem]
+Let $(\Omega, \mathcal{F})$ be a measurable space, and let $\mu$ and $\nu$ be two finite measures such that $\nu \ll \mu$. Then, there exists a non-negative measurable function $f \colon \Omega \to [0, \infty)$, unique $\mu$-almost everywhere, such that for any $A \in \mathcal{F}$:
+\begin{equation*}
+    \nu(A) = \int_A f \, d\mu.
+\end{equation*}
+The function $f$ is called the Radon-Nikodym derivative of $\nu$ with respect to $\mu$ and is denoted by:
+\begin{equation*}
+    f = \frac{d\nu}{d\mu}.
+\end{equation*}
+\end{theorem}
+
+\begin{proof}
+See \citet[Section 14.13]{Williams1991}.
+\end{proof}
+
+%add LCLT and also Ito's Lemma?
+
+\section{Conformal Maps}
+
+Here we state the definition of a conformal map, and the Riemann mapping theorem, both from \citet{Ahlfors1979}. Conformal maps will be very important for two reasons: theoretically, the Riemann Mapping Theorem guarantees that the Dirichlet problem in \cref{ch:theory} is well-posed even on the potentially fractal boundary of a DLA cluster. Algorithmically, these maps allow us to exploit the `conformal invariance' of Brownian motion, which we discuss in the \cref{ch:theory} and \cref{ch:algorithms}.
+%remove conformal map defintion?
+\begin{definition}[Conformal Map]
+Let $U, V \subseteq \mathbb{C}$ be open sets. A function $f \colon U \to V$ is called \textbf{conformal} at a point $z_0 \in U$ if it preserves angles and orientation locally. 
+
+Analytically, a holomorphic function $f$ is conformal at every point where its derivative is non-zero, i.e., $f'(z) \neq 0$. If $f$ is a holomorphic bijection between $U$ and $V$ (a biholomorphism), it is essentially a global conformal map, and we say $U$ and $V$ are conformally equivalent.
+\end{definition}
+
+\begin{theorem}[Riemann Mapping Theorem]
+Let $U \subsetneq \mathbb{C}$ be a non-empty, simply connected open subset of the complex plane. Then, there exists a unique bijective conformal map $f$ from $U$ onto the open unit disk $\mathbb{D} = \{z \in \mathbb{C} : |z| < 1\}$ such that:
+\begin{equation*}
+    f(z_0) = 0 \quad \text{and} \quad f'(z_0) > 0,
+\end{equation*}
+for any prescribed point $z_0 \in U$.
+\end{theorem}
+
+\begin{proof}
+See \citet[Chapter 6.1]{Ahlfors1979}.
+\end{proof}
+
+%%% -------------- %%%
+%%% Appendix B
+%%% -------------- %%%
 
 \chapter{Implementation Details and Optimisations}
 \label{app:implementation}
@@ -1672,6 +1659,27 @@ To enable a unified analysis pipeline, we implemented a standardisation layer th
 
 This post-processing step allows us to apply the exact same analysis scripts (fractal dimension estimation, radial density functions) to all datasets agnostically, eliminating potential errors arising from manual unit conversion.
 
+\subsection{Hausdorff Dimension}
+The formal mathematical foundation for fractal dimension is the Hausdorff dimension, which relies on the concept of optimal covers. We first define the Hausdorff measure.
 
+\begin{definition}[Hausdorff Measure]
+Let $F \subset \mathbb{R}^n$ and $s \geq 0$. A countable collection of sets $\{U_i\}$ is a $\delta$-cover of $F$ if $F \subset \bigcup_{i=1}^\infty U_i$ and the diameter $|U_i| \leq \delta$ for all $i$. The $s$-dimensional Hausdorff measure is defined as:
+\begin{equation}
+    \mathcal{H}^s(F) = \lim_{\delta \to 0} \inf \left\{ \sum_{i=1}^\infty |U_i|^s : \{U_i\} \text{ is a } \delta\text{-cover of } F \right\}
+\end{equation}
+\end{definition}
+
+It can be shown that as $s$ varies, $\mathcal{H}^s(F)$ exhibits a critical ``jump'' behavior, which fundamentally defines the dimension of the set.
+
+\begin{proposition}[Hausdorff Dimension]
+There exists a unique critical value, called the Hausdorff dimension $\dim_H(F)$, such that for any set $F$:
+\begin{align*}
+    \mathcal{H}^s(F) &= \infty \quad \text{if } s < \dim_H(F) \\
+    \mathcal{H}^s(F) &= 0 \quad \text{if } s > \dim_H(F)
+\end{align*}
+Formally, $\dim_H(F) = \inf \{ s \geq 0 : \mathcal{H}^s(F) = 0 \}$.
+\end{proposition}
+
+While rigourously applicable to wide range of sets, calculating $\dim_H(F)$ requires finding the optimal variable-sized cover as $\delta \to 0$. This is incredibly hard to do in practice.
 
 \end{document}

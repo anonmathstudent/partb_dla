@@ -3,6 +3,8 @@ from matplotlib.colors import LogNorm
 import numpy as np
 from scipy.stats import linregress
 import src.analysis.metrics as metrics 
+from scipy.signal import savgol_filter
+
 
 def plot_density_map(grid, bins, max_r_curve=None, rg_curve=None, title="Cluster Density", ax=None):
     """
@@ -230,7 +232,7 @@ def plot_anisotropy_evolution(df_precision, df_extension=None, ax=None):
     return ax
 
 
-def plot_beta_profile(time_points, agg_data, fit_start_N=1000, ax=None, input_sectors=360, target_sectors=90):
+def plot_beta_profile(time_points, agg_data, fit_start_N=1000, ax=None, input_sectors=360, target_sectors=90, trend_line = False):
     """
     Plots the Angular Growth Rate (Beta) for each sector.
     Downsamples to target_sectors (default 90 = 4 deg) so 0 deg is aligned with the lattice axis.
@@ -247,15 +249,14 @@ def plot_beta_profile(time_points, agg_data, fit_start_N=1000, ax=None, input_se
 
     ax.plot(angles, beta_profile, color='red', linewidth=1)
 
-    # Trend line (Smoothing)
-    window = max(5, num_sectors // 20)
-    if window % 2 == 0: window += 1
-    try:
-        from scipy.signal import savgol_filter
-        beta_smooth = savgol_filter(beta_profile, window, 2)
-        ax.plot(angles, beta_smooth, color='purple', alpha=0.3, linewidth=2, label=r'$\beta(\theta)$ Trend')
-    except Exception:
-        pass
+    if trend_line:
+        window = max(5, num_sectors // 20)
+        if window % 2 == 0: window += 1
+        try:
+            beta_smooth = savgol_filter(beta_profile, window, 2)
+            ax.plot(angles, beta_smooth, color='purple', alpha=0.3, linewidth=2, label=r'$\beta(\theta)$ Trend')
+        except Exception:
+            pass
 
     # Mean line
     mean_beta = np.nanmean(beta_profile)

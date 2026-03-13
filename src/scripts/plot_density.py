@@ -3,6 +3,7 @@ Coarse-Grained Density Plotter for DLA Clusters.
 """
 import argparse
 import sys
+import os
 from pathlib import Path
 
 import matplotlib.colors as mcolors
@@ -25,9 +26,6 @@ def compute_density_grid(x_coords, y_coords, grid, scale, pad_x, pad_y):
     H, W = grid.shape
     num_particles = len(x_coords)
     
-    # Note: For strict parallel safety, one would use atomics.
-    # However, for visualization histograms of sparse DLA, standard reduction 
-    # is performant and visual artifacts from race conditions are negligible.
     for i in range(num_particles):
         px = int((x_coords[i] - pad_x) * scale)
         py = int((y_coords[i] - pad_y) * scale)
@@ -37,23 +35,37 @@ def compute_density_grid(x_coords, y_coords, grid, scale, pad_x, pad_y):
 
 
 def render_density(
-    result, 
-    output_path, 
+    positions, 
+    title=None,
+    output_path=None, 
     res_power=11, 
     mode="log", 
-    cmap="Greys"
+    cmap="Greys",
+    ax=None
 ):
+    """
+    Renders coarse-grained density map. 
+    Can plot to a standalone figure, or onto an existing Matplotlib Axis.
+    """
     # 1. Setup Resolution
     res = 1 << res_power  # e.g., 2^11 = 2048
     print(f"Target Resolution: {res}x{res} (2^{res_power})")
     
     # 2. Get Coordinates
-    if hasattr(result, 'meta') and "x_coords" in result.meta:
-        x = np.array(result.meta["x_coords"])
-        y = np.array(result.meta["y_coords"])
-    elif result.positions is not None:
-        x = result.positions[:, 0]
-        y = result.positions[:, 1]
+    if hasattr(positions, 'meta') and "x_coords" in positions.meta:
+        x = np.array(positions.meta["x_coords"])
+        y = np.array(positions.meta["y_coords"])
+    elif hasattr(positions, 'positions') and positions.positions is not None:
+        x = positions.positions[:, 0]
+        y = positions.positions[:, 1]
+    elif isinstance(positions, tuple) or isinstance(positions, list) or isinstance(positions, np.ndarray):
+        # Allow passing raw coordinate arrays directly from Notebook dictionaries!
+        coords = np.asarray(positions)
+        if len(coords.shape) > 1 and coords.shape[1] == 2:
+            x = coords[:, 0]
+            y = coords[:, 1]
+        else:
+            x, y = coords[0], coords[1]
     else:
         raise ValueError("No coordinates found.")
         
@@ -71,9 +83,6 @@ def render_density(
     scale = res / max_dim
     grain_size = 1.0 / scale
     
-    print(f"Cluster Width:  {width_data:.1f} units")
-    print(f"Grain Size:     1 Pixel = {grain_size:.2f} x {grain_size:.2f} unit block")
-    
     # 4. Center Data
     center_x = (x_min + x_max) / 2
     center_y = (y_min + y_max) / 2
@@ -82,82 +91,78 @@ def render_density(
     
     # 5. Binning
     grid = np.zeros((res, res), dtype=np.int32)
-    print(f"Binning {len(x):,} particles...")
     compute_density_grid(x, y, grid, scale, pad_x, pad_y)
     
     max_count = np.max(grid)
-    print(f"Max Density: {max_count} particles per pixel")
 
-    # 6. Plotting Setup
-    fig, ax = plt.subplots(figsize=(10, 10))
+    # 6. Plotting Setup - AXIS INJECTION LOGIC
+    if ax is None:
+        fig, current_ax = plt.subplots(figsize=(10, 10))
+        standalone = True
+    else:
+        current_ax = ax
+        standalone = False
+        plt.sca(current_ax) # Ensure Matplotlib targets this axis
     
     # Convert to float for plotting
     grid_float = grid.astype(np.float32)
     
     # MASKING: Make empty pixels transparent (or white)
-    # We use a masked array so 0 values don't get plotted
     grid_masked = np.ma.masked_where(grid == 0, grid_float)
     
     # 7. Apply Modes
     if mode == "binary":
-        # Binary: Any pixel > 0 is treated as 1.0
-        # We set vmin=0, vmax=1, so all occupied pixels get the "max" color
         norm = mcolors.Normalize(vmin=0, vmax=0.1) 
-        # (vmax=0.1 ensures even a count of 1 is fully saturated color)
-        title_mode = "Binary (Occupancy)"
-        
+        title_mode = "Binary"
     elif mode == "log":
-        # Logarithmic: Good for seeing dynamic range
         norm = mcolors.LogNorm(vmin=1, vmax=max_count)
-        title_mode = "Logarithmic Density"
-        
+        title_mode = "Log Density"
     elif mode == "linear":
-        # Linear: Shows true mass concentration
         norm = mcolors.Normalize(vmin=0, vmax=max_count)
         title_mode = "Linear Density"
-        
-    
     else:
         raise ValueError(f"Unknown mode: {mode}")
 
-    # Plot Image
-    im = ax.imshow(
+    # Plot Image onto the correct axis
+    im = current_ax.imshow(
         grid_masked, 
         cmap=cmap, 
         norm=norm, 
-        interpolation='nearest', # Keep pixels sharp (no blurring)
+        interpolation='nearest', 
         origin='lower'
     )
     
-    # Add Colorbar only if not binary (binary bar is boring)
+    # Add Colorbar (attached explicitly to current_ax so it doesn't break grids)
     if mode != "binary":
-        plt.colorbar(im, label="Particles per Pixel")
+        plt.colorbar(im, ax=current_ax, label="Particles per Pixel", fraction=0.046, pad=0.04)
     
-    ax.axis('off')
-    ax.set_title(f"Coarse Grained DLA ({title_mode})\n$2^{{{res_power}}}\\times2^{{{res_power}}}$ Grid | Grain $\\approx$ {grain_size:.1f}")
+    current_ax.axis('off')
     
-    if output_path:
-        # Save with high DPI
+    # Apply Title if provided
+    if title:
+        current_ax.set_title(title, pad=10)
+    
+    if standalone and output_path:
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
         plt.savefig(output_path, dpi=300, bbox_inches='tight')
         print(f"Saved to {output_path}")
-    
-    plt.close()
+        plt.close(fig)
+        
+    return im
 
 
 def main():
     parser = argparse.ArgumentParser(description="Coarse-Grained Density Plotter")
     parser.add_argument("file", help="Input .npz file")
     parser.add_argument("--res-power", type=int, default=11, help="Resolution power of 2 (default 11 -> 2048px)")
-    parser.add_argument("--mode", choices=["binary", "log", "linear"], default="log", help="Plotting mode: binary, log, or linear")
+    parser.add_argument("--mode", choices=["binary", "log", "linear"], default="log", help="Plotting mode")
     parser.add_argument("--cmap", default="Greys", help="Matplotlib colormap (default: Greys)")
     parser.add_argument("--out", default=None, help="Output filename")
 
     args = parser.parse_args()
     
-    # Load
     result = utils.load_cluster(args.file)
     
-    # Auto-name output if not provided
     if args.out is None:
         input_path = Path(args.file)
         out_name = input_path.stem + f"_density_{args.mode}.png"
@@ -165,7 +170,7 @@ def main():
     else:
         out_path = args.out
         
-    render_density(result, out_path, args.res_power, args.mode, args.cmap)
+    render_density(positions=result, output_path=out_path, res_power=args.res_power, mode=args.mode, cmap=args.cmap)
 
 if __name__ == "__main__":
     main()
