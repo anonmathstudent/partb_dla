@@ -12,11 +12,11 @@ Diffusion-Limited Aggregation is a process where particles undergo random walks 
 
 ### Key Features
 
-- **Optimized Performance**: Numba JIT compilation for critical loops
+- **Optimised Performance**: Numba JIT compilation for critical loops
 - **Multiple Algorithms**: Three different simulation models to choose from
 - **Batch Processing**: Parallel execution for generating large datasets
 - **Analysis Tools**: Fractal dimension calculation and scaling analysis
-- **Visualization**: High-quality plotting with customizable rendering
+- **Visualisation**: High-quality plotting with customizable rendering
 
 ## Installation
 
@@ -114,7 +114,7 @@ Batch outputs are saved in `results/batches/<name>_<timestamp>/` with:
 - Individual cluster files (`001.npz`, `002.npz`, ...)
 - A `manifest.json` file with metadata
 
-### Visualizing Clusters
+### Visualising Clusters (old)
 
 Plot a saved cluster using `plot_cluster.py`:
 
@@ -138,30 +138,6 @@ python src/scripts/plot_cluster.py results/my_cluster.npz --save results/plot.pn
 - `--dpi`: Resolution for saved images (default: 300)
 - `--cmap`: Colormap name (default: 'magma')
 
-### Analyzing Clusters
-
-Compute fractal dimension and scaling statistics with `analyse_cluster.py`:
-
-```bash
-python src/scripts/analyse_cluster.py <path-to-npz-file> [options]
-```
-
-**Example:**
-
-```bash
-# Analyze a cluster and display results
-python src/scripts/analyse_cluster.py results/lattice_N100000_S42_20251224-175355.npz
-
-# Analyze without plotting
-python src/scripts/analyse_cluster.py results/my_cluster.npz --no-plot
-```
-
-This script computes:
-- **Fractal Dimension (Df)**: From the scaling relation Rg ~ N^(1/Df)
-- **Scaling Exponent (β)**: Slope of log(Rg) vs log(N)
-- **R² Value**: Linearity of the scaling relationship
-
-Expected fractal dimension for off-lattice DLA is typically around 1.71.
 
 ### Programmatic Usage
 
@@ -209,7 +185,7 @@ coords = result.positions
 metadata = result.meta
 ```
 
-## Project Structure
+## Project Structure (Outdated)
 
 ```
 dla/
@@ -235,36 +211,6 @@ dla/
 ├── pyproject.toml         # Package configuration
 └── README.md             # This file
 ```
-
-## Algorithm Details
-
-### Lattice DLA (`LatticeSimulator`)
-
-- **Algorithm**: Optimized square lattice DLA with hierarchical acceleration
-- **Key Features**:
-  - **Walk-to-Square (WTS)**: Multi-resolution grid for efficient empty space skipping
-  - **Walk-to-Line (WTL)**: Green's function lookup for instant transport to cluster boundary
-  - **Fuzzy Annulus Launching**: Kaiser-Bessel windowing to eliminate lattice artifacts
-- **Performance**: Optimized with Numba JIT compilation
-- **Reference**: Ported from Yen Lee Loh's `koh_lattice.cc`
-
-### Off-Lattice DLA (`BellOffSimulator`)
-
-- **Algorithm**: Continuous space DLA using conformal mapping
-- **Key Features**:
-  - Harmonic measure mapping from infinity to unit circle
-  - Continuous random walk in complex plane
-  - Grid-based neighbor detection for aggregation
-- **Performance**: Numba-accelerated critical loops
-
-### Hybrid DLA (`HybridSimulator`)
-
-- **Algorithm**: Combines off-lattice diffusion with on-lattice aggregation
-- **Key Features**:
-  - Continuous random walk (off-lattice)
-  - Grid-based aggregation (on-lattice)
-  - Configurable grid spacing
-- **Use Case**: Balances continuous dynamics with efficient aggregation
 
 ## Output Format
 
@@ -299,11 +245,3 @@ pytest tests/
 
 See `LICENSE` file for details.
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit issues or pull requests.
-
-## References
-
-- Original lattice algorithm: Yen Lee Loh's `koh_lattice.cc`
-- DLA theory: Witten & Sander (1981), "Diffusion-limited aggregation, a kinetic critical phenomenon"
