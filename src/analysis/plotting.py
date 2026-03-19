@@ -43,7 +43,7 @@ def plot_density_map(grid, bins, max_r_curve=None, rg_curve=None, title="Cluster
             gx, gy = polar_to_cart(rg_curve)
             ax.plot(gx, gy, color='white', linestyle='-', linewidth=1.5, label='Avg Mass ($R_g$)')
             
-        ax.legend(loc='upper right', frameon=True, facecolor='black', framealpha=0.6, labelcolor='white', fontsize='small')
+        #ax.legend(loc='upper right', frameon=True, facecolor='black', framealpha=0.6, labelcolor='white', fontsize='small')
 
     ax.set_title(title)
     ax.set_xlabel('X')

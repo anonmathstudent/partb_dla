@@ -1,4 +1,4 @@
-\begin{thebibliography}{29}
+\begin{thebibliography}{32}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -89,6 +89,14 @@ Peter Mörters and Yuval Peres.
 \newblock \emph{Brownian Motion}.
 \newblock Cambridge University Press, Cambridge, 2010.
 
+\bibitem[Hastings and Levitov(1998)]{Hastings1998}
+M.B. Hastings and L.S. Levitov.
+\newblock Laplacian growth as one-dimensional turbulence.
+\newblock \emph{Physica D: Nonlinear Phenomena}, 116\penalty0 (1–2):\penalty0 244–252, May 1998.
+\newblock ISSN 0167-2789.
+\newblock \doi{10.1016/s0167-2789(97)00244-3}.
+\newblock URL \url{http://dx.doi.org/10.1016/S0167-2789(97)00244-3}.
+
 \bibitem[Loh(2014)]{Loh2014}
 Yen~Lee Loh.
 \newblock Bias-free simulation of diffusion-limited aggregation on a square lattice, 2014.
@@ -158,6 +166,12 @@ W.~G. Hanan and D.~M. Heffernan.
 \newblock \emph{Physical Review E}, 85\penalty0 (2):\penalty0 021407, 2012.
 \newblock \doi{10.1103/PhysRevE.85.021407}.
 
+\bibitem[Novotny(1990)]{novotny1990}
+M.~A. Novotny.
+\newblock Noise reduction in dla.
+\newblock In David~P. Landau, K.~K. Mon, and Heinz-Bernd Sch{\"u}ttler, editors, \emph{Computer Simulation Studies in Condensed Matter Physics II}, pages 45--55, Berlin, Heidelberg, 1990. Springer Berlin Heidelberg.
+\newblock ISBN 978-3-642-75234-6.
+
 \bibitem[Meakin(1986)]{meakin1986}
 Paul Meakin.
 \newblock Universality, nonuniversality, and the effects of anisotropy on diffusion-limited aggregation.
@@ -180,6 +194,11 @@ David Williams.
 Lars~V. Ahlfors.
 \newblock \emph{Complex Analysis: An Introduction to the Theory of Analytic Functions of One Complex Variable}.
 \newblock McGraw-Hill, New York, 3rd edition, 1979.
+
+\bibitem[Herho et~al.(2026)Herho, Fajary, Anwar, Khadami, Trilaksono, Suwarman, and Irawan]{herho2026}
+Sandy H.~S. Herho, Faiz~R. Fajary, Iwan~P. Anwar, Faruq Khadami, Nurjanna~J. Trilaksono, Rusmawan Suwarman, and Dasapta~E. Irawan.
+\newblock Numba-accelerated 2d diffusion-limited aggregation: Implementation and fractal characterization, 2026.
+\newblock URL \url{https://arxiv.org/abs/2601.15440}.
 
 \bibitem[Abramowitz and Stegun(1965)]{Abramowitz1965}
 Milton Abramowitz and Irene~A. Stegun, editors.
